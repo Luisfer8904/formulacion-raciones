@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat flotante</title>
+  <style>
+    #chatBot {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .chat-icon {
+      background-color: #25D366;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      text-align: center;
+      line-height: 60px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .chat-icon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+    }
+
+    .chat-window {
+      display: none;
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 320px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      padding: 20px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .chat-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    .chat-header-text {
+      flex: 1;
+    }
+
+    .chat-header h4 {
+      margin: 0;
+      color: #1a1a1a;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .chat-header p {
+      margin: 4px 0 0;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .species-button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 12px 15px;
+      border: none;
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .species-button:hover {
+      background-color: #e9ecef;
+      transform: translateX(5px);
+    }
+
+    .species-button span {
+      font-size: 20px;
+      margin-right: 10px;
+    }
+
+    .response {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #e0e0e0;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .whatsapp-button {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 15px;
+      padding: 12px 20px;
+      background-color: #25D366;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+    }
+
+    .whatsapp-button:hover {
+      background-color: #22c15e;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    }
+
+    .whatsapp-button i {
+      margin-right: 8px;
+      font-size: 18px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #666;
+      cursor: pointer;
+      padding: 5px;
+      line-height: 1;
+    }
+
+    .close-button:hover {
+      color: #333;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #25D366;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    @media (max-width: 480px) {
+      .chat-window {
+        width: 300px;
+        bottom: 70px;
+      }
+
+      .species-button {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+</head>
+<body>
+
+<div id="chatBot">
+  <div class="chat-icon" onclick="toggleChat()">
+    <i class="fab fa-whatsapp"></i>
+  </div>
+  <div class="chat-window" id="chatWindow">
+    <button class="close-button" onclick="toggleChat()">×</button>
+    <div class="chat-header">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+      <div class="chat-header-text">
+        <h4>Nutrición Animal</h4>
+        <p><span class="status-dot"></span>En línea</p>
+      </div>
+    </div>
+    
+    <div class="chat-content">
+      <h4 style="margin-top: 0; margin-bottom: 15px; color: #333;">¿En qué especie estás interesado?</h4>
+      <button class="species-button" onclick="selectSpecies('Aves')">
+        <span>🐔</span> Aves de Corral
+      </button>
+      <button class="species-button" onclick="selectSpecies('Ganado')">
+        <span>🐄</span> Ganado Bovino
+      </button>
+      <button class="species-button" onclick="selectSpecies('Cerdos')">
+        <span>🐖</span> Cerdos
+      </button>
+      <button class="species-button" onclick="selectSpecies('Mascotas')">
+        <span>🐶</span> Mascotas
+      </button>
+
+      <div class="response" id="chatResponse"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let isOpen = false;
+
+  function toggleChat() {
+    const chat = document.getElementById('chatWindow');
+    isOpen = !isOpen;
+    
+    if (isOpen) {
+      chat.style.display = 'block';
+      setTimeout(() => chat.style.opacity = '1', 10);
+    } else {
+      chat.style.opacity = '0';
+      setTimeout(() => chat.style.display = 'none', 300);
+    }
+    
+    if (!isOpen) {
+      document.getElementById('chatResponse').innerHTML = '';
+    }
+  }
+
+  function selectSpecies(species) {
+    const response = document.getElementById('chatResponse');
+    let message = `¡Perfecto! Tenemos soluciones especializadas para ${species}.`;
+    let link = 'https://wa.me/50497167850?text=Hola%2C+me+interesa+conocer+más+sobre+sus+soluciones+de+nutrición+para+' + encodeURIComponent(species);
+    
+    response.innerHTML = `
+      <p style="color: #444; margin-bottom: 15px;">${message}</p>
+      <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Nuestro equipo está listo para asesorarte y brindarte la mejor solución para tus necesidades.</p>
+      <a href="${link}" target="_blank" class="whatsapp-button">
+        <i class="fab fa-whatsapp"></i>
+        Iniciar conversación
+      </a>
+    `;
+
+    // Animación suave del scroll
+    response.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  // Animación del ícono de WhatsApp
+  setInterval(() => {
+    if (!isOpen) {
+      const icon = document.querySelector('.chat-icon');
+      icon.style.transform = 'scale(1.1)';
+      setTimeout(() => {
+        icon.style.transform = 'scale(1)';
+      }, 200);
+    }
+  }, 3000);
+</script>
+
+</body>
+</html>

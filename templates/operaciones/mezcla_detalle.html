@@ -1,0 +1,22 @@
+{% extends "operaciones/layout.html" %}
+
+{% block titulo %}Detalle de la Mezcla{% endblock %}
+
+{% block contenido %}
+<div class="container py-4">
+    <h2>📝 Detalle de Mezcla: {{ mezcla.nombre }}</h2>
+    <p>📅 <strong>Fecha de creación:</strong> {{ mezcla.fecha_creacion or 'No disponible' }}</p>
+    <p>🐄 <strong>Tipo de Dieta:</strong> {{ mezcla.tipo_animales or 'No disponible' }}</p>
+    <p>🔄 <strong>Etapa de Producción:</strong> {{ mezcla.etapa_produccion or 'No disponible' }}</p>
+    <p>📝 <strong>Observaciones:</strong> {{ mezcla.observaciones or 'No disponible' }}</p>
+
+    <h4>🧪 Ingredientes Utilizados</h4>
+    <ul>
+        {% for ing in ingredientes %}
+            <li><strong>{{ ing.nombre_ingrediente }}</strong> — Inclusión: {{ ing.inclusion }}%</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('mezclas_bp.ver_mezclas') }}" class="btn btn-secondary">Volver a Mezclas</a>
+</div>
+{% endblock %}

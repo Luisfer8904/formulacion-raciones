@@ -1,0 +1,37 @@
+
+
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2 class="text-success">📋 Conjuntos de Requerimientos</h2>
+    <a href="{{ url_for('requerimientos_bp.nuevo_requerimiento') }}" class="btn btn-primary btn-sm">➕ Agregar Conjunto</a>
+  </div>
+
+  <div class="table-responsive mt-4">
+    <table class="table table-bordered table-striped">
+      <thead class="table-success">
+        <tr>
+          <th>Nombre del Conjunto</th>
+          <th>Fecha de Creación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for conjunto in conjuntos %}
+        <tr>
+          <td>{{ conjunto.nombre }}</td>
+          <td>{{ conjunto.fecha_creacion.strftime('%d-%m-%Y') }}</td>
+          <td>
+            <a href="{{ url_for('requerimientos_bp.ver_detalle_requerimiento', id=conjunto.id) }}" class="btn btn-info btn-sm">👁️ Ver</a>
+            <a href="{{ url_for('requerimientos_bp.editar_conjunto_requerimientos', id=conjunto.id) }}" class="btn btn-warning btn-sm">✏️ Editar</a>
+            <a href="{{ url_for('requerimientos_bp.eliminar_conjunto_requerimientos', id=conjunto.id) }}" class="btn btn-danger btn-sm">🗑️ Eliminar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

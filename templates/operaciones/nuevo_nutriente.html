@@ -1,0 +1,47 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h2 class="mb-4">Agregar Nuevo Nutriente</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('nutrientes_bp.guardar_nutriente') }}">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre del Nutriente</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required>
+        </div>
+        <div class="mb-3">
+            <label for="unidad" class="form-label">Unidad del Nutriente</label>
+            <select class="form-select" id="unidad" name="unidad" required>
+                <option value="">Seleccione...</option>
+                <option value="%">%</option>
+                <option value="ppm">ppm</option>
+                <option value="Kcal/kg">Kcal/kg</option>
+                <option value="UI">UI</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="tipo" class="form-label">Tipo de Nutriente</label>
+            <select class="form-select" id="tipo" name="tipo" required>
+                <option value="">Seleccione...</option>
+                <option value="Energía">Energía</option>
+                <option value="Proteína">Proteína</option>
+                <option value="Fibra">Fibra</option>
+                <option value="Aminoácido">Aminoácido</option>
+                <option value="Mineral">Mineral</option>
+                <option value="Vitamina">Vitamina</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{{ url_for('nutrientes_bp.ver_nutrientes') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

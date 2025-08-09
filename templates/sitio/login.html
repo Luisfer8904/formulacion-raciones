@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Nutrición Animal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 18px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #25D366;
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #25D366;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #22c15e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert i {
+            font-size: 18px;
+        }
+
+        .alert-error {
+            background-color: #ffe5e5;
+            color: #d63031;
+            border: 1px solid #ffcccc;
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2ecc71;
+            border: 1px solid #c8e6c9;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+        }
+
+        .loading i {
+            margin-right: 8px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <h2>Iniciar Sesión</h2>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <i class="fas {% if category == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('auth_bp.login') }}" method="POST" onsubmit="return validarFormulario(event)">
+        <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required>
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="btn-secondary" onclick="window.location.href='/'">
+                <i class="fas fa-arrow-left"></i> Regresar
+            </button>
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Ingresar
+            </button>
+        </div>
+
+        <div id="mensajeCarga" class="loading">
+            <i class="fas fa-circle-notch"></i> Iniciando sesión...
+        </div>
+    </form>
+</div>
+
+<script>
+    function validarFormulario(event) {
+        const correo = document.getElementById("correo").value.trim();
+        const contrasena = document.getElementById("contrasena").value.trim();
+        const mensajeCarga = document.getElementById("mensajeCarga");
+
+        if (correo === "" || contrasena === "") {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-error';
+            alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Por favor, completa todos los campos.';
+            
+            const form = document.querySelector('form');
+            form.insertBefore(alertDiv, form.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+
+            event.preventDefault();
+            return false;
+        }
+        
+        mensajeCarga.style.display = "block";
+        return true;
+    }
+
+    // Remover alertas después de 5 segundos
+    document.addEventListener('DOMContentLoaded', () => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="container-fluid">
+  <div class="row">
+    <main class="offset-md-1 col-md-10 offset-lg-1 col-lg-10 px-4 py-4">
+      <h2 class="mb-4 text-center">➕ Agregar Nuevo Ingrediente</h2>
+
+        <form method="POST" action="{{ url_for('ingredientes_bp.guardar_ingrediente') }}" class="row g-3 needs-validation" novalidate>
+        <div class="col-md-6">
+          <label class="form-label">ID:</label>
+          <input type="number" name="ID" class="form-control" required placeholder="ID único" value="{{ ultimo_id }}" readonly>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Nombre del Ingrediente:</label>
+          <input type="text" name="nombre" class="form-control" required placeholder="Nombre del ingrediente" value="">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Precio del Ingrediente:</label>
+          <input type="number" step="0.01" name="precio" class="form-control" required placeholder="Precio por unidad" value="">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Tipo de Ingrediente:</label>
+          <select name="tipo" class="form-select" required>
+            <option value="">Seleccione...</option>
+            <option value="Energía">Energía</option>
+            <option value="Proteína">Proteína</option>
+            <option value="Fibra">Fibra</option>
+            <option value="Aminoácido">Aminoácido</option>
+            <option value="Mineral">Mineral</option>
+            <option value="Vitamina">Vitamina</option>
+          </select>
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-label">Comentarios:</label>
+          <input type="text" name="comentario" class="form-control" placeholder="Comentarios (opcional)" value="">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Materia Seca (%):</label>
+          <input type="number" step="0.01" name="ms" class="form-control" placeholder="Ej. 88.5" required>
+        </div>
+
+        {% for nutriente in nutrientes %}
+        <div class="col-md-4">
+          <label class="form-label">{{ nutriente.nombre }} (%):</label>
+          <input type="number" step="0.0001" name="nutrientes[{{ nutriente.id }}]" class="form-control" placeholder="{{ nutriente.nombre }}" value="">
+        </div>
+        {% endfor %}
+
+        <div class="col-12 text-end mt-3">
+          <button type="submit" class="btn btn-success px-4">Guardar Ingrediente</button>
+          <a href="/ingredientes" class="btn btn-secondary ms-3 px-4">Cancelar</a>
+        </div>
+      </form>
+    </main>
+  </div>
+</div>
+
+<script>
+  // Validación de formularios Bootstrap
+  (() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
+{% endblock %}

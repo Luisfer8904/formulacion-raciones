@@ -1,0 +1,65 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="container py-5">
+  <h2 class="text-center mb-5">Formulación por Especie</h2>
+
+  <div class="row justify-content-center g-5 pt-5">
+    <!-- Cerdo -->
+    <div class="col-6 col-md-3 text-center">
+      <div class="pt-5">
+        <a href="#" class="text-decoration-none">
+          <div class="bg-white rounded-circle shadow d-flex justify-content-center align-items-center mx-auto"
+               style="width: 160px; height: 160px; overflow: hidden;">
+            <img src="{{ url_for('static', filename='cerdo.png') }}"
+                 alt="Cerdo" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <h5 class="mt-4 text-dark">Cerdos</h5>
+        </a>
+      </div>
+    </div>
+
+    <!-- Gallina -->
+    <div class="col-6 col-md-3 text-center">
+      <div class="pt-5">
+        <a href="#" class="text-decoration-none">
+          <div class="bg-white rounded-circle shadow d-flex justify-content-center align-items-center mx-auto"
+               style="width: 160px; height: 160px; overflow: hidden;">
+            <img src="{{ url_for('static', filename='gallina.png') }}"
+                 alt="Gallina" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <h5 class="mt-4 text-dark">Aves</h5>
+        </a>
+      </div>
+    </div>
+
+    <!-- Vaca -->
+    <div class="col-6 col-md-3 text-center">
+      <div class="pt-5">
+        <a href="#" class="text-decoration-none">
+          <div class="bg-white rounded-circle shadow d-flex justify-content-center align-items-center mx-auto"
+               style="width: 160px; height: 160px; overflow: hidden;">
+            <img src="{{ url_for('static', filename='vaca.png') }}"
+                 alt="Vaca" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <h5 class="mt-4 text-dark">Bovinos</h5>
+        </a>
+      </div>
+    </div>
+
+    <!-- Minerales -->
+    <div class="col-6 col-md-3 text-center">
+      <div class="pt-5">
+        <a href="{{ url_for('optimizacion_bp.formulacion_minerales') }}" class="text-decoration-none">
+          <div class="bg-white rounded-circle shadow d-flex justify-content-center align-items-center mx-auto"
+               style="width: 160px; height: 160px; overflow: hidden;">
+            <img src="{{ url_for('static', filename='minerales.png') }}"
+                 alt="Minerales" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <h5 class="mt-4 text-dark">Minerales</h5>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

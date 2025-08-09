@@ -1,0 +1,93 @@
+{% extends "operaciones/layout.html" %}
+{% block titulo %}⚙️ Opciones{% endblock %}
+{% block contenido %}
+<div class="container mt-4">
+    <h3>Configuración Personal</h3>
+    <form action="/guardar_opciones" method="POST">
+        
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Tu nombre completo" value="{{ usuario.nombre or '' }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" value="{{ usuario.email or '' }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="pais" class="form-label">País</label>
+            <select class="form-select" id="pais" name="pais" required>
+                <option value="">Seleccione un país...</option>
+                <option value="Honduras" {% if usuario.pais == 'Honduras' %}selected{% endif %}>Honduras</option>
+                <option value="Guatemala" {% if usuario.pais == 'Guatemala' %}selected{% endif %}>Guatemala</option>
+                <option value="El Salvador" {% if usuario.pais == 'El Salvador' %}selected{% endif %}>El Salvador</option>
+                <option value="Nicaragua" {% if usuario.pais == 'Nicaragua' %}selected{% endif %}>Nicaragua</option>
+                <option value="Costa Rica" {% if usuario.pais == 'Costa Rica' %}selected{% endif %}>Costa Rica</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="moneda" class="form-label">Moneda</label>
+            <select class="form-select" id="moneda" name="moneda" required>
+                <option value="">Seleccione una moneda...</option>
+                <option value="HNL" {% if usuario.moneda == 'HNL' %}selected{% endif %}>Lempira (HNL)</option>
+                <option value="GTQ" {% if usuario.moneda == 'GTQ' %}selected{% endif %}>Quetzal (GTQ)</option>
+                <option value="USD" {% if usuario.moneda == 'USD' %}selected{% endif %}>Dólar (USD)</option>
+                <option value="CRC" {% if usuario.moneda == 'CRC' %}selected{% endif %}>Colón (CRC)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="tipo_moneda" class="form-label">Tipo de Moneda</label>
+            <select class="form-select" id="tipo_moneda" name="tipo_moneda">
+                <option value="">Seleccione...</option>
+                <option value="Nacional" {% if usuario.tipo_moneda == 'Nacional' %}selected{% endif %}>Moneda Nacional</option>
+                <option value="Extranjera" {% if usuario.tipo_moneda == 'Extranjera' %}selected{% endif %}>Moneda Extranjera</option>
+                <option value="Criptomoneda" {% if usuario.tipo_moneda == 'Criptomoneda' %}selected{% endif %}>Criptomoneda</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="unidad_medida" class="form-label">Unidad de Medida</label>
+            <select class="form-select" id="unidad_medida" name="unidad_medida" required>
+                <option value="">Seleccione...</option>
+                <option value="kg" {% if usuario.unidad_medida == 'kg' %}selected{% endif %}>Kilogramos (kg)</option>
+                <option value="lb" {% if usuario.unidad_medida == 'lb' %}selected{% endif %}>Libras (lb)</option>
+                <option value="ton" {% if usuario.unidad_medida == 'ton' %}selected{% endif %}>Toneladas (ton)</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="idioma" class="form-label">Idioma</label>
+            <select class="form-select" id="idioma" name="idioma">
+                <option value="es" {% if usuario.idioma == 'es' %}selected{% endif %}>Español</option>
+                <option value="en" {% if usuario.idioma == 'en' %}selected{% endif %}>Inglés</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="tema" class="form-label">Tema de la Aplicación</label>
+            <select class="form-select" id="tema" name="tema">
+                <option value="claro" {% if usuario.tema == 'claro' %}selected{% endif %}>Claro</option>
+                <option value="oscuro" {% if usuario.tema == 'oscuro' %}selected{% endif %}>Oscuro</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+    </form>
+</div>
+{% endblock %}
+<style>
+    .form-label {
+        font-weight: 600;
+    }
+    .form-control, .form-select {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+    button[type="submit"] {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+</style>

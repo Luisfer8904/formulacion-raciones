@@ -1,0 +1,63 @@
+{% include "sitio/cabecera.html" %}
+
+<div class="container" style="padding: 2rem 0;">
+    <h1>Libros y Recursos</h1>
+    <p>Esta sección está en desarrollo. Aquí encontrarás recursos educativos sobre nutrición animal.</p>
+    
+    <div class="row" style="margin-top: 2rem;">
+        <div class="col-md-6">
+            <h3>Próximamente</h3>
+            <ul>
+                <li>Guías de formulación nutricional</li>
+                <li>Manuales técnicos</li>
+                <li>Casos de estudio</li>
+                <li>Mejores prácticas</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h3>Contacto</h3>
+            <p>Para más información sobre recursos disponibles, contáctanos:</p>
+            <p><strong>Email:</strong> info@nutricionanimal.com</p>
+            <p><strong>Teléfono:</strong> +504 9716-7850</p>
+        </div>
+    </div>
+</div>
+
+{% include "sitio/pie.html" %}
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+    
+    h1 {
+        color: #2e7d32;
+        margin-bottom: 1rem;
+    }
+    
+    h3 {
+        color: #388e3c;
+        margin-bottom: 1rem;
+    }
+    
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
+    }
+    
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 0 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+</style>

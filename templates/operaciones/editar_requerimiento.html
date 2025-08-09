@@ -1,0 +1,143 @@
+{% extends "operaciones/layout.html" %}
+
+{% block titulo %}✏️ Editar Requerimiento{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-11 col-md-12">
+            <h2 class="mb-4">Editar Requerimiento</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('requerimientos_bp.editar_requerimiento', id=requerimiento.id) }}">
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">
+                        <strong>Nombre del Requerimiento:</strong>
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="nombre" 
+                           name="nombre" 
+                           value="{{ requerimiento.nombre }}"
+                           placeholder="Ej: Pollos de engorde 1-21 días"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tipo_especie" class="form-label">
+                        <strong>Tipo de Especie:</strong>
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="tipo_especie" 
+                           name="tipo_especie" 
+                           value="{{ requerimiento.tipo_especie }}"
+                           placeholder="Ej: Pollo"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="comentario" class="form-label">
+                        <strong>Comentario (Opcional):</strong>
+                    </label>
+                    <textarea class="form-control" 
+                              id="comentario" 
+                              name="comentario" 
+                              rows="3"
+                              placeholder="Ej: Requerimientos para la etapa inicial de crecimiento...">{{ requerimiento.comentario or '' }}</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <a href="{{ url_for('requerimientos_bp.requerimientos') }}" class="btn btn-secondary">Cancelar</a>
+            </form>
+            
+            <!-- Nutrientes Asociados -->
+            <div class="mt-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-flask me-2"></i>Nutrientes Asociados
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-4">
+                            Asigna valores sugeridos a los nutrientes que deseas incluir en este requerimiento. 
+                            Los valores se guardarán como referencia para la formulación.
+                        </p>
+
+                        <form method="POST" action="{{ url_for('requerimientos_bp.guardar_nutrientes_requerimiento', requerimiento_id=requerimiento.id) }}">
+                            {% if nutrientes %}
+                            <div class="row">
+                              {% for nutriente in nutrientes %}
+                              <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card h-100 {% if nutriente.valor_sugerido %}border-success{% else %}border-light{% endif %}">
+                                  <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                      <h6 class="card-title mb-0">{{ nutriente.nombre }}</h6>
+                                      {% if nutriente.valor_sugerido %}
+                                      <span class="badge bg-success">Configurado</span>
+                                      {% endif %}
+                                    </div>
+                                    <p class="text-muted small mb-2">
+                                      <strong>Unidad:</strong> {{ nutriente.unidad or 'No especificada' }} |
+                                      <strong>Tipo:</strong> {{ nutriente.tipo or 'General' }}
+                                    </p>
+                                    <div class="input-group input-group-sm">
+                                      <span class="input-group-text">Valor</span>
+                                      <input type="number" 
+                                             step="0.0001" 
+                                             class="form-control"
+                                             name="valor_{{ nutriente.id }}"
+                                             value="{{ nutriente.valor_sugerido or '' }}"
+                                             placeholder="Ej: 0.45"
+                                             title="Valor sugerido para {{ nutriente.nombre }}">
+                                      <span class="input-group-text">{{ nutriente.unidad or '' }}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              {% endfor %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div class="text-muted">
+                                    <small>
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Deja en blanco los nutrientes que no deseas incluir en este requerimiento.
+                                    </small>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-2"></i>Guardar Valores de Nutrientes
+                                </button>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info d-flex align-items-center">
+                                <i class="fas fa-exclamation-circle me-3 fs-4"></i>
+                                <div>
+                                    <h6 class="alert-heading mb-1">No hay nutrientes disponibles</h6>
+                                    <p class="mb-2">Primero debes crear nutrientes en la sección de nutrientes para poder asignarlos a este requerimiento.</p>
+                                    <a href="{{ url_for('nutrientes_bp.nuevo_nutriente') }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-plus me-1"></i>Crear Nutriente
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+                <!-- Fin Nutrientes Asociados -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

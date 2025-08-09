@@ -1,0 +1,430 @@
+{% include "sitio/cabecera.html" %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100 py-5">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-dark mb-4">
+                    Formulación nutricional 
+                    <span class="text-primary">innovadora</span> 
+                    hecha simple.
+                </h1>
+                <p class="lead text-muted mb-4">
+                    NutriAnimal potencia los negocios agropecuarios con un sistema inteligente de formulación para aumentar la eficiencia, calidad y reducir costos.
+                </p>
+                <div class="d-flex gap-3 mb-4">
+                    <a href="#demo" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-play me-2"></i>Comenzar
+                    </a>
+                    <a href="#caracteristicas" class="btn btn-outline-dark btn-lg px-4">
+                        Conocer más <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center text-muted">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    <small>Sin tarjeta de crédito • Configuración en 5 minutos</small>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image">
+                    <img src="{{ url_for('static', filename='principal.jpg') }}" alt="Software Interface" class="img-fluid rounded-3 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="caracteristicas" class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">
+                Características avanzadas para máximo ahorro de costos y tiempo.
+            </h2>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4">
+                <div class="feature-card h-100 p-4 bg-white rounded-3 border">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-chart-bar fs-1 text-primary"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Todo lo que necesitas para una formulación inteligente</h4>
+                    <p class="text-muted">
+                        NutriAnimal ayuda a molinos de alimento y nutricionistas a crear las fórmulas de menor costo que cumplan con todos los requerimientos nutricionales y regulatorios.
+                    </p>
+                    <p class="text-muted">
+                        Con todas las herramientas de formulación, reportes, cumplimiento y colaboración en un sistema integrado, NutriAnimal es la solución completa para una producción eficiente de alimentos.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="feature-card h-100 p-4 bg-white rounded-3 border">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-dollar-sign fs-1 text-success"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Ahorro de costos</h4>
+                    <p class="text-muted">
+                        NutriAnimal utiliza un motor de optimización avanzado para seleccionar la combinación más económica de ingredientes mientras cumple con todos los requerimientos nutricionales y regulatorios.
+                    </p>
+                    <p class="text-muted">
+                        Te brinda información completa del proceso de optimización con parámetros claros, análisis de costos y flexibilidad para evaluar diferentes escenarios económicos antes de finalizar una fórmula.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="feature-card h-100 p-4 bg-white rounded-3 border">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-clock fs-1 text-warning"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Ahorro de tiempo</h4>
+                    <p class="text-muted">
+                        NutriAnimal automatiza todo el flujo de trabajo desde la gestión de materias primas y formulación hasta la planificación de producción, cumplimiento, reportes y colaboración.
+                    </p>
+                    <p class="text-muted">
+                        Todo funciona sin problemas bajo un sistema, haciendo la producción rápida y los ajustes aún más rápidos. Ejecuta escenarios hipotéticos, compara diferentes casos y ve los resultados al instante.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <a href="#precios" class="btn btn-primary btn-lg px-4">Ver todas las características <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center p-4">
+                    <div class="benefit-icon mb-3">
+                        <i class="fas fa-chart-line fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Mayor productividad</h5>
+                    <p class="text-muted">Optimiza tus procesos y mejora los resultados</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center p-4">
+                    <div class="benefit-icon mb-3">
+                        <i class="fas fa-coins fs-1 text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">Reducción de costos</h5>
+                    <p class="text-muted">Control eficiente de recursos y materias primas</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center p-4">
+                    <div class="benefit-icon mb-3">
+                        <i class="fas fa-clock fs-1 text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold">Ahorro de tiempo</h5>
+                    <p class="text-muted">Automatización de cálculos y procesos</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center p-4">
+                    <div class="benefit-icon mb-3">
+                        <i class="fas fa-chart-pie fs-1 text-info"></i>
+                    </div>
+                    <h5 class="fw-bold">Mejor control</h5>
+                    <p class="text-muted">Seguimiento detallado de indicadores clave</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="precios" class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Planes que se adaptan a tu negocio</h2>
+            <p class="lead text-muted">Elige el plan perfecto para tu operación</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <!-- Plan Personal -->
+            <div class="col-lg-4 col-md-6">
+                <div class="pricing-card h-100 p-4 bg-white rounded-3 border position-relative">
+                    <div class="text-center mb-4">
+                        <h4 class="fw-bold text-dark">Personal</h4>
+                        <p class="text-muted">Ideal para pequeños productores</p>
+                        <div class="price-display">
+                            <span class="display-4 fw-bold text-primary">$12</span>
+                            <span class="text-muted">/mes</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Hasta 50 formulaciones/mes</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Base de datos básica de ingredientes</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Reportes estándar</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Soporte por email</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>1 usuario</li>
+                    </ul>
+                    
+                    <div class="text-center">
+                        <a href="#demo" class="btn btn-outline-primary w-100">Comenzar prueba gratis</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Plan Profesional -->
+            <div class="col-lg-4 col-md-6">
+                <div class="pricing-card h-100 p-4 bg-white rounded-3 border position-relative">
+                    <div class="badge bg-primary position-absolute top-0 start-50 translate-middle px-3 py-2">
+                        Más Popular
+                    </div>
+                    <div class="text-center mb-4">
+                        <h4 class="fw-bold text-dark">Profesional</h4>
+                        <p class="text-muted">Para empresas medianas</p>
+                        <div class="price-display">
+                            <span class="display-4 fw-bold text-primary">$45</span>
+                            <span class="text-muted">/mes</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Formulaciones ilimitadas</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Base de datos completa</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Reportes avanzados y personalizados</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Optimización de costos</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Soporte prioritario</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Hasta 5 usuarios</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Integración con sistemas</li>
+                    </ul>
+                    
+                    <div class="text-center">
+                        <a href="#demo" class="btn btn-primary w-100">Comenzar prueba gratis</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Plan Institucional -->
+            <div class="col-lg-4 col-md-6">
+                <div class="pricing-card h-100 p-4 bg-white rounded-3 border position-relative">
+                    <div class="text-center mb-4">
+                        <h4 class="fw-bold text-dark">Institucional</h4>
+                        <p class="text-muted">Para grandes operaciones</p>
+                        <div class="price-display">
+                            <span class="display-6 fw-bold text-primary">Precio personalizado</span>
+                            <p class="text-muted mt-2 mb-0">Según cantidad de usuarios</p>
+                        </div>
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Todo lo del plan Profesional</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Usuarios ilimitados</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Soporte 24/7</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Capacitación personalizada</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>API personalizada</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Implementación dedicada</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>SLA garantizado</li>
+                    </ul>
+                    
+                    <div class="text-center">
+                        <a href="#demo" class="btn btn-outline-primary w-100">Contactar ventas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Lo que dicen nuestros clientes</h2>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="testimonial-card p-5 bg-light rounded-3">
+                    <div class="text-center">
+                        <i class="fas fa-quote-left fs-1 text-primary mb-4"></i>
+                        <p class="lead mb-4">
+                            "El software ha revolucionado nuestra forma de trabajar. La precisión en las formulaciones y el control de costos nos ha permitido mejorar significativamente nuestra operación."
+                        </p>
+                        <div class="testimonial-author">
+                            <h5 class="fw-bold mb-1">Juan Pérez</h5>
+                            <p class="text-muted">Granja Avícola El Progreso</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Preguntas Frecuentes</h2>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item border-0 mb-3">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                ¿Cómo puedo empezar a usar el software?
+                            </button>
+                        </h3>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Contacta con nuestro equipo para una demostración personalizada y te guiaremos en el proceso de implementación.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item border-0 mb-3">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                ¿Qué soporte técnico ofrecen?
+                            </button>
+                        </h3>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Brindamos soporte técnico continuo, capacitación inicial y actualizaciones regulares del sistema.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item border-0 mb-3">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                ¿Puedo cambiar de plan en cualquier momento?
+                            </button>
+                        </h3>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Sí, puedes actualizar o cambiar tu plan en cualquier momento. Los cambios se reflejarán en tu próximo ciclo de facturación.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Demo Section -->
+<section id="demo" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Solicita una demostración</h2>
+            <p class="lead text-muted">Descubre cómo NutriAnimal puede transformar tu negocio</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="demo-form bg-white p-5 rounded-3 shadow">
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">Nombre completo</label>
+                                <input type="text" class="form-control" id="nombre" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="telefono">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="empresa" class="form-label">Empresa</label>
+                                <input type="text" class="form-control" id="empresa">
+                            </div>
+                            <div class="col-12">
+                                <label for="mensaje" class="form-label">¿Qué te gustaría saber sobre nuestro software?</label>
+                                <textarea class="form-control" id="mensaje" rows="4"></textarea>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary btn-lg px-5">Solicitar demostración</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include "sitio/chatwhat.html" %}
+{% include "sitio/pie.html" %}
+
+<!-- Custom Styles -->
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .text-primary {
+        color: #1e40af !important;
+    }
+    
+    .btn-primary {
+        background-color: #f97316;
+        border-color: #f97316;
+        font-weight: 600;
+    }
+    
+    .btn-primary:hover {
+        background-color: #ea580c;
+        border-color: #ea580c;
+    }
+    
+    .btn-outline-primary {
+        color: #1e40af;
+        border-color: #1e40af;
+        font-weight: 600;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: #1e40af;
+        border-color: #1e40af;
+    }
+    
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .pricing-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .pricing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .hero-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: #f1f5f9;
+        color: #1e40af;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(30, 64, 175, 0.25);
+    }
+</style>

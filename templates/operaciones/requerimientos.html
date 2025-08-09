@@ -1,0 +1,202 @@
+{% extends "operaciones/layout.html" %}
+
+{% block titulo %}📌 Requerimientos{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4 text-center">📌 Requerimientos Nutricionales</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ url_for('requerimientos_bp.nuevo_requerimiento') }}" class="btn btn-success">
+            ➕ Agregar nuevo requerimiento
+        </a>
+    </div>
+
+    {% if requerimientos %}
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Tipo de Especie</th>
+                    <th class="text-center">Comentario</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requerimientos %}
+                <tr>
+                    <td class="fw-bold">{{ req.get('nombre', '-') }}</td>
+                    <td class="text-center">{{ req.get('tipo_especie', '-') }}</td>
+                    <td class="text-center">
+                        {% if req.get('comentario') %}
+                            {{ req.get('comentario')[:50] }}{% if req.get('comentario')|length > 50 %}...{% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            {% set req_id = req.get('id') %}
+                            {% if req_id %}
+                                <a href="#" 
+                                   class="btn btn-sm btn-outline-primary" 
+                                   title="Ver detalles"
+                                   onclick="mostrarDetalles({{ req_id }})">
+                                    👁️ Ver
+                                </a>
+                                <a href="{{ url_for('requerimientos_bp.editar_requerimiento', id=req_id) }}"
+                                   class="btn btn-sm btn-outline-warning"
+                                   title="Editar requerimiento">
+                                   ✏️ Editar
+                                </a>
+                                <a href="#" 
+                                   class="btn btn-sm btn-outline-danger" 
+                                   title="Eliminar requerimiento"
+                                   onclick="eliminarRequerimiento('{{ req_id }}')">
+                                    🗑️ Eliminar
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Sin ID</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-3">
+        <small class="text-muted">
+            <strong>Total de requerimientos:</strong> {{ requerimientos|length }}
+        </small>
+    </div>
+    
+    {% else %}
+        <div class="alert alert-warning text-center">
+            <h5>📋 No hay requerimientos registrados aún para tu usuario</h5>
+            <p class="mb-0">Comienza agregando tu primer requerimiento haciendo clic en el botón "Agregar nuevo requerimiento".</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Estilos para tabla más pequeña -->
+<style>
+    .table th {
+        background-color: #2c3e50 !important;
+        color: white !important;
+        font-weight: 600;
+        border: none;
+        font-size: 0.75rem;
+        padding: 4px 6px;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 4px 6px;
+        font-size: 0.75rem;
+    }
+
+    .btn-group .btn {
+        margin: 0 1px;
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f0f0f0;
+    }
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.7rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-group .btn {
+            margin: 1px 0;
+            font-size: 0.65rem;
+            padding: 3px 4px;
+        }
+    }
+</style>
+
+<!-- Modal para mostrar detalles -->
+<div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="detallesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detallesModalLabel">Detalles del Requerimiento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detallesContenido">
+                <!-- El contenido se llenará dinámicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mostrarDetalles(id) {
+    // Por ahora mostraremos la información básica disponible
+    // Puedes expandir esto para hacer una llamada AJAX si necesitas más detalles
+    const fila = document.querySelector(`tr:has(a[onclick*="${id}"])`);
+    if (fila) {
+        const celdas = fila.querySelectorAll('td');
+        const nombre = celdas[0].textContent.trim();
+        const tipoEspecie = celdas[1].textContent.trim();
+        const comentario = celdas[2].textContent.trim();
+        
+        const contenido = document.getElementById('detallesContenido');
+        contenido.innerHTML = `
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="border-bottom pb-2">Información del Requerimiento</h6>
+                    <table class="table table-sm">
+                        <tbody>
+                            <tr>
+                                <td class="text-muted"><strong>Nombre:</strong></td>
+                                <td>${nombre}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted"><strong>Tipo de Especie:</strong></td>
+                                <td>${tipoEspecie}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted"><strong>Comentario:</strong></td>
+                                <td>${comentario === '-' ? 'Sin comentarios' : comentario}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
+        const modal = new bootstrap.Modal(document.getElementById('detallesModal'));
+        modal.show();
+    }
+}
+
+function eliminarRequerimiento(id) {
+    console.log("Intentando eliminar requerimiento con ID:", id);
+    if (confirm('¿Estás seguro de que deseas eliminar este requerimiento?')) {
+        window.location.href = `/eliminar_requerimiento/${encodeURIComponent(id)}`;
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h2 class="mb-4">Editar Nutriente</h2>
+    <form method="POST" action="{{ url_for('nutrientes_bp.editar_nutriente', id=nutriente.id) }}">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre del Nutriente</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ nutriente.nombre }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="tipo" class="form-label">Tipo de Nutriente</label>
+            <select class="form-control" id="tipo" name="tipo">
+                <option value="Energético" {% if nutriente.tipo == "Energético" %}selected{% endif %}>Energético</option>
+                <option value="Proteico" {% if nutriente.tipo == "Proteico" %}selected{% endif %}>Proteico</option>
+                <option value="Mineral" {% if nutriente.tipo == "Mineral" %}selected{% endif %}>Mineral</option>
+                <option value="Aditivo" {% if nutriente.tipo == "Aditivo" %}selected{% endif %}>Aditivo</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="unidad" class="form-label">Unidad</label>
+            <select class="form-select" id="unidad" name="unidad" required>
+                <option value="">Seleccione...</option>
+                <option value="%" {% if nutriente.unidad == "%" %}selected{% endif %}>%</option>
+                <option value="ppm" {% if nutriente.unidad == "ppm" %}selected{% endif %}>ppm</option>
+                <option value="Kcal/kg" {% if nutriente.unidad == "Kcal/kg" %}selected{% endif %}>Kcal/kg</option>
+                <option value="UI" {% if nutriente.unidad == "UI" %}selected{% endif %}>UI</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a href="{{ url_for('nutrientes_bp.ver_nutrientes') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

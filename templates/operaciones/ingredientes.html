@@ -1,0 +1,222 @@
+{% extends "operaciones/layout.html" %}
+
+{% block titulo %}🧪 Ingredientes{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4 text-center">🧪 Ingredientes Registrados</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ url_for('ingredientes_bp.nuevo_ingrediente') }}" class="btn btn-success">
+            ➕ Agregar nuevo ingrediente
+        </a>
+    </div>
+
+    {% if ingredientes %}
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Precio</th>
+                    <th class="text-center">Tipo</th>
+                    <th class="text-center">MS (%)</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ing in ingredientes %}
+                <tr>
+                    <td class="fw-bold">{{ ing.get('nombre', '-') }}</td>
+                    <td class="text-center">
+                        {{ ing.get('precio', '-') }}
+                    </td>
+                    <td class="text-center">
+                        {{ ing.get('tipo', '-') }}
+                    </td>
+                    <td class="text-center">
+                        {{ ing.get('ms', '-') }}
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            {% set ingredient_id = ing.get('id') %}
+                            {% if ingredient_id %}
+                                <a href="#" 
+                                   class="btn btn-sm btn-outline-primary" 
+                                   title="Ver detalles"
+                                   onclick="mostrarDetalles({{ ingredient_id }})">
+                                    👁️ Ver
+                                </a>
+                                <a href="{{ url_for('ingredientes_bp.editar_ingrediente', id=ingredient_id) }}"
+                                   class="btn btn-sm btn-outline-warning"
+                                   title="Editar ingrediente">
+                                   ✏️ Editar
+                                </a>
+                                <a href="#" 
+                                   class="btn btn-sm btn-outline-danger" 
+                                   title="Eliminar ingrediente"
+                                   onclick="eliminarIngrediente('{{ ingredient_id }}')">
+                                    🗑️ Eliminar
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Sin ID</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-3">
+        <small class="text-muted">
+            <strong>Total de ingredientes:</strong> {{ ingredientes|length }}
+        </small>
+    </div>
+    
+    {% else %}
+        <div class="alert alert-warning text-center">
+            <h5>📋 No hay ingredientes registrados aún para tu usuario</h5>
+            <p class="mb-0">Comienza agregando tu primer ingrediente haciendo clic en el botón "Agregar nuevo ingrediente".</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Estilos para tabla más pequeña -->
+<style>
+    .table th {
+        background-color: #2c3e50 !important;
+        color: white !important;
+        font-weight: 600;
+        border: none;
+        font-size: 0.75rem;
+        padding: 4px 6px;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 4px 6px;
+        font-size: 0.75rem;
+    }
+
+    .btn-group .btn {
+        margin: 0 1px;
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f0f0f0;
+    }
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.7rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-group .btn {
+            margin: 1px 0;
+            font-size: 0.65rem;
+            padding: 3px 4px;
+        }
+    }
+</style>
+
+<!-- Modal para mostrar detalles -->
+<div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="detallesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detallesModalLabel">Detalles del Ingrediente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detallesContenido">
+                <!-- El contenido se llenará dinámicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mostrarDetalles(id) {
+    fetch(`/api/ingrediente/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            const contenido = document.getElementById('detallesContenido');
+            let html = '<div class="row">';
+            
+            const grupos = {
+                'Información General': ['nombre', 'tipo', 'comentario'],
+                'Composición Básica': ['MATERIA_SECA', 'HUMEDAD', 'CENIZAS', 'PB', 'EE', 'FB'],
+                'Energía': ['EM_RTES_Kcal_kg', 'EMA_AVES_Kcal_kg', 'ED_PORC_Kcal_kg'],
+                'Minerales': ['Ca', 'P', 'Na', 'Cl', 'Mg', 'K', 'S'],
+                'Aminoácidos': ['LYS', 'MET', 'M_C', 'THR', 'TRP', 'ILE', 'VAL', 'ARG']
+            };
+            
+            for (const [grupo, campos] of Object.entries(grupos)) {
+                html += `
+                    <div class="col-md-6 mb-4">
+                        <h6 class="border-bottom pb-2">${grupo}</h6>
+                        <table class="table table-sm">
+                            <tbody>`;
+                
+                campos.forEach(campo => {
+                    let valor = data[campo];
+                    if (valor !== null && valor !== undefined && valor !== '') {
+                        if (typeof valor === 'number') {
+                            if (campo.includes('Kcal')) {
+                                valor = valor.toFixed(0);
+                            } else {
+                                valor = valor.toFixed(3);
+                            }
+                        }
+                        html += `
+                            <tr>
+                                <td class="text-muted">${campo.charAt(0).toUpperCase() + campo.slice(1).replace(/_/g, ' ')}</td>
+                                <td class="text-end">${valor}</td>
+                            </tr>`;
+                    }
+                });
+                
+                html += `
+                            </tbody>
+                        </table>
+                    </div>`;
+            }
+            
+            html += '</div>';
+            contenido.innerHTML = html;
+
+            const modal = new bootstrap.Modal(document.getElementById('detallesModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los detalles del ingrediente');
+        });
+}
+
+function eliminarIngrediente(id) {
+    console.log("Intentando eliminar ingrediente con ID:", id);
+    if (confirm('¿Estás seguro de que deseas eliminar este ingrediente?')) {
+        window.location.href = `/eliminar_ingrediente/${encodeURIComponent(id)}`;
+    }
+}
+</script>
+{% endblock %}

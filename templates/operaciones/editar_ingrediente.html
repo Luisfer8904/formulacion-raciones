@@ -1,0 +1,61 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h2 class="mb-4">Editar Ingrediente</h2>
+    <form id="formulario-ingrediente" method="POST" action="{{ url_for('ingredientes_bp.editar_ingrediente', id=ingrediente.id) }}">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre del Ingrediente</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ ingrediente.nombre }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="tipo" class="form-label">Tipo de Ingrediente</label>
+            <select class="form-select" id="tipo" name="tipo" required>
+                <option value="">Seleccione...</option>
+                <option value="Energía" {% if ingrediente.tipo == "Energía" %}selected{% endif %}>Energía</option>
+                <option value="Proteína" {% if ingrediente.tipo == "Proteína" %}selected{% endif %}>Proteína</option>
+                <option value="Fibra" {% if ingrediente.tipo == "Fibra" %}selected{% endif %}>Fibra</option>
+                <option value="Aminoácido" {% if ingrediente.tipo == "Aminoácido" %}selected{% endif %}>Aminoácido</option>
+                <option value="Mineral" {% if ingrediente.tipo == "Mineral" %}selected{% endif %}>Mineral</option>
+                <option value="Vitamina" {% if ingrediente.tipo == "Vitamina" %}selected{% endif %}>Vitamina</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="precio" class="form-label">Precio</label>
+            <input type="number" class="form-control" id="precio" name="precio" step="any" value="{{ ingrediente.precio }}">
+        </div>
+        <div class="mb-3">
+            <label for="ms" class="form-label">Materia Seca (%)</label>
+            <input type="number" class="form-control" id="ms" name="ms" step="any" value="{{ ingrediente.ms }}">
+        </div>
+        <div class="mb-3">
+            <label for="comentario" class="form-label">Comentario</label>
+            <textarea class="form-control" id="comentario" name="comentario" rows="3">{{ ingrediente.comentario }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <a href="{{ url_for('ingredientes_bp.ver_ingredientes') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <h4 class="mt-5">Nutrientes</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Unidad</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for nutriente in nutrientes %}
+            <tr>
+                <td>{{ nutriente.nombre }}</td>
+                <td>{{ nutriente.unidad }}</td>
+                <td>
+                    <input type="number" step="any" name="nutriente_{{ nutriente.id }}" value="{{ nutriente.valor or 0 }}" class="form-control" form="formulario-ingrediente" />
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

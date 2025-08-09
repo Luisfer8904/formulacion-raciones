@@ -1,0 +1,116 @@
+{% extends "operaciones/layout.html" %}
+
+{% block titulo %}⚙️ Fórmulas Guardadas{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4 text-center">⚙️ Mezclas Guardadas</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if mezclas %}
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Nombre de la Mezcla</th>
+                    <th class="text-center">Tipo de Dieta</th>
+                    <th class="text-center">Etapa de Producción</th>
+                    <th class="text-center">Fecha de Creación</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mezcla in mezclas %}
+                <tr>
+                    <td class="fw-bold">{{ mezcla.nombre }}</td>
+                    <td class="text-center">{{ mezcla.tipo_animales or 'N/A' }}</td>
+                    <td class="text-center">{{ mezcla.etapa_produccion or 'N/A' }}</td>
+                    <td class="text-center">{{ mezcla.fecha_creacion.strftime('%d/%m/%Y') if mezcla.fecha_creacion else 'N/A' }}</td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <a href="{{ url_for('mezclas_bp.ver_mezcla_detalle', mezcla_id=mezcla.id) }}"
+                               class="btn btn-sm btn-outline-primary"
+                               title="Ver mezcla">
+                                👁️ Ver
+                            </a>
+                            <a href="{{ url_for('mezclas_bp.eliminar_mezcla', mezcla_id=mezcla.id) }}"
+                               class="btn btn-sm btn-outline-danger"
+                               title="Eliminar mezcla"
+                               onclick="return confirm('¿Estás seguro de que deseas eliminar esta mezcla?');">
+                                🗑️ Eliminar
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3">
+        <small class="text-muted">
+            <strong>Total de mezclas:</strong> {{ mezclas|length }}
+        </small>
+    </div>
+
+    {% else %}
+        <div class="alert alert-warning text-center">
+            <h5>📋 No hay mezclas registradas aún para tu usuario</h5>
+            <p class="mb-0">Comienza creando tu primera mezcla desde el módulo de formulación.</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .table th {
+        background-color: #2c3e50 !important;
+        color: white !important;
+        font-weight: 600;
+        border: none;
+        font-size: 0.75rem;
+        padding: 4px 6px;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 4px 6px;
+        font-size: 0.75rem;
+    }
+
+    .btn-group .btn {
+        margin: 0 1px;
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f0f0f0;
+    }
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.7rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-group .btn {
+            margin: 1px 0;
+            font-size: 0.65rem;
+            padding: 3px 4px;
+        }
+    }
+</style>
+{% endblock %}
