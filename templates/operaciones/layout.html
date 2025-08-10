@@ -90,7 +90,6 @@
             height: 50px;
             width: auto;
             margin-bottom: 10px;
-            filter: brightness(0) invert(1);
         }
 
         .sidebar-header h5 {
@@ -152,7 +151,7 @@
                 <div class="d-flex flex-column h-100">
                     <!-- Header -->
                     <div class="sidebar-header">
-                        <img src="{{ url_for('static', filename='feedpro-logo.svg') }}" alt="FeedPro" class="feedpro-logo">
+                        <img src="{{ url_for('static', filename='Logo nuevo.png') }}" alt="FeedPro" class="feedpro-logo">
                         <h5>FeedPro</h5>
                         <small class="sidebar-tagline">Formulación Nutricional</small>
                     </div>
@@ -174,7 +173,7 @@
                             <ul class="nav flex-column">
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('usuarios_bp.panel') }}">
-                                        <i class="fas fa-home"></i> Panel principal
+                                        <i class="fas fa-tachometer-alt"></i> Panel principal
                                     </a>
                                 </li>
                             </ul>
@@ -185,27 +184,27 @@
                             <ul class="nav flex-column">
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('usuarios_bp.panelformulador') }}">
-                                        <i class="fas fa-calculator"></i> Formulador
+                                        <i class="fas fa-balance-scale"></i> Formulador
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('ingredientes_bp.ver_ingredientes') }}">
-                                        <i class="fas fa-flask"></i> Ingredientes
+                                        <i class="fas fa-seedling"></i> Ingredientes
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('nutrientes_bp.ver_nutrientes') }}">
-                                        <i class="fas fa-atom"></i> Nutrientes
+                                        <i class="fas fa-pills"></i> Nutrientes
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('requerimientos_bp.requerimientos') }}">
-                                        <i class="fas fa-clipboard-list"></i> Requerimientos Nutricionales
+                                        <i class="fas fa-clipboard-check"></i> Requerimientos Nutricionales
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('mezclas_bp.ver_mezclas') }}">
-                                        <i class="fas fa-file-alt"></i> Fórmulas
+                                        <i class="fas fa-file-medical"></i> Fórmulas
                                     </a>
                                 </li>
                             </ul>
@@ -216,17 +215,17 @@
                             <ul class="nav flex-column">
                                 <li class="nav-item">
                                     <a class="nav-link" href="#">
-                                        <i class="fas fa-tools"></i> Herramientas
+                                        <i class="fas fa-wrench"></i> Herramientas
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#">
-                                        <i class="fas fa-calendar-alt"></i> Planificador de Producción
+                                        <i class="fas fa-calendar-check"></i> Planificador de Producción
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#">
-                                        <i class="fas fa-chart-bar"></i> Generador de Reportes
+                                        <i class="fas fa-chart-line"></i> Generador de Reportes
                                     </a>
                                 </li>
                             </ul>
@@ -237,12 +236,12 @@
                             <ul class="nav flex-column">
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('usuarios_bp.opciones') }}">
-                                        <i class="fas fa-cog"></i> Opciones
+                                        <i class="fas fa-sliders-h"></i> Opciones
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-danger" href="{{ url_for('auth_bp.logout') }}">
-                                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                                        <i class="fas fa-power-off"></i> Cerrar sesión
                                     </a>
                                 </li>
                             </ul>
