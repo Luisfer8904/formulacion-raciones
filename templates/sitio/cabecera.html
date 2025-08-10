@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Nutrición Animal - Software Profesional{% endblock %}</title>
+    <title>{% block title %}FeedPro - Software Profesional de Formulación{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -16,8 +16,28 @@
 <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="40" class="me-2">
-            <span class="fw-bold text-primary fs-4">NutriAnimal</span>
+            <!-- Logo SVG inline -->
+            <svg width="40" height="40" viewBox="0 0 50 50" class="me-2">
+                <!-- Engranaje verde -->
+                <g>
+                    <!-- Engranaje exterior -->
+                    <path d="M25 5 L30 8 L35 5 L38 10 L43 10 L43 15 L48 18 L45 23 L48 28 L43 31 L43 36 L38 36 L35 41 L30 38 L25 41 L22 36 L17 36 L17 31 L12 28 L15 23 L12 18 L17 15 L17 10 L22 10 Z" 
+                          fill="#7CB342" stroke="#689F38" stroke-width="1"/>
+                    
+                    <!-- Círculo interior del engranaje -->
+                    <circle cx="30" cy="23" r="10" fill="#8BC34A"/>
+                    
+                    <!-- Semilla/grano naranja -->
+                    <ellipse cx="30" cy="20" rx="3" ry="5" fill="#FF9800"/>
+                    
+                    <!-- Hojas verdes -->
+                    <path d="M24 25 Q22 21 26 17 Q30 19 32 23 Q28 27 24 25" fill="#4CAF50"/>
+                    <path d="M36 25 Q38 21 34 17 Q30 19 28 23 Q32 27 36 25" fill="#4CAF50"/>
+                </g>
+            </svg>
+            <span class="fw-bold fs-4">
+                <span style="color: #7CB342;">Feed</span><span style="color: #FF9800;">Pro</span>
+            </span>
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -43,46 +63,79 @@
 <style>
     body {
         font-family: 'Inter', sans-serif;
+        background-color: #fafafa;
     }
     
-    .navbar-brand span {
-        color: #1e40af !important;
+    .navbar {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border-bottom: 1px solid #e9ecef;
+        padding: 1rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    
+    .navbar-brand:hover {
+        text-decoration: none;
     }
     
     .nav-link {
-        color: #374151 !important;
+        color: #495057 !important;
         font-weight: 500;
-        padding: 0.5rem 1rem !important;
-        transition: color 0.3s ease;
+        padding: 0.75rem 1.25rem !important;
+        transition: all 0.3s ease;
+        border-radius: 0.5rem;
+        margin: 0 0.25rem;
     }
     
     .nav-link:hover {
-        color: #1e40af !important;
+        color: #7CB342 !important;
+        background-color: rgba(124, 179, 66, 0.1);
     }
     
     .btn-primary {
-        background-color: #f97316;
-        border-color: #f97316;
+        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        border: none;
         font-weight: 600;
-        padding: 0.5rem 1.5rem;
-        border-radius: 0.5rem;
+        padding: 0.75rem 2rem;
+        border-radius: 2rem;
+        box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        transition: all 0.3s ease;
     }
     
     .btn-primary:hover {
-        background-color: #ea580c;
-        border-color: #ea580c;
+        background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
     }
     
     .btn-outline-primary {
-        color: #1e40af;
-        border-color: #1e40af;
+        color: #7CB342;
+        border: 2px solid #7CB342;
         font-weight: 600;
-        padding: 0.5rem 1.5rem;
-        border-radius: 0.5rem;
+        padding: 0.75rem 2rem;
+        border-radius: 2rem;
+        background: transparent;
+        transition: all 0.3s ease;
     }
     
     .btn-outline-primary:hover {
-        background-color: #1e40af;
-        border-color: #1e40af;
+        background-color: #7CB342;
+        border-color: #7CB342;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(124, 179, 66, 0.3);
+    }
+    
+    /* Estilo similar a ADM */
+    .container {
+        max-width: 1200px;
+    }
+    
+    .shadow-sm {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
     }
 </style>
