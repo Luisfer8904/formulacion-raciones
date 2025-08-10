@@ -15,7 +15,7 @@ def create_app():
     static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
     
     app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
-    app.secret_key = 'clave_segura'
+    app.secret_key = os.environ.get('SECRET_KEY', 'clave_segura')
 
     # Filtro personalizado para reemplazo con regex en plantillas Jinja2
     @app.template_filter('regex_replace')

@@ -1,14 +1,15 @@
 import mysql.connector
 import re
+import os
 from typing import List, Optional, Any, Tuple
 
 # Configuración de conexión a la base de datos
 DB_CONFIG = {
-    "host": "127.0.0.1",
-    "port": "3306",
-    "database": "formulacion_nutricional",
-    "user": "root",
-    "password": "root1234"
+    "host": os.environ.get("DB_HOST", "127.0.0.1"),
+    "port": os.environ.get("DB_PORT", "3306"),
+    "database": os.environ.get("DB_DATABASE", "formulacion_nutricional"),
+    "user": os.environ.get("DB_USER", "root"),
+    "password": os.environ.get("DB_PASSWORD", "root1234")
 }
 
 def get_db_connection():
