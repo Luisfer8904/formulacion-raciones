@@ -50,11 +50,21 @@
             text-align: center;
         }
 
-        .user-info img {
-            width: 35px;
-            height: 35px;
+        .user-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            margin-bottom: 5px;
+            background: linear-gradient(135deg, #7CB342 0%, #8BC34A 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px auto;
+            box-shadow: 0 4px 12px rgba(124, 179, 66, 0.3);
+        }
+
+        .user-avatar i {
+            color: white;
+            font-size: 16px;
         }
 
         .user-info h6 {
@@ -71,22 +81,32 @@
 
         .sidebar-header {
             text-align: center;
-            padding: 15px 0;
+            padding: 20px 15px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        .sidebar-header img {
-            width: 45px;
-            height: 45px;
-            margin-bottom: 8px;
+        .feedpro-logo {
+            height: 50px;
+            width: auto;
+            margin-bottom: 10px;
+            filter: brightness(0) invert(1);
         }
 
         .sidebar-header h5 {
             color: #ecf0f1;
-            font-weight: 600;
-            margin: 0;
-            font-size: 16px;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-tagline {
+            color: #bdc3c7;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .nav-section {
@@ -132,13 +152,16 @@
                 <div class="d-flex flex-column h-100">
                     <!-- Header -->
                     <div class="sidebar-header">
-                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
-                        <h5>Nutrición Animal</h5>
+                        <img src="{{ url_for('static', filename='feedpro-logo.svg') }}" alt="FeedPro" class="feedpro-logo">
+                        <h5>FeedPro</h5>
+                        <small class="sidebar-tagline">Formulación Nutricional</small>
                     </div>
 
                     <!-- Información del usuario -->
                     <div class="user-info">
-                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Usuario">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
                         <h6>{{ session.get('nombre', 'Usuario') }}</h6>
                         <small class="d-block">{{ session.get('rol', 'Rol no definido') }}</small>
                         <small class="d-block">{{ session.get('email', 'Email no disponible') }}</small>

@@ -1,65 +1,246 @@
 {% extends "operaciones/layout.html" %}
 
 {% block contenido %}
-<div class="container py-5">
-  <h2 class="text-center mb-5">Formulación por Especie</h2>
-
-  <div class="row justify-content-center g-5 pt-5">
-    <!-- Cerdo -->
-    <div class="col-6 col-md-3 text-center">
-      <div class="pt-5">
-        <a href="#" class="text-decoration-none">
-          <div class="bg-white rounded-circle shadow d-flex justify-content-center align-items-center mx-auto"
-               style="width: 160px; height: 160px; overflow: hidden;">
-            <img src="{{ url_for('static', filename='cerdo.png') }}"
-                 alt="Cerdo" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-          <h5 class="mt-4 text-dark">Cerdos</h5>
-        </a>
-      </div>
-    </div>
-
-    <!-- Gallina -->
-    <div class="col-6 col-md-3 text-center">
-      <div class="pt-5">
-        <a href="#" class="text-decoration-none">
-          <div class="bg-white rounded-circle shadow d-flex justify-content-center align-items-center mx-auto"
-               style="width: 160px; height: 160px; overflow: hidden;">
-            <img src="{{ url_for('static', filename='gallina.png') }}"
-                 alt="Gallina" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-          <h5 class="mt-4 text-dark">Aves</h5>
-        </a>
-      </div>
-    </div>
-
-    <!-- Vaca -->
-    <div class="col-6 col-md-3 text-center">
-      <div class="pt-5">
-        <a href="#" class="text-decoration-none">
-          <div class="bg-white rounded-circle shadow d-flex justify-content-center align-items-center mx-auto"
-               style="width: 160px; height: 160px; overflow: hidden;">
-            <img src="{{ url_for('static', filename='vaca.png') }}"
-                 alt="Vaca" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-          <h5 class="mt-4 text-dark">Bovinos</h5>
-        </a>
-      </div>
-    </div>
-
-    <!-- Minerales -->
-    <div class="col-6 col-md-3 text-center">
-      <div class="pt-5">
-        <a href="{{ url_for('optimizacion_bp.formulacion_minerales') }}" class="text-decoration-none">
-          <div class="bg-white rounded-circle shadow d-flex justify-content-center align-items-center mx-auto"
-               style="width: 160px; height: 160px; overflow: hidden;">
-            <img src="{{ url_for('static', filename='minerales.png') }}"
-                 alt="Minerales" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-          <h5 class="mt-4 text-dark">Minerales</h5>
-        </a>
+<!-- Hero Section Moderno para Panel -->
+<div class="formulador-hero-section">
+  <div class="container">
+    <div class="row justify-content-center align-items-center min-vh-80">
+      <div class="col-lg-8 text-center">
+        <!-- Logo y Título -->
+        <div class="hero-brand mb-4">
+          <img src="{{ url_for('static', filename='feedpro-logo.svg') }}" alt="FeedPro" class="hero-logo mb-3">
+          <h1 class="hero-title">Formulación Nutricional Profesional</h1>
+          <p class="hero-subtitle">Selecciona la especie para comenzar la formulación</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Sección de Especies -->
+<div class="especies-section py-5">
+  <div class="container">
+    <div class="row justify-content-center g-4">
+      <!-- Cerdo -->
+      <div class="col-6 col-md-3">
+        <div class="especie-card">
+          <a href="#" class="text-decoration-none">
+            <div class="especie-icon">
+              <img src="{{ url_for('static', filename='cerdo.png') }}" alt="Cerdo">
+            </div>
+            <h5 class="especie-title">Cerdos</h5>
+            <p class="especie-description">Formulación para porcinos en todas las etapas</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Gallina -->
+      <div class="col-6 col-md-3">
+        <div class="especie-card">
+          <a href="#" class="text-decoration-none">
+            <div class="especie-icon">
+              <img src="{{ url_for('static', filename='gallina.png') }}" alt="Gallina">
+            </div>
+            <h5 class="especie-title">Aves</h5>
+            <p class="especie-description">Formulación para aves de corral y ponedoras</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Vaca -->
+      <div class="col-6 col-md-3">
+        <div class="especie-card">
+          <a href="#" class="text-decoration-none">
+            <div class="especie-icon">
+              <img src="{{ url_for('static', filename='vaca.png') }}" alt="Vaca">
+            </div>
+            <h5 class="especie-title">Bovinos</h5>
+            <p class="especie-description">Formulación para ganado bovino</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Minerales -->
+      <div class="col-6 col-md-3">
+        <div class="especie-card active">
+          <a href="{{ url_for('optimizacion_bp.formulacion_minerales') }}" class="text-decoration-none">
+            <div class="especie-icon">
+              <img src="{{ url_for('static', filename='minerales.png') }}" alt="Minerales">
+            </div>
+            <h5 class="especie-title">Minerales</h5>
+            <p class="especie-description">Formulación de mezclas minerales</p>
+            <div class="especie-badge">Disponible</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Estilos CSS -->
+<style>
+  /* Hero Section del Formulador */
+  .formulador-hero-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 4rem 0 2rem 0;
+  }
+  
+  .hero-brand {
+    text-align: center;
+  }
+  
+  .hero-logo {
+    height: 80px;
+    width: auto;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.125rem;
+    color: #6b7280;
+    margin-bottom: 0;
+  }
+  
+  /* Sección de Especies */
+  .especies-section {
+    background: #ffffff;
+  }
+  
+  .especie-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+  }
+  
+  .especie-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+  
+  .especie-card.active {
+    border: 2px solid #7CB342;
+    background: linear-gradient(135deg, #f8fff4 0%, #ffffff 100%);
+  }
+  
+  .especie-card.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #7CB342 0%, #8BC34A 100%);
+  }
+  
+  .especie-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.5rem auto;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .especie-card:hover .especie-icon {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  }
+  
+  .especie-card.active .especie-icon {
+    background: linear-gradient(135deg, #7CB342 0%, #8BC34A 100%);
+    box-shadow: 0 8px 25px rgba(124, 179, 66, 0.3);
+  }
+  
+  .especie-icon img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+  }
+  
+  .especie-card.active .especie-icon img {
+    filter: brightness(0) invert(1);
+  }
+  
+  .especie-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+  }
+  
+  .especie-card a:hover .especie-title {
+    color: #7CB342;
+  }
+  
+  .especie-card.active .especie-title {
+    color: #7CB342;
+  }
+  
+  .especie-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+  
+  .especie-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+    
+    .hero-logo {
+      height: 60px;
+    }
+    
+    .especie-card {
+      padding: 1.5rem 1rem;
+    }
+    
+    .especie-icon {
+      width: 100px;
+      height: 100px;
+    }
+    
+    .especie-icon img {
+      width: 60px;
+      height: 60px;
+    }
+  }
+  
+  .min-vh-80 {
+    min-height: 80vh;
+  }
+</style>
 {% endblock %}
