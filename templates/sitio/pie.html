@@ -1,68 +1,130 @@
-<footer class="bg-dark text-light py-5 mt-5">
+<!-- Footer moderno y profesional -->
+<footer class="py-5 mt-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-top: 1px solid #dee2e6;">
     <div class="container">
-        <div class="row">
+        <div class="row g-4">
+            <!-- Logo y descripción -->
             <div class="col-lg-4 mb-4">
                 <div class="d-flex align-items-center mb-3">
-                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="40" class="me-2">
+                    <!-- Logo SVG inline -->
+                    <svg width="40" height="40" viewBox="0 0 50 50" class="me-2">
+                        <!-- Engranaje verde -->
+                        <g>
+                            <!-- Engranaje exterior -->
+                            <path d="M25 5 L30 8 L35 5 L38 10 L43 10 L43 15 L48 18 L45 23 L48 28 L43 31 L43 36 L38 36 L35 41 L30 38 L25 41 L22 36 L17 36 L17 31 L12 28 L15 23 L12 18 L17 15 L17 10 L22 10 Z" 
+                                  fill="#7CB342" stroke="#689F38" stroke-width="1"/>
+                            
+                            <!-- Círculo interior del engranaje -->
+                            <circle cx="30" cy="23" r="10" fill="#8BC34A"/>
+                            
+                            <!-- Semilla/grano naranja -->
+                            <ellipse cx="30" cy="20" rx="3" ry="5" fill="#FF9800"/>
+                            
+                            <!-- Hojas verdes -->
+                            <path d="M24 25 Q22 21 26 17 Q30 19 32 23 Q28 27 24 25" fill="#4CAF50"/>
+                            <path d="M36 25 Q38 21 34 17 Q30 19 28 23 Q32 27 36 25" fill="#4CAF50"/>
+                        </g>
+                    </svg>
                     <span class="fw-bold fs-4">
                         <span style="color: #7CB342;">Feed</span><span style="color: #FF9800;">Pro</span>
                     </span>
                 </div>
-                <p class="text-muted">Software profesional para formulación de raciones y optimización nutricional en la industria animal.</p>
-                <div class="social-icons">
-                    <a href="#" class="text-light me-3 fs-5"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-light me-3 fs-5"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="text-light me-3 fs-5"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-light me-3 fs-5"><i class="fab fa-linkedin"></i></a>
+                <p class="text-muted mb-4">Tecnología avanzada para formulación nutricional de precisión. Optimiza tu producción con soluciones integrales para la industria de alimentos balanceados.</p>
+                
+                <!-- Redes sociales con estilo moderno -->
+                <div class="social-icons d-flex gap-3">
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
                 </div>
             </div>
             
+            <!-- Enlaces de producto -->
             <div class="col-lg-2 col-md-6 mb-4">
-                <h6 class="fw-bold mb-3">Producto</h6>
-                <ul class="list-unstyled">
-                    <li><a href="#caracteristicas" class="text-muted text-decoration-none">Características</a></li>
-                    <li><a href="#precios" class="text-muted text-decoration-none">Precios</a></li>
-                    <li><a href="#demo" class="text-muted text-decoration-none">Demo</a></li>
-                    <li><a href="/libros" class="text-muted text-decoration-none">Recursos</a></li>
+                <h6 class="fw-bold mb-3" style="color: #495057;">Producto</h6>
+                <ul class="list-unstyled footer-links">
+                    <li class="mb-2"><a href="/caracteristicas" class="footer-link">Características</a></li>
+                    <li class="mb-2"><a href="/precios" class="footer-link">Precios</a></li>
+                    <li class="mb-2"><a href="/precios" class="footer-link">Prueba gratis</a></li>
+                    <li class="mb-2"><a href="/libros" class="footer-link">Recursos</a></li>
                 </ul>
             </div>
             
+            <!-- Enlaces de empresa -->
             <div class="col-lg-2 col-md-6 mb-4">
-                <h6 class="fw-bold mb-3">Empresa</h6>
-                <ul class="list-unstyled">
-                    <li><a href="/nosotros" class="text-muted text-decoration-none">Nosotros</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none">Blog</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none">Carreras</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none">Contacto</a></li>
+                <h6 class="fw-bold mb-3" style="color: #495057;">Empresa</h6>
+                <ul class="list-unstyled footer-links">
+                    <li class="mb-2"><a href="/nosotros" class="footer-link">Nosotros</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link">Blog</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link">Carreras</a></li>
+                    <li class="mb-2"><a href="/nosotros" class="footer-link">Contacto</a></li>
                 </ul>
             </div>
             
+            <!-- Información de contacto -->
             <div class="col-lg-4 mb-4">
-                <h6 class="fw-bold mb-3">Contacto</h6>
-                <p class="text-muted mb-2">
-                    <i class="fas fa-envelope me-2"></i>
-                    info@nutricionanimal.com
-                </p>
-                <p class="text-muted mb-2">
-                    <i class="fas fa-phone me-2"></i>
-                    +504 9716-7850
-                </p>
-                <p class="text-muted">
-                    <i class="fas fa-map-marker-alt me-2"></i>
-                    Honduras
-                </p>
+                <h6 class="fw-bold mb-3" style="color: #495057;">Contacto</h6>
+                <div class="contact-info">
+                    <div class="contact-item mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Email</small>
+                                <span class="fw-medium">info@feedpro.com</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Teléfono</small>
+                                <span class="fw-medium">+504 9716-7850</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Ubicación</small>
+                                <span class="fw-medium">Honduras</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <hr class="my-4 border-secondary">
+        <!-- Línea divisoria -->
+        <hr class="my-4" style="border-color: #dee2e6; opacity: 0.5;">
         
+        <!-- Copyright y enlaces legales -->
         <div class="row align-items-center">
             <div class="col-md-6">
-                <p class="text-muted mb-0">© 2025 FeedPro. Todos los derechos reservados.</p>
+                <p class="text-muted mb-0 small">© 2025 FeedPro. Todos los derechos reservados.</p>
             </div>
             <div class="col-md-6 text-md-end">
-                <a href="#" class="text-muted text-decoration-none me-3">Política de Privacidad</a>
-                <a href="#" class="text-muted text-decoration-none">Términos de Servicio</a>
+                <div class="legal-links">
+                    <a href="#" class="footer-link small me-3">Política de Privacidad</a>
+                    <a href="#" class="footer-link small">Términos de Servicio</a>
+                </div>
             </div>
         </div>
     </div>
@@ -72,18 +134,127 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
-    .social-icons a:hover {
-        color: #f97316 !important;
-        transition: color 0.3s ease;
+    /* Footer moderno y profesional */
+    footer {
+        font-family: 'Inter', sans-serif;
     }
     
-    footer a:hover {
-        color: #f97316 !important;
-        transition: color 0.3s ease;
+    /* Iconos de redes sociales */
+    .social-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: white;
+        color: #6c757d;
+        border-radius: 50%;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
     }
     
+    .social-icon:hover {
+        background: linear-gradient(135deg, #7CB342 0%, #8BC34A 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(124, 179, 66, 0.3);
+    }
+    
+    /* Enlaces del footer */
+    .footer-link {
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .footer-link:hover {
+        color: #7CB342;
+        text-decoration: none;
+        padding-left: 5px;
+    }
+    
+    /* Iconos de contacto */
+    .contact-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+        color: white;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    
+    /* Títulos de sección */
+    footer h6 {
+        position: relative;
+        padding-bottom: 8px;
+    }
+    
+    footer h6::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background: linear-gradient(135deg, #7CB342 0%, #FF9800 100%);
+        border-radius: 1px;
+    }
+    
+    /* Elementos de contacto */
+    .contact-item {
+        padding: 8px 0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .contact-item:hover {
+        background: rgba(124, 179, 66, 0.05);
+        padding-left: 10px;
+    }
+    
+    /* Enlaces legales */
+    .legal-links .footer-link {
+        font-size: 0.875rem;
+        opacity: 0.8;
+    }
+    
+    .legal-links .footer-link:hover {
+        opacity: 1;
+        padding-left: 0;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .social-icons {
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .text-md-end {
+            text-align: center !important;
+            margin-top: 15px;
+        }
+        
+        .legal-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+    }
+    
+    /* Colores consistentes con el branding */
     .text-primary {
-        color: #1e40af !important;
+        color: #7CB342 !important;
+    }
+    
+    .text-secondary {
+        color: #FF9800 !important;
     }
 </style>
 
