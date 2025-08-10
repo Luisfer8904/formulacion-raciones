@@ -16,25 +16,7 @@
 <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="/">
-            <!-- Logo SVG inline -->
-            <svg width="40" height="40" viewBox="0 0 50 50" class="me-2">
-                <!-- Engranaje verde -->
-                <g>
-                    <!-- Engranaje exterior -->
-                    <path d="M25 5 L30 8 L35 5 L38 10 L43 10 L43 15 L48 18 L45 23 L48 28 L43 31 L43 36 L38 36 L35 41 L30 38 L25 41 L22 36 L17 36 L17 31 L12 28 L15 23 L12 18 L17 15 L17 10 L22 10 Z" 
-                          fill="#7CB342" stroke="#689F38" stroke-width="1"/>
-                    
-                    <!-- Círculo interior del engranaje -->
-                    <circle cx="30" cy="23" r="10" fill="#8BC34A"/>
-                    
-                    <!-- Semilla/grano naranja -->
-                    <ellipse cx="30" cy="20" rx="3" ry="5" fill="#FF9800"/>
-                    
-                    <!-- Hojas verdes -->
-                    <path d="M24 25 Q22 21 26 17 Q30 19 32 23 Q28 27 24 25" fill="#4CAF50"/>
-                    <path d="M36 25 Q38 21 34 17 Q30 19 28 23 Q32 27 36 25" fill="#4CAF50"/>
-                </g>
-            </svg>
+            <img src="{{ url_for('static', filename='Logo Vertical.png') }}" alt="FeedPro" class="navbar-logo me-2">
             <span class="fw-bold fs-4">
                 <span style="color: #7CB342;">Feed</span><span style="color: #FF9800;">Pro</span>
             </span>
@@ -137,5 +119,10 @@
     
     .shadow-sm {
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+    }
+    
+    .navbar-logo {
+        height: 40px;
+        width: auto;
     }
 </style>
