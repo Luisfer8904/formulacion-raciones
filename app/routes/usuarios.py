@@ -16,6 +16,14 @@ def libros():
 def nosotros():
     return render_template('sitio/nosotros.html')
 
+@usuarios_bp.route('/caracteristicas')
+def caracteristicas():
+    return render_template('sitio/caracteristicas.html')
+
+@usuarios_bp.route('/precios')
+def precios():
+    return render_template('sitio/precios.html')
+
 @usuarios_bp.route('/panel')
 def panel():
     if 'user_id' not in session:
