@@ -11,6 +11,12 @@
             background: linear-gradient(135deg, #2c3e50, #34495e) !important;
             min-height: 100vh;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 1000;
         }
 
         .sidebar .nav-link {
@@ -36,95 +42,98 @@
         }
 
         .sidebar .nav-link i {
-            margin-right: 8px;
+            margin-right: 6px;
             width: 16px;
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .user-info {
             background: rgba(255,255,255,0.1);
             border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 20px;
+            padding: 8px;
+            margin-bottom: 15px;
             text-align: center;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: linear-gradient(135deg, #7CB342 0%, #8BC34A 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 8px auto;
+            margin: 0 auto 6px auto;
             box-shadow: 0 4px 12px rgba(124, 179, 66, 0.3);
         }
 
         .user-avatar i {
             color: white;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .user-info h6 {
             color: #ecf0f1;
             margin: 0;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .user-info small {
             color: #bdc3c7;
-            font-size: 11px;
+            font-size: 10px;
         }
 
         .sidebar-header {
             text-align: center;
-            padding: 20px 15px;
+            padding: 15px 10px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .feedpro-logo {
-            height: 50px;
+            height: 40px;
             width: auto;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .sidebar-header h5 {
             color: #ecf0f1;
             font-weight: 700;
             margin: 0 0 5px 0;
-            font-size: 18px;
+            font-size: 16px;
             letter-spacing: 0.5px;
         }
 
         .sidebar-tagline {
             color: #bdc3c7;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .nav-section {
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
 
         .nav-section-title {
             color: #95a5a6;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 8px;
-            padding-left: 15px;
+            margin-bottom: 6px;
+            padding-left: 10px;
         }
 
         main {
             background-color: #f8f9fa;
             min-height: 100vh;
+            margin-left: 220px;
+            overflow-y: auto;
+            height: 100vh;
         }
 
         @media (max-width: 768px) {
@@ -132,7 +141,7 @@
                 position: fixed;
                 top: 0;
                 left: -100%;
-                width: 280px;
+                width: 220px;
                 z-index: 1000;
                 transition: left 0.3s ease;
             }
@@ -151,9 +160,9 @@
                 <div class="d-flex flex-column h-100">
                     <!-- Header -->
                     <div class="sidebar-header">
-                        <img src="{{ url_for('static', filename='Logo Vertical.png') }}" alt="FeedPro" class="feedpro-logo">
-                        <h5>FeedPro</h5>
-                        <small class="sidebar-tagline">Formulación Nutricional</small>
+                        <img src="{{ url_for('static', filename='Logo Vertical.png') }}" alt="Logo" class="feedpro-logo">
+                        <!-- <h5>FeedPro</h5> -->
+                        <!-- <small class="sidebar-tagline">Formulación Nutricional</small> -->
                     </div>
 
                     <!-- Información del usuario -->
