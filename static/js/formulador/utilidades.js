@@ -33,18 +33,33 @@ function imprimirTabla() {
       totalPeso += peso;
       ingredientesHTML += `
         <tr>
-          <td class="text-center">${filaIndex}</td>
-          <td>${nombreIngrediente}</td>
-          <td class="text-center">${inclusion.toFixed(2)}%</td>
-          <td class="text-center">${peso.toFixed(2)} kg</td>
-          <td class="text-right">$${precio.toFixed(2)}</td>
-          <td class="text-right">$${total.toFixed(2)}</td>
+          <td>
+            <select class="form-select form-select-sm" disabled>
+              <option selected>${nombreIngrediente}</option>
+            </select>
+          </td>
+          <td><input type="number" class="form-control form-control-sm" value="${inclusion.toFixed(2)}" readonly></td>
+          <td><input type="number" class="form-control form-control-sm" value="-" readonly></td>
+          <td><input type="number" class="form-control form-control-sm" value="-" readonly></td>
+          <td><input type="number" class="form-control form-control-sm" value="${peso.toFixed(2)}" readonly></td>
+          <td><input type="number" class="form-control form-control-sm" value="${precio.toFixed(2)}" readonly></td>
+          <td><input type="number" class="form-control form-control-sm" value="${total.toFixed(2)}" readonly></td>
+          <td>
+            <div class="btn-action-container">
+              <button type="button" class="btn-action btn-action-danger" disabled>
+                <i class="fas fa-times"></i>
+              </button>
+              <button type="button" class="btn-action btn-action-info" disabled>
+                <i class="fas fa-info"></i>
+              </button>
+            </div>
+          </td>
         </tr>`;
       filaIndex++;
     }
   });
 
-  // Recopilar nutrientes con más detalles
+  // Recopilar nutrientes
   let nutrientesHTML = '';
   let nutrientesCount = 0;
   document.querySelectorAll('#tabla-nutrientes tr').forEach(fila => {
@@ -59,45 +74,26 @@ function imprimirTabla() {
     
     if (select && select.value && nombreNutriente.trim() !== '') {
       nutrientesCount++;
-      // Determinar estado del nutriente (cumple, no cumple, etc.)
-      let estado = '';
-      let estadoClass = '';
-      if (minimo && maximo) {
-        const resultadoNum = parseFloat(resultadoTC);
-        const minimoNum = parseFloat(minimo);
-        const maximoNum = parseFloat(maximo);
-        if (resultadoNum >= minimoNum && resultadoNum <= maximoNum) {
-          estado = '✅ Cumple';
-          estadoClass = 'status-ok';
-        } else if (resultadoNum < minimoNum) {
-          estado = '⚠️ Bajo';
-          estadoClass = 'status-low';
-        } else {
-          estado = '❌ Alto';
-          estadoClass = 'status-high';
-        }
-      } else if (minimo) {
-        const resultadoNum = parseFloat(resultadoTC);
-        const minimoNum = parseFloat(minimo);
-        if (resultadoNum >= minimoNum) {
-          estado = '✅ Cumple';
-          estadoClass = 'status-ok';
-        } else {
-          estado = '⚠️ Bajo';
-          estadoClass = 'status-low';
-        }
-      }
-      
       nutrientesHTML += `
         <tr>
-          <td><strong>${nombreNutriente}</strong></td>
-          <td class="text-center">${unidad}</td>
-          <td class="text-center">${sugerido || '-'}</td>
-          <td class="text-center">${minimo || '-'}</td>
-          <td class="text-center">${maximo || '-'}</td>
-          <td class="text-center"><strong>${resultadoTC}</strong></td>
-          <td class="text-center">${resultadoBS}</td>
-          <td class="text-center ${estadoClass}">${estado}</td>
+          <td>
+            <select class="form-select form-select-sm" disabled>
+              <option selected>${nombreNutriente}</option>
+            </select>
+          </td>
+          <td><input type="text" class="form-control form-control-sm" value="${unidad}" readonly></td>
+          <td><input type="number" class="form-control form-control-sm" value="${sugerido || ''}" readonly></td>
+          <td><input type="number" class="form-control form-control-sm" value="${minimo || ''}" readonly></td>
+          <td><input type="number" class="form-control form-control-sm" value="${maximo || ''}" readonly></td>
+          <td class="text-end"><span class="badge bg-primary">${resultadoTC}</span></td>
+          <td class="text-end"><span class="badge bg-secondary">${resultadoBS}</span></td>
+          <td class="text-center">
+            <div class="btn-action-container">
+              <button type="button" class="btn-action btn-action-danger" disabled>
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </td>
         </tr>`;
     }
   });
@@ -109,359 +105,263 @@ function imprimirTabla() {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Formulación - ${nombre}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
             @media print {
-                @page {
-                    margin: 1cm;
-                    size: A4;
-                }
-                body { margin: 0; }
+                @page { margin: 1cm; size: A4; }
+                .no-print { display: none !important; }
+                body { font-size: 12px; }
             }
             
             body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                line-height: 1.4;
-                color: #333;
-                max-width: 210mm;
-                margin: 0 auto;
-                padding: 20px;
-                background: white;
-            }
-            
-            .header {
-                text-align: center;
-                border-bottom: 3px solid #7CB342;
-                padding-bottom: 20px;
-                margin-bottom: 30px;
-            }
-            
-            .logo {
-                font-size: 28px;
-                font-weight: bold;
-                color: #7CB342;
-                margin-bottom: 5px;
-            }
-            
-            .subtitle {
-                font-size: 16px;
-                color: #666;
-                margin-bottom: 10px;
-            }
-            
-            .fecha {
-                font-size: 12px;
-                color: #888;
-            }
-            
-            .info-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
-                margin-bottom: 30px;
-            }
-            
-            @media (max-width: 768px) {
-                .info-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-            
-            .info-card {
-                background: #f8f9fa;
-                padding: 15px;
-                border-radius: 8px;
-                border-left: 4px solid #7CB342;
-            }
-            
-            .info-card h3 {
-                margin: 0 0 10px 0;
-                color: #7CB342;
-                font-size: 16px;
-            }
-            
-            .info-item {
-                margin-bottom: 8px;
-                font-size: 14px;
-            }
-            
-            .info-label {
-                font-weight: 600;
-                color: #555;
-            }
-            
-            .section-title {
-                font-size: 18px;
-                font-weight: bold;
-                color: #7CB342;
-                margin: 30px 0 15px 0;
-                padding-bottom: 5px;
-                border-bottom: 2px solid #e9ecef;
-            }
-            
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 20px;
-                font-size: 12px;
-            }
-            
-            th {
-                background: #7CB342;
-                color: white;
-                padding: 12px 8px;
-                text-align: center;
-                font-weight: 600;
-                font-size: 11px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            
-            td {
-                padding: 10px 8px;
-                border-bottom: 1px solid #e9ecef;
-                vertical-align: middle;
-            }
-            
-            tr:nth-child(even) {
                 background-color: #f8f9fa;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
             
-            tr:hover {
-                background-color: #e8f5e8;
-            }
-            
-            .text-center { text-align: center; }
-            .text-right { text-align: right; }
-            
-            .status-ok { 
-                background-color: #d4edda; 
-                color: #155724; 
-                font-weight: bold;
-            }
-            .status-low { 
-                background-color: #fff3cd; 
-                color: #856404; 
-                font-weight: bold;
-            }
-            .status-high { 
-                background-color: #f8d7da; 
-                color: #721c24; 
-                font-weight: bold;
-            }
-            
-            .summary-box {
-                background: linear-gradient(135deg, #7CB342, #8BC34A);
+            .print-header {
+                background: linear-gradient(135deg, #2c3e50, #34495e);
                 color: white;
                 padding: 20px;
                 border-radius: 10px;
-                margin: 20px 0;
+                margin-bottom: 20px;
                 text-align: center;
             }
             
-            .summary-item {
-                display: inline-block;
-                margin: 0 20px;
-                font-size: 16px;
+            .print-header h2 {
+                margin: 0;
+                font-weight: 700;
             }
             
-            .summary-value {
+            .print-header small {
+                opacity: 0.8;
+            }
+            
+            .info-section {
+                background: white;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .section-title {
+                color: #7CB342;
+                font-weight: 700;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #7CB342;
+            }
+            
+            .table {
+                margin-bottom: 0;
+            }
+            
+            .table th {
+                background: #7CB342;
+                color: white;
+                border: none;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 11px;
+                letter-spacing: 0.5px;
+            }
+            
+            .btn-action-container {
+                display: flex;
+                gap: 4px;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .btn-action {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                padding: 0;
+                border-radius: 4px;
+                font-size: 12px;
+                border: 1px solid transparent;
+                opacity: 0.6;
+            }
+            
+            .btn-action-danger {
+                background-color: #dc3545;
+                border-color: #dc3545;
+                color: #fff;
+            }
+            
+            .btn-action-info {
+                background-color: #17a2b8;
+                border-color: #17a2b8;
+                color: #fff;
+            }
+            
+            .summary-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .summary-card {
+                background: linear-gradient(135deg, #7CB342, #8BC34A);
+                color: white;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+            }
+            
+            .summary-card h5 {
+                margin: 0;
                 font-size: 24px;
                 font-weight: bold;
-                display: block;
             }
             
-            .observaciones {
-                background: #fff3cd;
-                border: 1px solid #ffeaa7;
-                border-radius: 8px;
-                padding: 15px;
-                margin: 20px 0;
+            .summary-card small {
+                opacity: 0.9;
             }
             
-            .firma-section {
-                margin-top: 40px;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 40px;
-            }
-            
-            .firma-box {
-                text-align: center;
-                padding-top: 30px;
-                border-top: 2px solid #333;
-            }
-            
-            .footer {
+            .print-footer {
                 margin-top: 30px;
                 text-align: center;
-                font-size: 10px;
-                color: #888;
-                border-top: 1px solid #e9ecef;
+                color: #6c757d;
+                font-size: 12px;
+                border-top: 1px solid #dee2e6;
                 padding-top: 15px;
             }
             
-            @media print {
-                .no-print { display: none; }
-                body { font-size: 11px; }
-                .summary-box { background: #7CB342 !important; }
+            .no-print {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
             }
         </style>
     </head>
     <body>
-        <div class="header">
-            <div class="logo">🌾 FeedPro</div>
-            <div class="subtitle">Sistema de Formulación Nutricional</div>
-            <div class="fecha">Generado el ${fechaActual}</div>
+        <div class="no-print">
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="fas fa-print me-2"></i>Imprimir
+            </button>
+            <button class="btn btn-secondary ms-2" onclick="window.close()">
+                <i class="fas fa-times me-2"></i>Cerrar
+            </button>
         </div>
+        
+        <div class="container-fluid py-4">
+            <div class="print-header">
+                <h2><i class="fas fa-balance-scale me-2"></i>Formulación y Control de Mezclas</h2>
+                <small>Generado el ${fechaActual}</small>
+            </div>
+            
+            <div class="info-section">
+                <h5 class="section-title"><i class="fas fa-info-circle me-2"></i>Información de la Mezcla</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Nombre de la Mezcla:</label>
+                        <input type="text" class="form-control form-control-sm" value="${nombre}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tipo de Animales:</label>
+                        <input type="text" class="form-control form-control-sm" value="${tipo}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Etapa de Producción:</label>
+                        <input type="text" class="form-control form-control-sm" value="${etapa}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tamaño de Bachada (kg):</label>
+                        <input type="number" class="form-control form-control-sm" value="${tamanoBachada}" readonly>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label">Observaciones:</label>
+                    <textarea class="form-control form-control-sm" rows="2" readonly>${observaciones}</textarea>
+                </div>
+            </div>
 
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>📋 Información de la Mezcla</h3>
-                <div class="info-item">
-                    <span class="info-label">Nombre:</span> ${nombre}
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h5>$${totalCosto}</h5>
+                    <small>Costo Total</small>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Especie:</span> ${tipo}
+                <div class="summary-card">
+                    <h5>${sumaInclusion}%</h5>
+                    <small>Suma Inclusión</small>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Etapa:</span> ${etapa}
+                <div class="summary-card">
+                    <h5>${filaIndex - 1}</h5>
+                    <small>Ingredientes</small>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Fecha:</span> ${fechaActual}
+                <div class="summary-card">
+                    <h5>${nutrientesCount}</h5>
+                    <small>Nutrientes</small>
                 </div>
             </div>
             
-            <div class="info-card">
-                <h3>⚖️ Datos de Producción</h3>
-                <div class="info-item">
-                    <span class="info-label">Tamaño de bachada:</span> ${tamanoBachada} kg
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Peso total:</span> ${totalPeso.toFixed(2)} kg
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Suma inclusión:</span> ${sumaInclusion}%
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Ingredientes:</span> ${filaIndex - 1}
-                </div>
-            </div>
-            
-            <div class="info-card">
-                <h3>🧪 Resumen Nutricional</h3>
-                <div class="info-item">
-                    <span class="info-label">Nutrientes analizados:</span> ${nutrientesCount}
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Costo por kg:</span> $${totalPeso > 0 ? (parseFloat(totalCosto) / totalPeso).toFixed(2) : '0.00'}
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Eficiencia:</span> ${sumaInclusion}% utilizado
+            <div class="info-section">
+                <h5 class="section-title"><i class="fas fa-seedling me-2"></i>Ingredientes Disponibles</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th>Ingrediente</th>
+                                <th>Inclusión (%)</th>
+                                <th>Límite Mín. (%)</th>
+                                <th>Límite Máx. (%)</th>
+                                <th>Peso en Bachada (kg)</th>
+                                <th>Costo Ingrediente ($/kg)</th>
+                                <th>Valor Total ($)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ingredientesHTML}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
-            <div class="info-card">
-                <h3>📊 Estadísticas</h3>
-                <div class="info-item">
-                    <span class="info-label">Rendimiento:</span> ${totalPeso > 0 ? ((totalPeso / tamanoBachada) * 100).toFixed(1) : '0'}%
+            ${nutrientesHTML ? `
+            <div class="info-section">
+                <h5 class="section-title"><i class="fas fa-pills me-2"></i>Nutrientes y Requerimientos</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th>Nutriente</th>
+                                <th>Unidad</th>
+                                <th>Sugerido</th>
+                                <th>Mínimo</th>
+                                <th>Máximo</th>
+                                <th>Resultado TC</th>
+                                <th>Resultado BS</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${nutrientesHTML}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Costo unitario:</span> $${tamanoBachada > 0 ? (parseFloat(totalCosto) / tamanoBachada).toFixed(3) : '0.000'}/kg
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Formulación:</span> ${filaIndex > 1 ? 'Completa' : 'Incompleta'}
-                </div>
+            </div>
+            ` : ''}
+            
+            <div class="print-footer">
+                <p><strong>Sistema de Formulación Nutricional</strong></p>
+                <p>Documento generado automáticamente - ${fechaActual}</p>
             </div>
         </div>
-
-        <div class="section-title">🥬 Composición de Ingredientes</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Ingrediente</th>
-                    <th>Inclusión (%)</th>
-                    <th>Peso (kg)</th>
-                    <th>Precio Unitario</th>
-                    <th>Valor Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${ingredientesHTML}
-            </tbody>
-        </table>
-
-        <div class="summary-box">
-            <div class="summary-item">
-                <span class="summary-value">$${totalCosto}</span>
-                <span>Costo Total</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-value">${sumaInclusion}%</span>
-                <span>Inclusión Total</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-value">${totalPeso.toFixed(1)} kg</span>
-                <span>Peso Total</span>
-            </div>
-        </div>
-
-        ${nutrientesHTML ? `
-        <div class="section-title">🧪 Análisis Nutricional (${nutrientesCount} nutrientes)</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nutriente</th>
-                    <th>Unidad</th>
-                    <th>Sugerido</th>
-                    <th>Mínimo</th>
-                    <th>Máximo</th>
-                    <th>Resultado TC</th>
-                    <th>Resultado BS</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${nutrientesHTML}
-            </tbody>
-        </table>
-        ` : ''}
-
-        ${observaciones !== 'Sin observaciones' ? `
-        <div class="observaciones">
-            <strong>📝 Observaciones:</strong><br>
-            ${observaciones}
-        </div>
-        ` : ''}
-
-        <div class="firma-section">
-            <div class="firma-box">
-                <strong>Elaborado por</strong><br>
-                <small>Nutricionista</small>
-            </div>
-            <div class="firma-box">
-                <strong>Revisado por</strong><br>
-                <small>Supervisor</small>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>Documento generado por FeedPro - Sistema de Formulación Nutricional</p>
-            <p>© ${new Date().getFullYear()} - Todos los derechos reservados</p>
-        </div>
-
-        <script>
-            window.onload = function() {
-                setTimeout(function() {
-                    window.print();
-                }, 500);
-            }
-        </script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
     </html>
   `;
 
-  const ventana = window.open('', '_blank', 'width=800,height=600');
+  const ventana = window.open('', '_blank', 'width=1200,height=800');
   ventana.document.write(contenidoHTML);
   ventana.document.close();
 }
