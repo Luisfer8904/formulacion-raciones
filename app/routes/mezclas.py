@@ -147,6 +147,26 @@ def cargar_mezcla(mezcla_id):
 
     print("📋 Ingredientes disponibles:", ingredientes)
 
+    # Obtener configuración del usuario
+    cursor.execute("""
+        SELECT unidad_medida, moneda, tipo_moneda
+        FROM usuarios
+        WHERE id = %s
+    """, (session['user_id'],))
+    config_usuario = cursor.fetchone()
+    
+    # Si no hay configuración, usar valores por defecto
+    if not config_usuario:
+        config_usuario = {
+            'unidad_medida': 'kg',
+            'moneda': 'USD',
+            'tipo_moneda': '$'
+        }
+
+    # Obtener todas las mezclas disponibles para el modal "Guardar Como"
+    cursor.execute("SELECT nombre FROM mezclas WHERE usuario_id = %s ORDER BY nombre", (session['user_id'],))
+    mezclas_disponibles = cursor.fetchall()
+
     cursor.close()
     conn.close()
 
@@ -155,7 +175,9 @@ def cargar_mezcla(mezcla_id):
                            ingredientes_mezcla=ingredientes_mezcla,
                            minerales=ingredientes,
                            nutrientes=nutrientes_info,
-                           ingredientesPrecargados=ingredientes_mezcla)
+                           ingredientesPrecargados=ingredientes_mezcla,
+                           config_usuario=config_usuario,
+                           mezclas_disponibles=mezclas_disponibles)
 
 @mezclas_bp.route('/lista_mezclas')
 def lista_mezclas():
