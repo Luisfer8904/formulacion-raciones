@@ -63,7 +63,7 @@ def panelformulador():
     if 'user_id' not in session:
         flash('Debes iniciar sesión para acceder.', 'error')
         return redirect(url_for('auth_bp.login'))
-    return redirect(url_for('optimizacion_bp.formulacion_minerales'))
+    return render_template('operaciones/panelformulador.html')
 
 @usuarios_bp.route('/opciones')
 def opciones():
