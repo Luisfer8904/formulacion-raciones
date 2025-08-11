@@ -44,26 +44,60 @@ function imprimirTabla() {
     }
   });
 
-  // Recopilar nutrientes
+  // Recopilar nutrientes con más detalles
   let nutrientesHTML = '';
+  let nutrientesCount = 0;
   document.querySelectorAll('#tabla-nutrientes tr').forEach(fila => {
     const select = fila.querySelector('select');
     const nombreNutriente = select?.options[select.selectedIndex]?.text || '';
     const unidad = fila.querySelector('input[name^="unidad_"]')?.value || '';
+    const sugerido = fila.querySelector('input[name^="sugerido_"]')?.value || '';
     const minimo = fila.querySelector('input[name^="min_"]')?.value || '';
     const maximo = fila.querySelector('input[name^="max_"]')?.value || '';
     const resultadoTC = fila.querySelector('span[id^="resultado-tc-"]')?.textContent || '0.00';
     const resultadoBS = fila.querySelector('span[id^="resultado-bs-"]')?.textContent || '0.00';
     
-    if (select && select.value) {
+    if (select && select.value && nombreNutriente.trim() !== '') {
+      nutrientesCount++;
+      // Determinar estado del nutriente (cumple, no cumple, etc.)
+      let estado = '';
+      let estadoClass = '';
+      if (minimo && maximo) {
+        const resultadoNum = parseFloat(resultadoTC);
+        const minimoNum = parseFloat(minimo);
+        const maximoNum = parseFloat(maximo);
+        if (resultadoNum >= minimoNum && resultadoNum <= maximoNum) {
+          estado = '✅ Cumple';
+          estadoClass = 'status-ok';
+        } else if (resultadoNum < minimoNum) {
+          estado = '⚠️ Bajo';
+          estadoClass = 'status-low';
+        } else {
+          estado = '❌ Alto';
+          estadoClass = 'status-high';
+        }
+      } else if (minimo) {
+        const resultadoNum = parseFloat(resultadoTC);
+        const minimoNum = parseFloat(minimo);
+        if (resultadoNum >= minimoNum) {
+          estado = '✅ Cumple';
+          estadoClass = 'status-ok';
+        } else {
+          estado = '⚠️ Bajo';
+          estadoClass = 'status-low';
+        }
+      }
+      
       nutrientesHTML += `
         <tr>
-          <td>${nombreNutriente}</td>
+          <td><strong>${nombreNutriente}</strong></td>
           <td class="text-center">${unidad}</td>
+          <td class="text-center">${sugerido || '-'}</td>
           <td class="text-center">${minimo || '-'}</td>
           <td class="text-center">${maximo || '-'}</td>
-          <td class="text-center">${resultadoTC}</td>
+          <td class="text-center"><strong>${resultadoTC}</strong></td>
           <td class="text-center">${resultadoBS}</td>
+          <td class="text-center ${estadoClass}">${estado}</td>
         </tr>`;
     }
   });
@@ -124,6 +158,12 @@ function imprimirTabla() {
                 grid-template-columns: 1fr 1fr;
                 gap: 20px;
                 margin-bottom: 30px;
+            }
+            
+            @media (max-width: 768px) {
+                .info-grid {
+                    grid-template-columns: 1fr;
+                }
             }
             
             .info-card {
@@ -192,6 +232,22 @@ function imprimirTabla() {
             
             .text-center { text-align: center; }
             .text-right { text-align: right; }
+            
+            .status-ok { 
+                background-color: #d4edda; 
+                color: #155724; 
+                font-weight: bold;
+            }
+            .status-low { 
+                background-color: #fff3cd; 
+                color: #856404; 
+                font-weight: bold;
+            }
+            .status-high { 
+                background-color: #f8d7da; 
+                color: #721c24; 
+                font-weight: bold;
+            }
             
             .summary-box {
                 background: linear-gradient(135deg, #7CB342, #8BC34A);
@@ -270,6 +326,9 @@ function imprimirTabla() {
                 <div class="info-item">
                     <span class="info-label">Etapa:</span> ${etapa}
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Fecha:</span> ${fechaActual}
+                </div>
             </div>
             
             <div class="info-card">
@@ -282,6 +341,35 @@ function imprimirTabla() {
                 </div>
                 <div class="info-item">
                     <span class="info-label">Suma inclusión:</span> ${sumaInclusion}%
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Ingredientes:</span> ${filaIndex - 1}
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>🧪 Resumen Nutricional</h3>
+                <div class="info-item">
+                    <span class="info-label">Nutrientes analizados:</span> ${nutrientesCount}
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Costo por kg:</span> $${totalPeso > 0 ? (parseFloat(totalCosto) / totalPeso).toFixed(2) : '0.00'}
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Eficiencia:</span> ${sumaInclusion}% utilizado
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>📊 Estadísticas</h3>
+                <div class="info-item">
+                    <span class="info-label">Rendimiento:</span> ${totalPeso > 0 ? ((totalPeso / tamanoBachada) * 100).toFixed(1) : '0'}%
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Costo unitario:</span> $${tamanoBachada > 0 ? (parseFloat(totalCosto) / tamanoBachada).toFixed(3) : '0.000'}/kg
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Formulación:</span> ${filaIndex > 1 ? 'Completa' : 'Incompleta'}
                 </div>
             </div>
         </div>
@@ -319,16 +407,18 @@ function imprimirTabla() {
         </div>
 
         ${nutrientesHTML ? `
-        <div class="section-title">🧪 Análisis Nutricional</div>
+        <div class="section-title">🧪 Análisis Nutricional (${nutrientesCount} nutrientes)</div>
         <table>
             <thead>
                 <tr>
                     <th>Nutriente</th>
                     <th>Unidad</th>
+                    <th>Sugerido</th>
                     <th>Mínimo</th>
                     <th>Máximo</th>
                     <th>Resultado TC</th>
                     <th>Resultado BS</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
