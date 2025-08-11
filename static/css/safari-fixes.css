@@ -1,0 +1,122 @@
+/* Correcciones específicas para Safari */
+
+/* Botones de acciones en tablas - Compatibilidad Safari */
+.btn-action-container {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-action-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+.btn-action-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: #fff;
+}
+
+.btn-action-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: #fff;
+}
+
+.btn-action-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+    color: #fff;
+}
+
+/* Iconos usando Font Awesome en lugar de emojis */
+.btn-action .fa-times,
+.btn-action .fa-info {
+    font-size: 11px;
+    line-height: 1;
+}
+
+/* Corrección específica para Safari - Alineación de celdas de acciones */
+@supports (-webkit-appearance: none) {
+    .table td:last-child {
+        text-align: center;
+        vertical-align: middle;
+        padding: 8px 4px;
+    }
+
+    .btn-action-container {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .btn-action {
+        -webkit-appearance: none;
+        -webkit-flex-shrink: 0;
+        flex-shrink: 0;
+    }
+}
+
+/* Corrección para inputs en Safari */
+@supports (-webkit-appearance: none) {
+
+    .form-control,
+    .form-select {
+        -webkit-appearance: none;
+        -webkit-border-radius: 0.375rem;
+        border-radius: 0.375rem;
+    }
+
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+    }
+}
+
+/* Mejoras adicionales para tablas en Safari */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+}
+
+/* Asegurar que los botones mantengan su tamaño */
+.btn-sm.btn-action {
+    min-width: 28px;
+    min-height: 28px;
+    max-width: 28px;
+    max-height: 28px;
+}

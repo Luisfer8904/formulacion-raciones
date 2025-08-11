@@ -24,7 +24,13 @@ function agregarFilaNutriente() {
     <td><input type="number" class="form-control form-control-sm" name="max_${contadorNutrientes}" step="0.0001" oninput="calcularMinerales();"></td>
     <td class="text-end"><span id="resultado-tc-${contadorNutrientes}">0.00</span></td>
     <td class="text-end"><span id="resultado-bs-${contadorNutrientes}">0.00</span></td>
-    <td class="text-center"><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaNutriente(this); calcularMinerales();">✖</button></td>
+    <td class="text-center">
+        <div class="btn-action-container">
+            <button type="button" class="btn-action btn-action-danger" onclick="eliminarFilaNutriente(this); calcularMinerales();" title="Eliminar nutriente">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </td>
   `;
 
   tabla.appendChild(fila);

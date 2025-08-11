@@ -151,8 +151,14 @@ function agregarFilaDesdeDatos(ing, index) {
       <td><input type="number" class="form-control form-control-sm" name="costo_ingrediente_${index}" value="${formatearPrecio(precioIngrediente, false)}" readonly></td>
       <td><input type="number" class="form-control form-control-sm" name="valor_${index}" value="${formatearPrecio(valorTotal, false)}" readonly></td>
       <td>
-          <button type="button" class="btn btn-sm btn-danger" onclick="eliminarFila(this)">✖</button>
-          <button type="button" class="btn btn-sm btn-info" onclick="mostrarInfo(this)">ℹ️</button>
+          <div class="btn-action-container">
+              <button type="button" class="btn-action btn-action-danger" onclick="eliminarFila(this)" title="Eliminar ingrediente">
+                  <i class="fas fa-times"></i>
+              </button>
+              <button type="button" class="btn-action btn-action-info" onclick="mostrarInfo(this)" title="Ver información">
+                  <i class="fas fa-info"></i>
+              </button>
+          </div>
       </td>
   `;
 
@@ -203,8 +209,14 @@ function precargarIngredientes() {
         <td><input type="number" class="form-control form-control-sm" name="costo_ingrediente_${contadorFilas}" step="0.01" readonly></td>
         <td><input type="number" class="form-control form-control-sm" name="valor_${contadorFilas}" step="0.01" readonly></td>
         <td>
-            <button type="button" class="btn btn-sm btn-danger" onclick="eliminarFila(this)">✖</button>
-            <button type="button" class="btn btn-sm btn-info" onclick="mostrarInfo(this)">ℹ️</button>
+            <div class="btn-action-container">
+                <button type="button" class="btn-action btn-action-danger" onclick="eliminarFila(this)" title="Eliminar ingrediente">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button type="button" class="btn-action btn-action-info" onclick="mostrarInfo(this)" title="Ver información">
+                    <i class="fas fa-info"></i>
+                </button>
+            </div>
         </td>
     `;
     
