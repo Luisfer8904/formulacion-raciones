@@ -129,10 +129,18 @@ function agregarFilaDesdeDatos(ing, index) {
     window.mineralesTemplate.forEach(m => {
       const selected = m.id === ing.ingrediente_id ? 'selected' : '';
       const nutrientesData = JSON.stringify(m.nutrientes);
+      let nutrientesAttr = '';
+      // Agregar atributos data-id-{nutriente_id} para cada nutriente
+      if (m.nutrientes && Array.isArray(m.nutrientes)) {
+        m.nutrientes.forEach(n => {
+          nutrientesAttr += ` data-id-${n.id}="${n.valor}"`;
+        });
+      }
       opcionesSelect += `<option value="${m.id}" ${selected} 
           data-precio="${m.precio}"
           data-ms="${m.ms}"
-          data-nutrientes="${nutrientesData}">
+          ${nutrientesAttr}
+          data-nutrientes='${nutrientesData}'>
           ${m.nombre}
       </option>`;
     });
@@ -196,10 +204,31 @@ function precargarIngredientes() {
       });
     }
 
+    let opcionesSelectVacia = `<option value="">-- Seleccionar --</option>`;
+    if (typeof window.mineralesTemplate !== 'undefined') {
+      window.mineralesTemplate.forEach(m => {
+        const nutrientesData = JSON.stringify(m.nutrientes);
+        let nutrientesAttr = '';
+        // Agregar atributos data-id-{nutriente_id} para cada nutriente
+        if (m.nutrientes && Array.isArray(m.nutrientes)) {
+          m.nutrientes.forEach(n => {
+            nutrientesAttr += ` data-id-${n.id}="${n.valor}"`;
+          });
+        }
+        opcionesSelectVacia += `<option value="${m.id}" 
+            data-precio="${m.precio}"
+            data-ms="${m.ms}"
+            ${nutrientesAttr}
+            data-nutrientes='${nutrientesData}'>
+            ${m.nombre}
+        </option>`;
+      });
+    }
+
     fila.innerHTML = `
         <td>
             <select class="form-select form-select-sm select-ingrediente" name="ingrediente_${contadorFilas}" onchange="agregarFila(this)">
-                ${opcionesSelect}
+                ${opcionesSelectVacia}
             </select>
         </td>
         <td><input type="number" class="form-control form-control-sm" name="inclusion_${contadorFilas}" min="0" max="100" step="0.1" oninput="actualizarValores(this)"></td>
