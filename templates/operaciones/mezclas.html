@@ -1,116 +1,89 @@
 {% extends "operaciones/layout.html" %}
 
-{% block titulo %}⚙️ Fórmulas Guardadas{% endblock %}
+{% block titulo %}Fórmulas Guardadas{% endblock %}
 
 {% block contenido %}
-<div class="container-fluid py-4">
-    <h2 class="mb-4 text-center">⚙️ Mezclas Guardadas</h2>
+<!-- Header profesional -->
+<div class="feedpro-header fade-in-up">
+    <h2><i class="fas fa-file-medical me-2"></i>Fórmulas Guardadas</h2>
+    <small>Gestión y visualización de mezclas formuladas</small>
+</div>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+<!-- Mensajes flash -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show fade-in-up" role="alert">
+                <i class="fas fa-info-circle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
+<!-- Sección de fórmulas -->
+<div class="info-section fade-in-up">
+    <h5 class="section-title"><i class="fas fa-list me-2"></i>Fórmulas Disponibles</h5>
+    
     {% if mezclas %}
-    <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th class="text-center">Nombre de la Mezcla</th>
-                    <th class="text-center">Tipo de Dieta</th>
-                    <th class="text-center">Etapa de Producción</th>
-                    <th class="text-center">Fecha de Creación</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for mezcla in mezclas %}
-                <tr>
-                    <td class="fw-bold">{{ mezcla.nombre }}</td>
-                    <td class="text-center">{{ mezcla.tipo_animales or 'N/A' }}</td>
-                    <td class="text-center">{{ mezcla.etapa_produccion or 'N/A' }}</td>
-                    <td class="text-center">{{ mezcla.fecha_creacion.strftime('%d/%m/%Y') if mezcla.fecha_creacion else 'N/A' }}</td>
-                    <td class="text-center">
-                        <div class="btn-group" role="group">
-                            <a href="{{ url_for('mezclas_bp.ver_mezcla_detalle', mezcla_id=mezcla.id) }}"
-                               class="btn btn-sm btn-outline-primary"
-                               title="Ver mezcla">
-                                👁️ Ver
-                            </a>
-                            <a href="{{ url_for('mezclas_bp.eliminar_mezcla', mezcla_id=mezcla.id) }}"
-                               class="btn btn-sm btn-outline-danger"
-                               title="Eliminar mezcla"
-                               onclick="return confirm('¿Estás seguro de que deseas eliminar esta mezcla?');">
-                                🗑️ Eliminar
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-tag me-1"></i>Nombre de la Mezcla</th>
+                        <th><i class="fas fa-paw me-1"></i>Tipo de Dieta</th>
+                        <th><i class="fas fa-chart-line me-1"></i>Etapa de Producción</th>
+                        <th><i class="fas fa-calendar me-1"></i>Fecha de Creación</th>
+                        <th><i class="fas fa-cogs me-1"></i>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mezcla in mezclas %}
+                    <tr>
+                        <td class="fw-bold">{{ mezcla.nombre }}</td>
+                        <td class="text-center">
+                            <span class="badge bg-info">{{ mezcla.tipo_animales or 'N/A' }}</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-secondary">{{ mezcla.etapa_produccion or 'N/A' }}</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-success">{{ mezcla.fecha_creacion.strftime('%d/%m/%Y') if mezcla.fecha_creacion else 'N/A' }}</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-action-container">
+                                <a href="{{ url_for('mezclas_bp.ver_mezcla_detalle', mezcla_id=mezcla.id) }}"
+                                   class="btn-action btn-action-info"
+                                   title="Ver mezcla">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('mezclas_bp.eliminar_mezcla', mezcla_id=mezcla.id) }}"
+                                   class="btn-action btn-action-danger"
+                                   title="Eliminar mezcla"
+                                   onclick="return confirm('¿Estás seguro de que deseas eliminar esta mezcla?');">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <div class="mt-3">
-        <small class="text-muted">
-            <strong>Total de mezclas:</strong> {{ mezclas|length }}
-        </small>
-    </div>
+        <div class="mt-3">
+            <div class="summary-card text-center">
+                <h5><i class="fas fa-file-medical me-2"></i>{{ mezclas|length }}</h5>
+                <small>Total de fórmulas guardadas</small>
+            </div>
+        </div>
 
     {% else %}
         <div class="alert alert-warning text-center">
-            <h5>📋 No hay mezclas registradas aún para tu usuario</h5>
-            <p class="mb-0">Comienza creando tu primera mezcla desde el módulo de formulación.</p>
+            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+            <h5>No hay fórmulas registradas</h5>
+            <p class="mb-0">Comienza creando tu primera fórmula desde el módulo de formulación.</p>
         </div>
     {% endif %}
 </div>
-
-<style>
-    .table th {
-        background-color: #2c3e50 !important;
-        color: white !important;
-        font-weight: 600;
-        border: none;
-        font-size: 0.75rem;
-        padding: 4px 6px;
-    }
-
-    .table td {
-        vertical-align: middle;
-        padding: 4px 6px;
-        font-size: 0.75rem;
-    }
-
-    .btn-group .btn {
-        margin: 0 1px;
-        font-size: 0.7rem;
-        padding: 2px 4px;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f0f0f0;
-    }
-
-    @media (max-width: 768px) {
-        .table-responsive {
-            font-size: 0.7rem;
-        }
-
-        .btn-group {
-            flex-direction: column;
-        }
-
-        .btn-group .btn {
-            margin: 1px 0;
-            font-size: 0.65rem;
-            padding: 3px 4px;
-        }
-    }
-</style>
 {% endblock %}
