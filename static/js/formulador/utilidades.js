@@ -178,10 +178,11 @@ function mostrarSelectorRequerimientos() {
   modal.show();
 }
 
-let requerimientoSeleccionado = null;
-
 function seleccionarRequerimiento(id, nombre) {
-  requerimientoSeleccionado = { id, nombre };
+  if (typeof requerimientoSeleccionado === 'undefined') {
+    window.requerimientoSeleccionado = null;
+  }
+  window.requerimientoSeleccionado = { id, nombre };
   
   // Mostrar preview
   fetch(`/api/requerimiento/${id}/nutrientes`)
@@ -236,13 +237,13 @@ function seleccionarRequerimiento(id, nombre) {
 }
 
 function aplicarRequerimientosSeleccionados() {
-  if (!requerimientoSeleccionado) {
+  if (!window.requerimientoSeleccionado) {
     alert('Selecciona un requerimiento primero');
     return;
   }
   
   // Cargar nutrientes del requerimiento seleccionado
-  fetch(`/api/requerimiento/${requerimientoSeleccionado.id}/nutrientes`)
+  fetch(`/api/requerimiento/${window.requerimientoSeleccionado.id}/nutrientes`)
     .then(response => response.json())
     .then(data => {
       if (data.error) {
@@ -291,7 +292,7 @@ function aplicarRequerimientosSeleccionados() {
         calcularMinerales();
       }
       
-      alert(`✅ Requerimientos "${requerimientoSeleccionado.nombre}" aplicados correctamente`);
+      alert(`✅ Requerimientos "${window.requerimientoSeleccionado.nombre}" aplicados correctamente`);
     })
     .catch(error => {
       console.error('Error:', error);
