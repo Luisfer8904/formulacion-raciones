@@ -1,86 +1,114 @@
 {% extends "operaciones/layout.html" %}
 
 {% block contenido %}
-<h1 class="mb-4 text-center">Panel de Control - Nutrición Animal</h1>
-<p class="lead text-center">Bienvenido, {{ session.get('nombre', 'Usuario') }}.</p>
+<!-- Header profesional -->
+<div class="feedpro-header fade-in-up">
+    <h2><i class="fas fa-tachometer-alt me-2"></i>Panel de Control - Nutrición Animal</h2>
+    <small>Bienvenido, {{ session.get('nombre', 'Usuario') }} FeedPro.</small>
+</div>
 
-<div class="row">
+<!-- Tarjetas de resumen -->
+<div class="summary-cards fade-in-up">
+    <div class="summary-card">
+        <h4><i class="fas fa-balance-scale me-2"></i>{{ total_formulaciones }}</h4>
+        <small>Formulaciones</small>
+    </div>
+    <div class="summary-card">
+        <h4><i class="fas fa-seedling me-2"></i>{{ total_ingredientes }}</h4>
+        <small>Ingredientes</small>
+    </div>
+    <div class="summary-card">
+        <h4><i class="fas fa-chart-line me-2"></i>{{ total_reportes }}</h4>
+        <small>Reportes</small>
+    </div>
+</div>
+
+<!-- Navegación principal -->
+<div class="row fade-in-up">
     <div class="col-md-4 mb-4">
-        <div class="card shadow border-0 rounded-lg">
-            <div class="card-body text-center">
-                <i class="fas fa-drumstick-bite fa-3x mb-3 text-primary"></i>
-                <h5 class="card-title font-weight-bold">Formular Raciones</h5>
-                <h5 class="font-weight-bold text-primary">{{ total_formulaciones }}</h5>
-                <p class="card-text text-muted">Cree, modifique y gestione las formulaciones de raciones para diferentes especies.</p>
-                <a href="{{ url_for('usuarios_bp.panelformulador') }}" class="btn btn-primary btn-sm mt-2">Acceder</a>
+        <a href="{{ url_for('usuarios_bp.panelformulador') }}" class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-balance-scale"></i>
             </div>
-        </div>
+            <h5>Formular Raciones</h5>
+            <p>Cree, modifique y gestione las formulaciones de raciones para diferentes especies.</p>
+        </a>
     </div>
 
     <div class="col-md-4 mb-4">
-        <div class="card shadow border-0 rounded-lg">
-            <div class="card-body text-center">
-                <i class="fas fa-seedling fa-3x mb-3 text-success"></i>
-                <h5 class="card-title font-weight-bold">Ingredientes</h5>
-                <h5 class="font-weight-bold text-success">{{ total_ingredientes }}</h5>
-                <p class="card-text text-muted">Administre los ingredientes disponibles y sus características nutricionales.</p>
-                <a href="{{ url_for('ingredientes_bp.ver_ingredientes') }}" class="btn btn-success btn-sm mt-2">Acceder</a>
+        <a href="{{ url_for('ingredientes_bp.ver_ingredientes') }}" class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-seedling"></i>
             </div>
-        </div>
+            <h5>Ingredientes</h5>
+            <p>Administre los ingredientes disponibles y sus características nutricionales.</p>
+        </a>
     </div>
 
     <div class="col-md-4 mb-4">
-        <div class="card shadow border-0 rounded-lg">
-            <div class="card-body text-center">
-                <i class="fas fa-chart-line fa-3x mb-3 text-info"></i>
-                <h5 class="card-title font-weight-bold">Reportes</h5>
-                <h5 class="font-weight-bold text-info">{{ total_reportes }}</h5>
-                <p class="card-text text-muted">Genere reportes detallados de sus formulaciones y resultados de producción.</p>
-                <a href="{{ url_for('mezclas_bp.ver_mezclas') }}" class="btn btn-info btn-sm mt-2">Acceder</a>
+        <a href="{{ url_for('mezclas_bp.ver_mezclas') }}" class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h5>Reportes</h5>
+            <p>Genere reportes detallados de sus formulaciones y resultados de producción.</p>
+        </a>
+    </div>
+</div>
+
+<!-- Resumen general -->
+<div class="info-section fade-in-up">
+    <h5 class="section-title"><i class="fas fa-chart-bar me-2"></i>Resumen General</h5>
+    <p class="text-muted">Visualice de forma rápida y sencilla el estado actual de su gestión nutricional y producción animal.</p>
+    
+    <div class="row text-center mt-4">
+        <div class="col-md-4">
+            <div class="summary-card mb-3">
+                <h4>{{ total_formulaciones }}</h4>
+                <small>Formulaciones guardadas</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card mb-3">
+                <h4>{{ total_ingredientes }}</h4>
+                <small>Ingredientes activos</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card mb-3">
+                <h4>{{ total_reportes }}</h4>
+                <small>Reportes generados</small>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12 mt-4">
-        <div class="card shadow border-0 rounded-lg">
-            <div class="card-body text-center">
-                <h4 class="card-title font-weight-bold mb-3">Resumen General</h4>
-                <p class="card-text text-muted">Visualice de forma rápida y sencilla el estado actual de su gestión nutricional y producción animal.</p>
-                <div class="d-flex justify-content-around mt-4">
-                    <div>
-                        <h5 class="font-weight-bold text-primary">{{ total_formulaciones }}</h5>
-                        <p class="text-muted small">Formulaciones guardadas</p>
-                    </div>
-                    <div>
-                        <h5 class="font-weight-bold text-success">{{ total_ingredientes }}</h5>
-                        <p class="text-muted small">Ingredientes activos</p>
-                    </div>
-                    <div>
-                        <h5 class="font-weight-bold text-info">{{ total_reportes }}</h5>
-                        <p class="text-muted small">Reportes generados</p>
-                    </div>
-                </div>
-            </div>
+<!-- Historial de actividades -->
+<div class="info-section fade-in-up">
+    <h5 class="section-title"><i class="fas fa-history me-2"></i>Historial de Actividades</h5>
+    {% if actividades %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-tasks me-1"></i>Actividad</th>
+                        <th><i class="fas fa-calendar me-1"></i>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for actividad in actividades %}
+                    <tr>
+                        <td>{{ actividad.descripcion }}</td>
+                        <td><span class="badge bg-primary">{{ actividad.fecha }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="card shadow border-0 rounded-lg mt-4">
-            <div class="card-body">
-                <h4 class="card-title font-weight-bold mb-3">Historial de Actividades</h4>
-                {% if actividades %}
-                    <ul class="list-group list-group-flush">
-                        {% for actividad in actividades %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>{{ actividad.descripcion }}</span>
-                                <small class="text-muted">{{ actividad.fecha }}</small>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-muted">No hay actividades recientes.</p>
-                {% endif %}
-            </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>No hay actividades recientes.
         </div>
-    </div>
+    {% endif %}
 </div>
 {% endblock %}
