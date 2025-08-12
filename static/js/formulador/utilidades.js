@@ -8,19 +8,9 @@ function imprimirTabla() {
   const tamanoBachada = parseFloat(document.getElementById("tamano-bachada").value) || 100;
   const totalCosto = document.getElementById("suma-total").textContent || "0.00";
   const sumaInclusion = document.getElementById("suma-inclusion").textContent || "0";
-  
-  // Obtener fecha actual
-  const fechaActual = new Date().toLocaleDateString('es-ES', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
 
   // Recopilar ingredientes
-  let ingredientesHTML = '';
-  let filaIndex = 1;
-  let totalPeso = 0;
-  
+  let ingredientes = [];
   document.querySelectorAll('#tabla-ingredientes tr').forEach(fila => {
     const select = fila.querySelector('select');
     const nombreIngrediente = select?.options[select.selectedIndex]?.text || '';
@@ -30,38 +20,18 @@ function imprimirTabla() {
     const total = parseFloat(fila.querySelector('input[name^="valor_"]')?.value || 0);
     
     if (select && select.value && inclusion > 0) {
-      totalPeso += peso;
-      ingredientesHTML += `
-        <tr>
-          <td>
-            <select class="form-select form-select-sm" disabled>
-              <option selected>${nombreIngrediente}</option>
-            </select>
-          </td>
-          <td><input type="number" class="form-control form-control-sm" value="${inclusion.toFixed(2)}" readonly></td>
-          <td><input type="number" class="form-control form-control-sm" value="-" readonly></td>
-          <td><input type="number" class="form-control form-control-sm" value="-" readonly></td>
-          <td><input type="number" class="form-control form-control-sm" value="${peso.toFixed(2)}" readonly></td>
-          <td><input type="number" class="form-control form-control-sm" value="${precio.toFixed(2)}" readonly></td>
-          <td><input type="number" class="form-control form-control-sm" value="${total.toFixed(2)}" readonly></td>
-          <td>
-            <div class="btn-action-container">
-              <button type="button" class="btn-action btn-action-danger" disabled>
-                <i class="fas fa-times"></i>
-              </button>
-              <button type="button" class="btn-action btn-action-info" disabled>
-                <i class="fas fa-info"></i>
-              </button>
-            </div>
-          </td>
-        </tr>`;
-      filaIndex++;
+      ingredientes.push({
+        nombre: nombreIngrediente,
+        inclusion: inclusion.toFixed(2),
+        peso: peso.toFixed(2),
+        precio: precio.toFixed(2),
+        valor_total: total.toFixed(2)
+      });
     }
   });
 
   // Recopilar nutrientes
-  let nutrientesHTML = '';
-  let nutrientesCount = 0;
+  let nutrientes = [];
   document.querySelectorAll('#tabla-nutrientes tr').forEach(fila => {
     const select = fila.querySelector('select');
     const nombreNutriente = select?.options[select.selectedIndex]?.text || '';
@@ -73,297 +43,59 @@ function imprimirTabla() {
     const resultadoBS = fila.querySelector('span[id^="resultado-bs-"]')?.textContent || '0.00';
     
     if (select && select.value && nombreNutriente.trim() !== '') {
-      nutrientesCount++;
-      nutrientesHTML += `
-        <tr>
-          <td>
-            <select class="form-select form-select-sm" disabled>
-              <option selected>${nombreNutriente}</option>
-            </select>
-          </td>
-          <td><input type="text" class="form-control form-control-sm" value="${unidad}" readonly></td>
-          <td><input type="number" class="form-control form-control-sm" value="${sugerido || ''}" readonly></td>
-          <td><input type="number" class="form-control form-control-sm" value="${minimo || ''}" readonly></td>
-          <td><input type="number" class="form-control form-control-sm" value="${maximo || ''}" readonly></td>
-          <td class="text-end"><span class="badge bg-primary">${resultadoTC}</span></td>
-          <td class="text-end"><span class="badge bg-secondary">${resultadoBS}</span></td>
-          <td class="text-center">
-            <div class="btn-action-container">
-              <button type="button" class="btn-action btn-action-danger" disabled>
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-          </td>
-        </tr>`;
+      nutrientes.push({
+        nombre: nombreNutriente,
+        unidad: unidad,
+        sugerido: sugerido || '',
+        minimo: minimo || '',
+        maximo: maximo || '',
+        resultado_tc: resultadoTC,
+        resultado_bs: resultadoBS
+      });
     }
   });
 
-  const contenidoHTML = `
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Formulación - ${nombre}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <style>
-            @media print {
-                @page { margin: 1cm; size: A4; }
-                .no-print { display: none !important; }
-                body { font-size: 12px; }
-            }
-            
-            body {
-                background-color: #f8f9fa;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            }
-            
-            .print-header {
-                background: linear-gradient(135deg, #2c3e50, #34495e);
-                color: white;
-                padding: 20px;
-                border-radius: 10px;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-            
-            .print-header h2 {
-                margin: 0;
-                font-weight: 700;
-            }
-            
-            .print-header small {
-                opacity: 0.8;
-            }
-            
-            .info-section {
-                background: white;
-                border-radius: 10px;
-                padding: 20px;
-                margin-bottom: 20px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-            
-            .section-title {
-                color: #7CB342;
-                font-weight: 700;
-                margin-bottom: 15px;
-                padding-bottom: 10px;
-                border-bottom: 2px solid #7CB342;
-            }
-            
-            .table {
-                margin-bottom: 0;
-            }
-            
-            .table th {
-                background: #7CB342;
-                color: white;
-                border: none;
-                font-weight: 600;
-                text-transform: uppercase;
-                font-size: 11px;
-                letter-spacing: 0.5px;
-            }
-            
-            .btn-action-container {
-                display: flex;
-                gap: 4px;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .btn-action {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 28px;
-                height: 28px;
-                padding: 0;
-                border-radius: 4px;
-                font-size: 12px;
-                border: 1px solid transparent;
-                opacity: 0.6;
-            }
-            
-            .btn-action-danger {
-                background-color: #dc3545;
-                border-color: #dc3545;
-                color: #fff;
-            }
-            
-            .btn-action-info {
-                background-color: #17a2b8;
-                border-color: #17a2b8;
-                color: #fff;
-            }
-            
-            .summary-cards {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 15px;
-                margin-bottom: 20px;
-            }
-            
-            .summary-card {
-                background: linear-gradient(135deg, #7CB342, #8BC34A);
-                color: white;
-                padding: 15px;
-                border-radius: 8px;
-                text-align: center;
-            }
-            
-            .summary-card h5 {
-                margin: 0;
-                font-size: 24px;
-                font-weight: bold;
-            }
-            
-            .summary-card small {
-                opacity: 0.9;
-            }
-            
-            .print-footer {
-                margin-top: 30px;
-                text-align: center;
-                color: #6c757d;
-                font-size: 12px;
-                border-top: 1px solid #dee2e6;
-                padding-top: 15px;
-            }
-            
-            .no-print {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1000;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="no-print">
-            <button class="btn btn-primary" onclick="window.print()">
-                <i class="fas fa-print me-2"></i>Imprimir
-            </button>
-            <button class="btn btn-secondary ms-2" onclick="window.close()">
-                <i class="fas fa-times me-2"></i>Cerrar
-            </button>
-        </div>
-        
-        <div class="container-fluid py-4">
-            <div class="print-header">
-                <h2><i class="fas fa-balance-scale me-2"></i>Formulación y Control de Mezclas</h2>
-                <small>Generado el ${fechaActual}</small>
-            </div>
-            
-            <div class="info-section">
-                <h5 class="section-title"><i class="fas fa-info-circle me-2"></i>Información de la Mezcla</h5>
-                <div class="row">
-                    <div class="col-md-3">
-                        <label class="form-label">Nombre de la Mezcla:</label>
-                        <input type="text" class="form-control form-control-sm" value="${nombre}" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Tipo de Animales:</label>
-                        <input type="text" class="form-control form-control-sm" value="${tipo}" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Etapa de Producción:</label>
-                        <input type="text" class="form-control form-control-sm" value="${etapa}" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Tamaño de Bachada (kg):</label>
-                        <input type="number" class="form-control form-control-sm" value="${tamanoBachada}" readonly>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <label class="form-label">Observaciones:</label>
-                    <textarea class="form-control form-control-sm" rows="2" readonly>${observaciones}</textarea>
-                </div>
-            </div>
+  // Preparar datos para enviar
+  const datosImpresion = {
+    nombre_mezcla: nombre,
+    tipo_animales: tipo,
+    etapa_produccion: etapa,
+    observaciones: observaciones,
+    tamano_bachada: tamanoBachada,
+    total_costo: totalCosto,
+    suma_inclusion: sumaInclusion,
+    ingredientes: ingredientes,
+    nutrientes: nutrientes
+  };
 
-            <div class="summary-cards">
-                <div class="summary-card">
-                    <h5>$${totalCosto}</h5>
-                    <small>Costo Total</small>
-                </div>
-                <div class="summary-card">
-                    <h5>${sumaInclusion}%</h5>
-                    <small>Suma Inclusión</small>
-                </div>
-                <div class="summary-card">
-                    <h5>${filaIndex - 1}</h5>
-                    <small>Ingredientes</small>
-                </div>
-                <div class="summary-card">
-                    <h5>${nutrientesCount}</h5>
-                    <small>Nutrientes</small>
-                </div>
-            </div>
-            
-            <div class="info-section">
-                <h5 class="section-title"><i class="fas fa-seedling me-2"></i>Ingredientes Disponibles</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-sm">
-                        <thead>
-                            <tr>
-                                <th>Ingrediente</th>
-                                <th>Inclusión (%)</th>
-                                <th>Límite Mín. (%)</th>
-                                <th>Límite Máx. (%)</th>
-                                <th>Peso en Bachada (kg)</th>
-                                <th>Costo Ingrediente ($/kg)</th>
-                                <th>Valor Total ($)</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${ingredientesHTML}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            ${nutrientesHTML ? `
-            <div class="info-section">
-                <h5 class="section-title"><i class="fas fa-pills me-2"></i>Nutrientes y Requerimientos</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-sm">
-                        <thead>
-                            <tr>
-                                <th>Nutriente</th>
-                                <th>Unidad</th>
-                                <th>Sugerido</th>
-                                <th>Mínimo</th>
-                                <th>Máximo</th>
-                                <th>Resultado TC</th>
-                                <th>Resultado BS</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${nutrientesHTML}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            ` : ''}
-            
-            <div class="print-footer">
-                <p><strong>Sistema de Formulación Nutricional</strong></p>
-                <p>Documento generado automáticamente - ${fechaActual}</p>
-            </div>
-        </div>
-        
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
-  `;
+  // Crear un formulario temporal para enviar los datos via POST
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/hoja_impresion';
+  form.target = '_blank'; // Abrir en nueva ventana
+  form.style.display = 'none';
 
-  const ventana = window.open('', '_blank', 'width=1200,height=800');
-  ventana.document.write(contenidoHTML);
-  ventana.document.close();
+  // Agregar los datos como campo oculto
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'datos';
+  input.value = JSON.stringify(datosImpresion);
+  form.appendChild(input);
+
+  // Agregar CSRF token si existe
+  const csrfToken = document.querySelector('meta[name="csrf-token"]');
+  if (csrfToken) {
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrf_token';
+    csrfInput.value = csrfToken.getAttribute('content');
+    form.appendChild(csrfInput);
+  }
+
+  // Enviar el formulario
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
 }
 
 // Función para marcar que hay cambios sin guardar
