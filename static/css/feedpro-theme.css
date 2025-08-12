@@ -95,13 +95,26 @@ body {
 }
 
 .summary-card {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    color: var(--white);
-    padding: 20px;
-    border-radius: var(--border-radius-sm);
+    background: var(--white);
+    color: var(--text-dark);
+    padding: 25px 20px;
+    border-radius: var(--border-radius);
     text-align: center;
     transition: var(--transition);
     box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
 }
 
 .summary-card:hover {
@@ -112,13 +125,27 @@ body {
 .summary-card h3,
 .summary-card h4,
 .summary-card h5 {
-    margin: 0 0 5px 0;
-    font-weight: bold;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .summary-card small {
-    opacity: 0.9;
-    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-card i {
+    color: var(--primary-color);
+    opacity: 0.8;
 }
 
 /* Tablas mejoradas */
@@ -420,4 +447,168 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-dark);
+}
+
+/* Estilos específicos para el formulador */
+.formulador-table {
+    font-size: 0.85rem;
+}
+
+.formulador-table th {
+    padding: 8px 6px !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.formulador-table td {
+    padding: 6px 4px !important;
+    vertical-align: middle;
+}
+
+.formulador-table .form-control,
+.formulador-table .form-select {
+    font-size: 0.8rem;
+    padding: 4px 6px;
+    min-height: 28px;
+}
+
+.formulador-table .btn-action {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+}
+
+/* Mejorar el espaciado de las columnas del formulador */
+.formulador-table th:nth-child(1),
+.formulador-table td:nth-child(1) {
+    width: 200px;
+    min-width: 200px;
+}
+
+.formulador-table th:nth-child(2),
+.formulador-table td:nth-child(2) {
+    width: 100px;
+    min-width: 100px;
+}
+
+.formulador-table th:nth-child(3),
+.formulador-table td:nth-child(3) {
+    width: 100px;
+    min-width: 100px;
+}
+
+.formulador-table th:nth-child(4),
+.formulador-table td:nth-child(4) {
+    width: 100px;
+    min-width: 100px;
+}
+
+.formulador-table th:nth-child(5),
+.formulador-table td:nth-child(5) {
+    width: 120px;
+    min-width: 120px;
+}
+
+.formulador-table th:nth-child(6),
+.formulador-table td:nth-child(6) {
+    width: 120px;
+    min-width: 120px;
+}
+
+.formulador-table th:nth-child(7),
+.formulador-table td:nth-child(7) {
+    width: 100px;
+    min-width: 100px;
+}
+
+.formulador-table th:nth-child(8),
+.formulador-table td:nth-child(8) {
+    width: 80px;
+    min-width: 80px;
+}
+
+/* Tabla de nutrientes del formulador */
+.nutrientes-table th:nth-child(1),
+.nutrientes-table td:nth-child(1) {
+    width: 180px;
+    min-width: 180px;
+}
+
+.nutrientes-table th:nth-child(2),
+.nutrientes-table td:nth-child(2) {
+    width: 80px;
+    min-width: 80px;
+}
+
+.nutrientes-table th:nth-child(3),
+.nutrientes-table td:nth-child(3) {
+    width: 90px;
+    min-width: 90px;
+}
+
+.nutrientes-table th:nth-child(4),
+.nutrientes-table td:nth-child(4) {
+    width: 90px;
+    min-width: 90px;
+}
+
+.nutrientes-table th:nth-child(5),
+.nutrientes-table td:nth-child(5) {
+    width: 90px;
+    min-width: 90px;
+}
+
+.nutrientes-table th:nth-child(6),
+.nutrientes-table td:nth-child(6) {
+    width: 100px;
+    min-width: 100px;
+}
+
+.nutrientes-table th:nth-child(7),
+.nutrientes-table td:nth-child(7) {
+    width: 100px;
+    min-width: 100px;
+}
+
+.nutrientes-table th:nth-child(8),
+.nutrientes-table td:nth-child(8) {
+    width: 80px;
+    min-width: 80px;
+}
+
+/* Responsive para formulador */
+@media (max-width: 1200px) {
+
+    .formulador-table,
+    .nutrientes-table {
+        font-size: 0.75rem;
+    }
+
+    .formulador-table .form-control,
+    .formulador-table .form-select,
+    .nutrientes-table .form-control,
+    .nutrientes-table .form-select {
+        font-size: 0.7rem;
+        padding: 2px 4px;
+        min-height: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .formulador-table th,
+    .formulador-table td,
+    .nutrientes-table th,
+    .nutrientes-table td {
+        padding: 4px 2px !important;
+        font-size: 0.7rem;
+    }
+
+    .formulador-table .btn-action,
+    .nutrientes-table .btn-action {
+        width: 20px;
+        height: 20px;
+        font-size: 8px;
+    }
 }
