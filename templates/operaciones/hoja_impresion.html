@@ -11,6 +11,19 @@
             @page { margin: 1cm; size: A4; }
             .no-print { display: none !important; }
             body { font-size: 12px; }
+            .page-break { page-break-before: always; }
+            .section-header { margin-top: 0; }
+        }
+        
+        .page-break {
+            display: none;
+        }
+        
+        @media print {
+            .page-break {
+                display: block;
+                page-break-before: always;
+            }
         }
         
         body {
@@ -201,8 +214,11 @@
             </div>
         </div>
         
+        <!-- Salto de página para la segunda sección -->
+        <div class="page-break"></div>
+        
         <div class="info-section">
-            <h5 class="section-title"><i class="fas fa-seedling me-2"></i>Ingredientes Disponibles</h5>
+            <h5 class="section-title section-header"><i class="fas fa-seedling me-2"></i>Ingredientes Disponibles</h5>
             <div class="table-responsive">
                 <table class="table table-bordered table-sm">
                     <thead>
@@ -249,8 +265,11 @@
         </div>
         
         {% if nutrientes %}
+        <!-- Salto de página para la tercera sección -->
+        <div class="page-break"></div>
+        
         <div class="info-section">
-            <h5 class="section-title"><i class="fas fa-pills me-2"></i>Nutrientes y Requerimientos</h5>
+            <h5 class="section-title section-header"><i class="fas fa-pills me-2"></i>Nutrientes y Requerimientos</h5>
             <div class="table-responsive">
                 <table class="table table-bordered table-sm">
                     <thead>
