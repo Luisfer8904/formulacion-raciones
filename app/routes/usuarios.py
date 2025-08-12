@@ -137,13 +137,10 @@ def hoja_impresion():
         return jsonify({'error': 'No autorizado'}), 401
     
     try:
-        # Recibir datos del formulario
-        datos_json = request.form.get('datos')
-        if not datos_json:
+        # Recibir datos JSON
+        data = request.get_json()
+        if not data:
             return jsonify({'error': 'No se recibieron datos'}), 400
-            
-        import json
-        data = json.loads(datos_json)
         
         # Información básica
         nombre_mezcla = data.get('nombre_mezcla', 'Sin nombre')

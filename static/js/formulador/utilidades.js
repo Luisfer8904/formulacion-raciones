@@ -68,34 +68,34 @@ function imprimirTabla() {
     nutrientes: nutrientes
   };
 
-  // Crear un formulario temporal para enviar los datos via POST
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '/hoja_impresion';
-  form.target = '_blank'; // Abrir en nueva ventana
-  form.style.display = 'none';
-
-  // Agregar los datos como campo oculto
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'datos';
-  input.value = JSON.stringify(datosImpresion);
-  form.appendChild(input);
-
-  // Agregar CSRF token si existe
-  const csrfToken = document.querySelector('meta[name="csrf-token"]');
-  if (csrfToken) {
-    const csrfInput = document.createElement('input');
-    csrfInput.type = 'hidden';
-    csrfInput.name = 'csrf_token';
-    csrfInput.value = csrfToken.getAttribute('content');
-    form.appendChild(csrfInput);
-  }
-
-  // Enviar el formulario
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
+  // Usar fetch para enviar los datos y luego abrir la nueva ventana
+  fetch('/hoja_impresion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(datosImpresion)
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.text();
+    }
+    throw new Error('Error en la respuesta del servidor');
+  })
+  .then(html => {
+    // Abrir nueva ventana y escribir el HTML
+    const ventana = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    if (ventana) {
+      ventana.document.write(html);
+      ventana.document.close();
+    } else {
+      alert('No se pudo abrir la ventana de impresión. Verifica que no esté bloqueada por el navegador.');
+    }
+  })
+  .catch(error => {
+    console.error('Error al generar hoja de impresión:', error);
+    alert('Error al generar la hoja de impresión. Inténtalo de nuevo.');
+  });
 }
 
 // Función para marcar que hay cambios sin guardar
