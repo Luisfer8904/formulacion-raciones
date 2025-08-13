@@ -112,8 +112,8 @@ def nuevo_requerimiento():
             # Insertar el nuevo requerimiento
             print(f"🔄 Insertando requerimiento en la base de datos...")
             cursor.execute("""
-                INSERT INTO requerimientos (usuario_id, nombre, tipo_especie, comentario, fecha_creacion)
-                VALUES (%s, %s, %s, %s, NOW())
+                INSERT INTO requerimientos (usuario_id, nombre, tipo_especie, comentario)
+                VALUES (%s, %s, %s, %s)
             """, (usuario_id, nombre, tipo_especie, comentario))
             
             requerimiento_id = cursor.lastrowid
