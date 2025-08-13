@@ -17,6 +17,27 @@
   </div>
 </div>
 
+<!-- Sección de Requerimientos Sugeridos -->
+<div class="requerimientos-section py-4" style="background: #f8f9fa;">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h4 class="text-center mb-4" style="color: #2c3e50;">
+          <i class="fas fa-clipboard-list me-2"></i>Requerimientos Nutricionales Disponibles
+        </h4>
+        <div id="requerimientos-container" class="row g-3">
+          <!-- Los requerimientos se cargarán aquí dinámicamente -->
+          <div class="col-12 text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando requerimientos...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Sección de Especies -->
 <div class="especies-section py-5">
   <div class="container">
@@ -315,5 +336,186 @@
       font-size: 0.7rem;
     }
   }
+  
+  /* Estilos para la sección de requerimientos */
+  .requerimiento-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+  }
+  
+  .requerimiento-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #7CB342;
+  }
+  
+  .requerimiento-card.selected {
+    border: 2px solid #7CB342;
+    background: linear-gradient(135deg, #f8fff4 0%, #ffffff 100%);
+  }
+  
+  .requerimiento-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .requerimiento-especie {
+    font-size: 0.9rem;
+    color: #7CB342;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .requerimiento-comentario {
+    font-size: 0.85rem;
+    color: #6c757d;
+    line-height: 1.4;
+  }
+  
+  .requerimiento-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #7CB342 0%, #8BC34A 100%);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+  }
+  
+  .no-requerimientos {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+  }
+  
+  .no-requerimientos i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    cargarRequerimientos();
+});
+
+function cargarRequerimientos() {
+    fetch('/api/requerimientos_usuario')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al cargar requerimientos');
+            }
+            return response.json();
+        })
+        .then(requerimientos => {
+            mostrarRequerimientos(requerimientos);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarErrorRequerimientos();
+        });
+}
+
+function mostrarRequerimientos(requerimientos) {
+    const container = document.getElementById('requerimientos-container');
+    
+    if (!requerimientos || requerimientos.length === 0) {
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="no-requerimientos">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h5>No hay requerimientos disponibles</h5>
+                    <p>Crea tus primeros requerimientos nutricionales para comenzar a formular.</p>
+                    <a href="/nuevo_requerimiento" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Crear Requerimiento
+                    </a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    requerimientos.forEach(req => {
+        html += `
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="requerimiento-card" onclick="seleccionarRequerimiento(${req.id}, '${req.nombre}')" data-id="${req.id}">
+                    <div class="requerimiento-badge">Disponible</div>
+                    <div class="requerimiento-title">${req.nombre}</div>
+                    <div class="requerimiento-especie">
+                        <i class="fas fa-tag me-1"></i>${req.tipo_especie || 'General'}
+                    </div>
+                    <div class="requerimiento-comentario">
+                        ${req.comentario || 'Sin descripción adicional'}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function mostrarErrorRequerimientos() {
+    const container = document.getElementById('requerimientos-container');
+    container.innerHTML = `
+        <div class="col-12">
+            <div class="no-requerimientos">
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                <h5>Error al cargar requerimientos</h5>
+                <p>No se pudieron cargar los requerimientos. Inténtalo de nuevo.</p>
+                <button onclick="cargarRequerimientos()" class="btn btn-outline-primary">
+                    <i class="fas fa-refresh me-2"></i>Reintentar
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function seleccionarRequerimiento(id, nombre) {
+    // Remover selección anterior
+    document.querySelectorAll('.requerimiento-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    // Seleccionar el nuevo
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) {
+        card.classList.add('selected');
+    }
+    
+    // Mostrar mensaje de confirmación
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.innerHTML = `
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+            <i class="fas fa-check-circle me-2"></i>
+            Requerimiento "${nombre}" seleccionado
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    // Remover el toast después de 3 segundos
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 3000);
+    
+    console.log(`Requerimiento seleccionado: ${nombre} (ID: ${id})`);
+}
+</script>
 {% endblock %}

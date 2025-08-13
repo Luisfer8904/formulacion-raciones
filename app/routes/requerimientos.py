@@ -65,28 +65,83 @@ def nuevo_requerimiento():
         return redirect(url_for('auth_bp.login'))
 
     if request.method == 'POST':
-        nombre = request.form['nombre']
-        tipo_especie = request.form['tipo_especie']
-        comentario = request.form.get('comentario', '')
-        usuario_id = session['user_id']
-
         try:
+            # Validar datos del formulario
+            nombre = request.form.get('nombre', '').strip()
+            tipo_especie = request.form.get('tipo_especie', '').strip()
+            comentario = request.form.get('comentario', '').strip()
+            usuario_id = session['user_id']
+
+            print(f"📝 Datos recibidos - Nombre: '{nombre}', Tipo: '{tipo_especie}', Usuario: {usuario_id}")
+
+            # Validaciones básicas
+            if not nombre:
+                flash('El nombre del requerimiento es obligatorio.', 'error')
+                return render_template('operaciones/nuevo_requerimiento.html')
+            
+            if not tipo_especie:
+                flash('El tipo de especie es obligatorio.', 'error')
+                return render_template('operaciones/nuevo_requerimiento.html')
+
+            if len(nombre) > 255:
+                flash('El nombre del requerimiento es demasiado largo (máximo 255 caracteres).', 'error')
+                return render_template('operaciones/nuevo_requerimiento.html')
+
+            # Intentar guardar en la base de datos
             conn = get_db_connection()
+            if not conn:
+                print("❌ Error: No se pudo conectar a la base de datos")
+                flash('Error de conexión a la base de datos. Inténtalo de nuevo.', 'danger')
+                return render_template('operaciones/nuevo_requerimiento.html')
+
             cursor = conn.cursor()
+            
+            # Verificar si ya existe un requerimiento con el mismo nombre para este usuario
             cursor.execute("""
-                INSERT INTO requerimientos (usuario_id, nombre, tipo_especie, comentario)
-                VALUES (%s, %s, %s, %s)
+                SELECT id FROM requerimientos 
+                WHERE usuario_id = %s AND nombre = %s
+                LIMIT 1
+            """, (usuario_id, nombre))
+            
+            if cursor.fetchone():
+                flash('Ya existe un requerimiento con ese nombre. Elige un nombre diferente.', 'warning')
+                cursor.close()
+                conn.close()
+                return render_template('operaciones/nuevo_requerimiento.html')
+
+            # Insertar el nuevo requerimiento
+            print(f"🔄 Insertando requerimiento en la base de datos...")
+            cursor.execute("""
+                INSERT INTO requerimientos (usuario_id, nombre, tipo_especie, comentario, fecha_creacion)
+                VALUES (%s, %s, %s, %s, NOW())
             """, (usuario_id, nombre, tipo_especie, comentario))
+            
+            requerimiento_id = cursor.lastrowid
+            print(f"✅ Requerimiento insertado con ID: {requerimiento_id}")
+            
             conn.commit()
             cursor.close()
             conn.close()
 
             flash('Requerimiento guardado exitosamente.', 'success')
+            print(f"✅ Requerimiento '{nombre}' guardado exitosamente para usuario {usuario_id}")
             return redirect(url_for('requerimientos_bp.requerimientos'))
+            
         except Exception as e:
-            print("❌ Error al guardar requerimiento:", e)
-            flash('Error al guardar el requerimiento. Por favor, inténtalo de nuevo.', 'danger')
-            return redirect(url_for('requerimientos_bp.nuevo_requerimiento'))
+            print(f"❌ Error detallado al guardar requerimiento: {str(e)}")
+            print(f"❌ Tipo de error: {type(e).__name__}")
+            
+            # Intentar cerrar conexiones si están abiertas
+            try:
+                if 'cursor' in locals():
+                    cursor.close()
+                if 'conn' in locals():
+                    conn.close()
+            except:
+                pass
+            
+            flash(f'Error al guardar el requerimiento: {str(e)}', 'danger')
+            return render_template('operaciones/nuevo_requerimiento.html')
 
     return render_template('operaciones/nuevo_requerimiento.html')
 
