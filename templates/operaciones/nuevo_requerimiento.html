@@ -10,18 +10,73 @@
         <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej. Bovino Crecimiento" required>
       </div>
       <div class="col-md-6">
-        <label for="tipo_especie" class="form-label">Tipo de Especie:</label>
-        <input type="text" class="form-control" id="tipo_especie" name="tipo_especie" placeholder="Ej. Bovino, Porcino, Aves..." required>
+        <label for="especie" class="form-label">Especie Animal:</label>
+        <select class="form-control" id="especie" name="especie" required>
+          <option value="">Selecciona una especie...</option>
+          <option value="Pollo">🐔 Pollo (Broiler)</option>
+          <option value="Gallina">🐓 Gallina (Ponedora)</option>
+          <option value="Cerdo">🐷 Cerdo (Porcino)</option>
+          <option value="Bovino">🐄 Bovino (Ganado)</option>
+          <option value="Ovino">🐑 Ovino (Oveja)</option>
+          <option value="Caprino">🐐 Caprino (Cabra)</option>
+          <option value="Peces">🐟 Peces (Acuicultura)</option>
+          <option value="Conejos">🐰 Conejos (Cunicultura)</option>
+          <option value="Pavo">🦃 Pavo</option>
+          <option value="Codorniz">🐦 Codorniz</option>
+          <option value="Equino">🐴 Equino (Caballo)</option>
+          <option value="Bufalos">🐃 Búfalos</option>
+          <option value="General">📋 General/Otros</option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="tipo_especie" class="form-label">Categoría/Etapa Productiva:</label>
+      <input type="text" class="form-control" id="tipo_especie" name="tipo_especie" 
+             placeholder="Ej: Iniciador, Crecimiento, Engorde, Lactancia, Gestación, etc." required>
+      <div class="form-text">
+        <small>Ejemplos: Iniciador (0-21 días), Crecimiento (22-42 días), Engorde, Lactancia, Gestación, Mantenimiento</small>
       </div>
     </div>
     <div class="mb-3">
       <label for="comentario" class="form-label">Comentario (opcional):</label>
-      <textarea class="form-control" id="comentario" name="comentario" rows="3" placeholder="Notas o consideraciones..."></textarea>
+      <textarea class="form-control" id="comentario" name="comentario" rows="3" 
+                placeholder="Notas adicionales, consideraciones especiales, referencias bibliográficas..."></textarea>
     </div>
     <div class="text-center">
-      <button type="submit" class="btn btn-success">Guardar Requerimiento</button>
-      <a href="{{ url_for('requerimientos_bp.requerimientos') }}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-success btn-lg">
+        <i class="fas fa-save me-2"></i>Guardar Requerimiento
+      </button>
+      <a href="{{ url_for('requerimientos_bp.requerimientos') }}" class="btn btn-secondary btn-lg ms-3">
+        <i class="fas fa-times me-2"></i>Cancelar
+      </a>
     </div>
   </form>
 </div>
+
+<script>
+// Sugerencias automáticas basadas en la especie seleccionada
+document.getElementById('especie').addEventListener('change', function() {
+    const especie = this.value;
+    const tipoEspecieInput = document.getElementById('tipo_especie');
+    
+    const sugerencias = {
+        'Pollo': 'Iniciador (0-21 días)',
+        'Gallina': 'Postura (18+ semanas)',
+        'Cerdo': 'Iniciador (5-10 kg)',
+        'Bovino': 'Crecimiento',
+        'Ovino': 'Engorde',
+        'Caprino': 'Lactancia',
+        'Peces': 'Juveniles',
+        'Conejos': 'Engorde',
+        'Pavo': 'Iniciador',
+        'Codorniz': 'Postura',
+        'Equino': 'Mantenimiento',
+        'Bufalos': 'Lactancia'
+    };
+    
+    if (sugerencias[especie]) {
+        tipoEspecieInput.placeholder = `Sugerencia: ${sugerencias[especie]}`;
+    }
+});
+</script>
 {% endblock %}

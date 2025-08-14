@@ -16,7 +16,7 @@ def requerimientos():
 
         # Obtener datos de la tabla requerimientos filtrados por usuario_id
         cursor.execute("""
-            SELECT id, nombre, tipo_especie, comentario
+            SELECT id, nombre, COALESCE(especie, tipo_especie) as especie, tipo_especie, comentario
             FROM requerimientos
             WHERE usuario_id = %s
             ORDER BY nombre ASC
@@ -46,7 +46,7 @@ def ver_conjuntos_requerimientos():
         cursor = conn.cursor(dictionary=True)
         # Selecciona todos los requerimientos registrados en la base de datos (sin filtrar por usuario)
         cursor.execute("""
-            SELECT id, nombre, tipo_especie, comentario
+            SELECT id, nombre, COALESCE(especie, tipo_especie) as especie, tipo_especie, comentario
             FROM requerimientos
         """)
         requerimientos = cursor.fetchall()
@@ -68,19 +68,24 @@ def nuevo_requerimiento():
         try:
             # Validar datos del formulario
             nombre = request.form.get('nombre', '').strip()
+            especie = request.form.get('especie', '').strip()
             tipo_especie = request.form.get('tipo_especie', '').strip()
             comentario = request.form.get('comentario', '').strip()
             usuario_id = session['user_id']
 
-            print(f"📝 Datos recibidos - Nombre: '{nombre}', Tipo: '{tipo_especie}', Usuario: {usuario_id}")
+            print(f"📝 Datos recibidos - Nombre: '{nombre}', Especie: '{especie}', Tipo: '{tipo_especie}', Usuario: {usuario_id}")
 
             # Validaciones básicas
             if not nombre:
                 flash('El nombre del requerimiento es obligatorio.', 'error')
                 return render_template('operaciones/nuevo_requerimiento.html')
             
+            if not especie:
+                flash('La especie animal es obligatoria.', 'error')
+                return render_template('operaciones/nuevo_requerimiento.html')
+                
             if not tipo_especie:
-                flash('El tipo de especie es obligatorio.', 'error')
+                flash('La categoría/etapa es obligatoria.', 'error')
                 return render_template('operaciones/nuevo_requerimiento.html')
 
             if len(nombre) > 255:
@@ -109,12 +114,12 @@ def nuevo_requerimiento():
                 conn.close()
                 return render_template('operaciones/nuevo_requerimiento.html')
 
-            # Insertar el nuevo requerimiento
+            # Insertar el nuevo requerimiento con ambos campos
             print(f"🔄 Insertando requerimiento en la base de datos...")
             cursor.execute("""
-                INSERT INTO requerimientos (usuario_id, nombre, tipo_especie, comentario)
-                VALUES (%s, %s, %s, %s)
-            """, (usuario_id, nombre, tipo_especie, comentario))
+                INSERT INTO requerimientos (usuario_id, nombre, especie, tipo_especie, comentario)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (usuario_id, nombre, especie, tipo_especie, comentario))
             
             requerimiento_id = cursor.lastrowid
             print(f"✅ Requerimiento insertado con ID: {requerimiento_id}")
@@ -157,14 +162,15 @@ def editar_requerimiento(id):
 
         if request.method == 'POST':
             nombre = request.form.get('nombre')
+            especie = request.form.get('especie', '')
             tipo_especie = request.form.get('tipo_especie')
             comentario = request.form.get('comentario', '')
             
             cursor.execute("""
                 UPDATE requerimientos 
-                SET nombre=%s, tipo_especie=%s, comentario=%s 
+                SET nombre=%s, especie=%s, tipo_especie=%s, comentario=%s 
                 WHERE id=%s AND usuario_id=%s
-            """, (nombre, tipo_especie, comentario, id, session['user_id']))
+            """, (nombre, especie, tipo_especie, comentario, id, session['user_id']))
             
             if cursor.rowcount == 0:
                 flash('No tienes permisos para editar este requerimiento.', 'error')

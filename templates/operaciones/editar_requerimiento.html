@@ -34,16 +34,41 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="especie" class="form-label">
+                        <strong>Especie Animal:</strong>
+                    </label>
+                    <select class="form-control" id="especie" name="especie" required>
+                        <option value="">Selecciona una especie...</option>
+                        <option value="Pollo" {% if requerimiento.especie == 'Pollo' %}selected{% endif %}>🐔 Pollo (Broiler)</option>
+                        <option value="Gallina" {% if requerimiento.especie == 'Gallina' %}selected{% endif %}>🐓 Gallina (Ponedora)</option>
+                        <option value="Cerdo" {% if requerimiento.especie == 'Cerdo' %}selected{% endif %}>🐷 Cerdo (Porcino)</option>
+                        <option value="Bovino" {% if requerimiento.especie == 'Bovino' %}selected{% endif %}>🐄 Bovino (Ganado)</option>
+                        <option value="Ovino" {% if requerimiento.especie == 'Ovino' %}selected{% endif %}>🐑 Ovino (Oveja)</option>
+                        <option value="Caprino" {% if requerimiento.especie == 'Caprino' %}selected{% endif %}>🐐 Caprino (Cabra)</option>
+                        <option value="Peces" {% if requerimiento.especie == 'Peces' %}selected{% endif %}>🐟 Peces (Acuicultura)</option>
+                        <option value="Conejos" {% if requerimiento.especie == 'Conejos' %}selected{% endif %}>🐰 Conejos (Cunicultura)</option>
+                        <option value="Pavo" {% if requerimiento.especie == 'Pavo' %}selected{% endif %}>🦃 Pavo</option>
+                        <option value="Codorniz" {% if requerimiento.especie == 'Codorniz' %}selected{% endif %}>🐦 Codorniz</option>
+                        <option value="Equino" {% if requerimiento.especie == 'Equino' %}selected{% endif %}>🐴 Equino (Caballo)</option>
+                        <option value="Bufalos" {% if requerimiento.especie == 'Bufalos' %}selected{% endif %}>🐃 Búfalos</option>
+                        <option value="General" {% if requerimiento.especie == 'General' %}selected{% endif %}>📋 General/Otros</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
                     <label for="tipo_especie" class="form-label">
-                        <strong>Tipo de Especie:</strong>
+                        <strong>Categoría/Etapa Productiva:</strong>
                     </label>
                     <input type="text" 
                            class="form-control" 
                            id="tipo_especie" 
                            name="tipo_especie" 
                            value="{{ requerimiento.tipo_especie }}"
-                           placeholder="Ej: Pollo"
+                           placeholder="Ej: Iniciador, Crecimiento, Engorde, Lactancia, etc."
                            required>
+                    <div class="form-text">
+                        <small>Ejemplos: Iniciador (0-21 días), Crecimiento (22-42 días), Engorde, Lactancia, Gestación, Mantenimiento</small>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -54,11 +79,17 @@
                               id="comentario" 
                               name="comentario" 
                               rows="3"
-                              placeholder="Ej: Requerimientos para la etapa inicial de crecimiento...">{{ requerimiento.comentario or '' }}</textarea>
+                              placeholder="Notas adicionales, consideraciones especiales, referencias bibliográficas...">{{ requerimiento.comentario or '' }}</textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Actualizar</button>
-                <a href="{{ url_for('requerimientos_bp.requerimientos') }}" class="btn btn-secondary">Cancelar</a>
+                <div class="text-center mb-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Actualizar Requerimiento
+                    </button>
+                    <a href="{{ url_for('requerimientos_bp.requerimientos') }}" class="btn btn-secondary btn-lg ms-3">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
             </form>
             
             <!-- Nutrientes Asociados -->
@@ -140,4 +171,31 @@
         </div>
     </div>
 </div>
+
+<script>
+// Sugerencias automáticas basadas en la especie seleccionada
+document.getElementById('especie').addEventListener('change', function() {
+    const especie = this.value;
+    const tipoEspecieInput = document.getElementById('tipo_especie');
+    
+    const sugerencias = {
+        'Pollo': 'Iniciador (0-21 días)',
+        'Gallina': 'Postura (18+ semanas)',
+        'Cerdo': 'Iniciador (5-10 kg)',
+        'Bovino': 'Crecimiento',
+        'Ovino': 'Engorde',
+        'Caprino': 'Lactancia',
+        'Peces': 'Juveniles',
+        'Conejos': 'Engorde',
+        'Pavo': 'Iniciador',
+        'Codorniz': 'Postura',
+        'Equino': 'Mantenimiento',
+        'Bufalos': 'Lactancia'
+    };
+    
+    if (sugerencias[especie]) {
+        tipoEspecieInput.placeholder = `Sugerencia: ${sugerencias[especie]}`;
+    }
+});
+</script>
 {% endblock %}
