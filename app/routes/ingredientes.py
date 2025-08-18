@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from app.db import get_db_connection, to_decimal
+from app.routes.usuarios import registrar_actividad
 from typing import Any
 
 ingredientes_bp = Blueprint('ingredientes_bp', __name__)
@@ -192,6 +193,9 @@ def guardar_ingrediente():
         cursor.close()
         conn.close()
 
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Creó el ingrediente: {nombre.strip()}', 'ingrediente')
+
         flash('Ingrediente guardado correctamente.', 'success')
         return redirect(url_for('ingredientes_bp.ver_ingredientes'))
 
@@ -247,6 +251,10 @@ def editar_ingrediente(id):
         conn.commit()
         cursor.close()
         conn.close()
+        
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Editó el ingrediente: {nombre}', 'ingrediente')
+        
         flash('Ingrediente actualizado con éxito.', 'success')
         return redirect(url_for('ingredientes_bp.ver_ingredientes'))
 
@@ -319,7 +327,13 @@ def eliminar_ingrediente(id):
 
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Obtener el nombre del ingrediente antes de eliminarlo
+        cursor.execute("SELECT nombre FROM ingredientes WHERE id = %s", (id,))
+        ingrediente: Any = cursor.fetchone()
+        nombre_ingrediente = ingrediente['nombre'] if ingrediente else f'ID {id}'
+        
         # Eliminar relaciones en ingrediente_especie antes de eliminar el ingrediente
         cursor.execute("DELETE FROM ingrediente_especie WHERE ingrediente_id = %s", (id,))
         cursor.execute("DELETE FROM ingredientes WHERE id = %s", (id,))
@@ -327,6 +341,9 @@ def eliminar_ingrediente(id):
         conn.commit()
         cursor.close()
         conn.close()
+
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Eliminó el ingrediente: {nombre_ingrediente}', 'ingrediente')
 
         flash('Ingrediente eliminado correctamente.', 'success')
     except Exception as e:

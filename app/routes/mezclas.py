@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from app.db import get_db_connection
+from app.routes.usuarios import registrar_actividad
 from typing import Any, Union
 
 mezclas_bp = Blueprint('mezclas_bp', __name__)
@@ -267,6 +268,9 @@ def guardar_mezcla():
         cursor.close()
         conn.close()
 
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Guardó la formulación: {nombre}', 'formulacion')
+
         return jsonify({'mensaje': 'Mezcla guardada exitosamente.'}), 200
 
     except Exception as e:
@@ -329,6 +333,9 @@ def guardar_mezcla_como():
         cursor.close()
         conn.close()
 
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Guardó como nueva formulación: {nombre}', 'formulacion')
+
         return jsonify({'mensaje': 'Mezcla guardada exitosamente.'}), 200
 
     except Exception as e:
@@ -343,7 +350,12 @@ def eliminar_mezcla(mezcla_id):
 
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
+
+        # Obtener el nombre de la mezcla antes de eliminarla
+        cursor.execute("SELECT nombre FROM mezclas WHERE id = %s AND usuario_id = %s", (mezcla_id, session['user_id']))
+        mezcla: Any = cursor.fetchone()
+        nombre_mezcla = mezcla['nombre'] if mezcla else f'ID {mezcla_id}'
 
         # Eliminar ingredientes asociados a la mezcla
         cursor.execute("DELETE FROM mezcla_ingredientes WHERE mezcla_id = %s", (mezcla_id,))
@@ -353,6 +365,9 @@ def eliminar_mezcla(mezcla_id):
         conn.commit()
         cursor.close()
         conn.close()
+
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Eliminó la formulación: {nombre_mezcla}', 'formulacion')
 
         flash('Mezcla eliminada correctamente.', 'success')
     except Exception as e:

@@ -32,23 +32,46 @@ def panel():
         return redirect(url_for('auth_bp.login'))
 
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
 
     # Total de formulaciones (mezclas) del usuario
-    cursor.execute("SELECT COUNT(*) FROM mezclas WHERE usuario_id = %s", (session['user_id'],))
+    cursor.execute("SELECT COUNT(*) as total FROM mezclas WHERE usuario_id = %s", (session['user_id'],))
     result_formulaciones: Any = cursor.fetchone()
-    total_formulaciones = result_formulaciones[0] if result_formulaciones else 0
+    total_formulaciones = result_formulaciones['total'] if result_formulaciones else 0
 
     # Total de ingredientes del usuario
-    cursor.execute("SELECT COUNT(*) FROM ingredientes WHERE usuario_id = %s", (session['user_id'],))
+    cursor.execute("SELECT COUNT(*) as total FROM ingredientes WHERE usuario_id = %s", (session['user_id'],))
     result_ingredientes: Any = cursor.fetchone()
-    total_ingredientes = result_ingredientes[0] if result_ingredientes else 0
+    total_ingredientes = result_ingredientes['total'] if result_ingredientes else 0
 
     # Total de reportes — por ahora puedes dejarlo en cero si no tienes reportes implementados
     total_reportes = 0
 
-    # Historial de actividades vacío por el momento
+    # Obtener historial de actividades del usuario actual (últimas 10)
+    # Manejar el caso donde la tabla actividades no existe aún
     actividades = []
+    try:
+        cursor.execute("""
+            SELECT descripcion, DATE_FORMAT(fecha, '%d/%m/%Y %H:%i') as fecha_formateada
+            FROM actividades 
+            WHERE usuario_id = %s 
+            ORDER BY fecha DESC 
+            LIMIT 10
+        """, (session['user_id'],))
+        actividades_result = cursor.fetchall()
+        
+        # Convertir a lista de diccionarios para el template
+        if actividades_result:
+            for actividad in actividades_result:
+                actividad_typed: Any = actividad
+                actividades.append({
+                    'descripcion': actividad_typed['descripcion'],
+                    'fecha': actividad_typed['fecha_formateada']
+                })
+    except Exception as e:
+        print(f"⚠️ Tabla actividades no existe aún: {e}")
+        # Actividades permanece como lista vacía
+        actividades = []
 
     cursor.close()
     conn.close()
@@ -177,3 +200,30 @@ def hoja_impresion():
     except Exception as e:
         print("❌ Error en hoja_impresion:", e)
         return jsonify({'error': 'Error interno del servidor'}), 500
+
+def registrar_actividad(usuario_id: int, descripcion: str, tipo_actividad: str = 'general'):
+    """
+    Función helper para registrar actividades del usuario
+    Maneja el caso donde la tabla actividades no existe aún
+    """
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO actividades (usuario_id, descripcion, tipo_actividad)
+            VALUES (%s, %s, %s)
+        """, (usuario_id, descripcion, tipo_actividad))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        print(f"✅ Actividad registrada: {descripcion}")
+        
+    except Exception as e:
+        # Si la tabla no existe, solo mostrar un mensaje informativo
+        if "doesn't exist" in str(e) or "Table" in str(e):
+            print(f"⚠️ Tabla actividades no existe aún - Actividad no registrada: {descripcion}")
+        else:
+            print(f"❌ Error al registrar actividad: {e}")
