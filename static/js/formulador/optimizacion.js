@@ -53,11 +53,18 @@ function optimizarMezcla() {
   const requerimientos = [];
   document.querySelectorAll("#tabla-nutrientes tr").forEach(fila => {
     const select = fila.querySelector("select");
-    if (!select || !select.value) return;
-    const nombre = select.options[select.selectedIndex].textContent.trim();
+    if (!select || !select.value || select.value === "") return;
+    
+    const selectedOption = select.options[select.selectedIndex];
+    const nombre = selectedOption.textContent.trim();
+    
+    // Filtrar opciones "-- Seleccionar --" o nombres vacíos
+    if (nombre === "-- Seleccionar --" || nombre === "" || !nombre) return;
+    
     const min = fila.querySelector('input[name^="min_"]')?.value;
     const max = fila.querySelector('input[name^="max_"]')?.value;
     const unidad = fila.querySelector('input[name^="unidad_"]')?.value || "";
+    
     requerimientos.push({
       nombre: nombre,
       min: min !== "" ? parseFloat(min) : null,
@@ -85,7 +92,7 @@ function optimizarMezcla() {
     const inclusiones = data.resultado;
     filas.forEach((fila, i) => {
       if (!fila.querySelector("select").value) return;
-      fila.querySelector('input[name^="inclusion_"]').value = inclusiones[i].inclusion.toFixed(2);
+      fila.querySelector('input[name^="inclusion_"]').value = formatearInclusion(inclusiones[i].inclusion);
       actualizarValores(fila.querySelector('input[name^="inclusion_"]'));
     });
     calcularMinerales();

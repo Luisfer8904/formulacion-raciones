@@ -6,6 +6,20 @@ from scipy.optimize import minimize
 
 optimizacion_bp = Blueprint('optimizacion_bp', __name__)
 
+def formatear_inclusion(valor):
+    """Formatear inclusiones con decimales inteligentes"""
+    num = float(valor)
+    
+    # Si el valor es menor a 0.01, usar 4 decimales
+    if num < 0.01 and num > 0:
+        return round(num, 4)
+    # Si el valor es menor a 0.1, usar 3 decimales
+    elif num < 0.1:
+        return round(num, 3)
+    # Para valores mayores, usar 2 decimales
+    else:
+        return round(num, 2)
+
 @optimizacion_bp.route('/formulacion_minerales')
 def formulacion_minerales():
     if 'user_id' not in session:
@@ -501,8 +515,8 @@ def optimizar_formulacion():
         
         resultado_lista.append({
             'ingrediente': ingredientes[i]['nombre'],
-            'inclusion': round(inclusion, 2),
-            'peso': round(inclusion, 2),  # Para mezcla de 100 kg
+            'inclusion': formatear_inclusion(inclusion),
+            'peso': formatear_inclusion(inclusion),  # Para mezcla de 100 kg
             'valor': round(costo_ingrediente, 2)
         })
         

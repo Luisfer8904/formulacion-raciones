@@ -152,7 +152,7 @@ function agregarFilaDesdeDatos(ing, index) {
               ${opcionesSelect}
           </select>
       </td>
-      <td><input type="number" class="form-control form-control-sm" name="inclusion_${index}" value="${inclusion}" oninput="actualizarValores(this)"></td>
+      <td><input type="number" class="form-control form-control-sm" name="inclusion_${index}" value="${formatearInclusion(inclusion)}" step="0.0001" oninput="actualizarValores(this)"></td>
       <td><input type="number" class="form-control form-control-sm" name="min_${index}" step="0.0001"></td>
       <td><input type="number" class="form-control form-control-sm" name="max_${index}" step="0.0001"></td>
       <td><input type="number" class="form-control form-control-sm" name="peso_bachada_${index}" value="${formatearPeso(pesoBachada, false)}" readonly></td>
@@ -231,7 +231,7 @@ function precargarIngredientes() {
                 ${opcionesSelectVacia}
             </select>
         </td>
-        <td><input type="number" class="form-control form-control-sm" name="inclusion_${contadorFilas}" min="0" max="100" step="0.1" oninput="actualizarValores(this)"></td>
+        <td><input type="number" class="form-control form-control-sm" name="inclusion_${contadorFilas}" min="0" max="100" step="0.0001" oninput="actualizarValores(this)"></td>
         <td><input type="number" class="form-control form-control-sm" name="min_${contadorFilas}" step="0.0001"></td>
         <td><input type="number" class="form-control form-control-sm" name="max_${contadorFilas}" step="0.0001"></td>
         <td><input type="number" class="form-control form-control-sm" name="peso_bachada_${contadorFilas}" step="0.01" readonly></td>

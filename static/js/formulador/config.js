@@ -22,6 +22,25 @@ function obtenerSimboloMoneda(moneda) {
   return simbolos[moneda] || moneda;
 }
 
+// Función para formatear inclusiones con decimales inteligentes
+function formatearInclusion(valor) {
+  const num = parseFloat(valor);
+  if (isNaN(num)) return "0.00";
+  
+  // Si el valor es menor a 0.01, usar 4 decimales
+  if (num < 0.01 && num > 0) {
+    return num.toFixed(4);
+  }
+  // Si el valor es menor a 0.1, usar 3 decimales
+  else if (num < 0.1) {
+    return num.toFixed(3);
+  }
+  // Para valores mayores, usar 2 decimales
+  else {
+    return num.toFixed(2);
+  }
+}
+
 // Función para formatear precio con moneda
 function formatearPrecio(valor, mostrarSimbolo = true) {
   if (!window.configUsuario) return valor.toFixed(2);

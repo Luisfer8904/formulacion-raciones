@@ -22,7 +22,7 @@ function imprimirTabla() {
     if (select && select.value && inclusion > 0) {
       ingredientes.push({
         nombre: nombreIngrediente,
-        inclusion: inclusion.toFixed(2),
+        inclusion: formatearInclusion(inclusion),
         peso: peso.toFixed(2),
         precio: precio.toFixed(2),
         valor_total: total.toFixed(2)
@@ -279,9 +279,6 @@ function aplicarRequerimientosSeleccionados() {
           sugeridoInput.value = nutriente.valor_sugerido;
         }
       });
-      
-      // Agregar una fila vacía al final
-      agregarFilaNutriente();
       
       // Cerrar modal
       const modal = bootstrap.Modal.getInstance(document.getElementById('selectorRequerimientosModal'));

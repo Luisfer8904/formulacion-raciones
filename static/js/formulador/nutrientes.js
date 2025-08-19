@@ -73,7 +73,16 @@ function verificarUltimaFilaNutriente(index) {
   const filas = tabla.querySelectorAll('tr');
   const ultimaFila = filas[filas.length - 1];
   const select = ultimaFila.querySelector('select');
-  if (select && select.value !== "") {
-    agregarFilaNutriente();
+  
+  // Solo agregar nueva fila si la última fila tiene un nutriente seleccionado
+  // y no es una opción vacía o "-- Seleccionar --"
+  if (select && select.value !== "" && select.value !== null) {
+    const selectedOption = select.options[select.selectedIndex];
+    const nombre = selectedOption.textContent.trim();
+    
+    // No agregar fila si es "-- Seleccionar --"
+    if (nombre !== "-- Seleccionar --" && nombre !== "") {
+      agregarFilaNutriente();
+    }
   }
 }

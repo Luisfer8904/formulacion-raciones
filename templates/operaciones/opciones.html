@@ -19,11 +19,40 @@
             <label for="pais" class="form-label">País</label>
             <select class="form-select" id="pais" name="pais" required>
                 <option value="">Seleccione un país...</option>
+                <!-- Centroamérica -->
                 <option value="Honduras" {% if usuario.pais == 'Honduras' %}selected{% endif %}>Honduras</option>
                 <option value="Guatemala" {% if usuario.pais == 'Guatemala' %}selected{% endif %}>Guatemala</option>
                 <option value="El Salvador" {% if usuario.pais == 'El Salvador' %}selected{% endif %}>El Salvador</option>
                 <option value="Nicaragua" {% if usuario.pais == 'Nicaragua' %}selected{% endif %}>Nicaragua</option>
                 <option value="Costa Rica" {% if usuario.pais == 'Costa Rica' %}selected{% endif %}>Costa Rica</option>
+                <option value="Panamá" {% if usuario.pais == 'Panamá' %}selected{% endif %}>Panamá</option>
+                <option value="Belice" {% if usuario.pais == 'Belice' %}selected{% endif %}>Belice</option>
+                <!-- Norteamérica -->
+                <option value="México" {% if usuario.pais == 'México' %}selected{% endif %}>México</option>
+                <option value="Estados Unidos" {% if usuario.pais == 'Estados Unidos' %}selected{% endif %}>Estados Unidos</option>
+                <option value="Canadá" {% if usuario.pais == 'Canadá' %}selected{% endif %}>Canadá</option>
+                <!-- Sudamérica -->
+                <option value="Colombia" {% if usuario.pais == 'Colombia' %}selected{% endif %}>Colombia</option>
+                <option value="Venezuela" {% if usuario.pais == 'Venezuela' %}selected{% endif %}>Venezuela</option>
+                <option value="Ecuador" {% if usuario.pais == 'Ecuador' %}selected{% endif %}>Ecuador</option>
+                <option value="Perú" {% if usuario.pais == 'Perú' %}selected{% endif %}>Perú</option>
+                <option value="Bolivia" {% if usuario.pais == 'Bolivia' %}selected{% endif %}>Bolivia</option>
+                <option value="Brasil" {% if usuario.pais == 'Brasil' %}selected{% endif %}>Brasil</option>
+                <option value="Paraguay" {% if usuario.pais == 'Paraguay' %}selected{% endif %}>Paraguay</option>
+                <option value="Uruguay" {% if usuario.pais == 'Uruguay' %}selected{% endif %}>Uruguay</option>
+                <option value="Argentina" {% if usuario.pais == 'Argentina' %}selected{% endif %}>Argentina</option>
+                <option value="Chile" {% if usuario.pais == 'Chile' %}selected{% endif %}>Chile</option>
+                <!-- Europa -->
+                <option value="España" {% if usuario.pais == 'España' %}selected{% endif %}>España</option>
+                <option value="Francia" {% if usuario.pais == 'Francia' %}selected{% endif %}>Francia</option>
+                <option value="Alemania" {% if usuario.pais == 'Alemania' %}selected{% endif %}>Alemania</option>
+                <option value="Italia" {% if usuario.pais == 'Italia' %}selected{% endif %}>Italia</option>
+                <option value="Portugal" {% if usuario.pais == 'Portugal' %}selected{% endif %}>Portugal</option>
+                <option value="Reino Unido" {% if usuario.pais == 'Reino Unido' %}selected{% endif %}>Reino Unido</option>
+                <!-- Otros -->
+                <option value="República Dominicana" {% if usuario.pais == 'República Dominicana' %}selected{% endif %}>República Dominicana</option>
+                <option value="Cuba" {% if usuario.pais == 'Cuba' %}selected{% endif %}>Cuba</option>
+                <option value="Puerto Rico" {% if usuario.pais == 'Puerto Rico' %}selected{% endif %}>Puerto Rico</option>
             </select>
         </div>
 
@@ -31,10 +60,33 @@
             <label for="moneda" class="form-label">Moneda</label>
             <select class="form-select" id="moneda" name="moneda" required>
                 <option value="">Seleccione una moneda...</option>
-                <option value="HNL" {% if usuario.moneda == 'HNL' %}selected{% endif %}>Lempira (HNL)</option>
-                <option value="GTQ" {% if usuario.moneda == 'GTQ' %}selected{% endif %}>Quetzal (GTQ)</option>
-                <option value="USD" {% if usuario.moneda == 'USD' %}selected{% endif %}>Dólar (USD)</option>
-                <option value="CRC" {% if usuario.moneda == 'CRC' %}selected{% endif %}>Colón (CRC)</option>
+                <!-- Centroamérica -->
+                <option value="HNL" {% if usuario.moneda == 'HNL' %}selected{% endif %}>Lempira Hondureño (L)</option>
+                <option value="GTQ" {% if usuario.moneda == 'GTQ' %}selected{% endif %}>Quetzal Guatemalteco (Q)</option>
+                <option value="USD" {% if usuario.moneda == 'USD' %}selected{% endif %}>Dólar Estadounidense ($)</option>
+                <option value="CRC" {% if usuario.moneda == 'CRC' %}selected{% endif %}>Colón Costarricense (₡)</option>
+                <option value="NIO" {% if usuario.moneda == 'NIO' %}selected{% endif %}>Córdoba Nicaragüense (C$)</option>
+                <option value="PAB" {% if usuario.moneda == 'PAB' %}selected{% endif %}>Balboa Panameño (B/.)</option>
+                <!-- Norteamérica -->
+                <option value="MXN" {% if usuario.moneda == 'MXN' %}selected{% endif %}>Peso Mexicano ($)</option>
+                <option value="CAD" {% if usuario.moneda == 'CAD' %}selected{% endif %}>Dólar Canadiense (C$)</option>
+                <!-- Sudamérica -->
+                <option value="COP" {% if usuario.moneda == 'COP' %}selected{% endif %}>Peso Colombiano ($)</option>
+                <option value="VES" {% if usuario.moneda == 'VES' %}selected{% endif %}>Bolívar Venezolano (Bs.)</option>
+                <option value="PEN" {% if usuario.moneda == 'PEN' %}selected{% endif %}>Sol Peruano (S/)</option>
+                <option value="BOB" {% if usuario.moneda == 'BOB' %}selected{% endif %}>Boliviano (Bs.)</option>
+                <option value="BRL" {% if usuario.moneda == 'BRL' %}selected{% endif %}>Real Brasileño (R$)</option>
+                <option value="PYG" {% if usuario.moneda == 'PYG' %}selected{% endif %}>Guaraní Paraguayo (₲)</option>
+                <option value="UYU" {% if usuario.moneda == 'UYU' %}selected{% endif %}>Peso Uruguayo ($U)</option>
+                <option value="ARS" {% if usuario.moneda == 'ARS' %}selected{% endif %}>Peso Argentino ($)</option>
+                <option value="CLP" {% if usuario.moneda == 'CLP' %}selected{% endif %}>Peso Chileno ($)</option>
+                <!-- Europa -->
+                <option value="EUR" {% if usuario.moneda == 'EUR' %}selected{% endif %}>Euro (€)</option>
+                <option value="GBP" {% if usuario.moneda == 'GBP' %}selected{% endif %}>Libra Esterlina (£)</option>
+                <!-- Otros -->
+                <option value="DOP" {% if usuario.moneda == 'DOP' %}selected{% endif %}>Peso Dominicano (RD$)</option>
+                <option value="CUP" {% if usuario.moneda == 'CUP' %}selected{% endif %}>Peso Cubano ($)</option>
+                <option value="JPY" {% if usuario.moneda == 'JPY' %}selected{% endif %}>Yen Japonés (¥)</option>
             </select>
         </div>
 

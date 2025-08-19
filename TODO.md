@@ -1,60 +1,34 @@
-# Plan de Mejoras del Panel de Control
+# TODO: Expansión de Símbolos de Monedas y Países
 
-## Tareas a Completar:
+## Tareas Completadas
+- ✅ Analizar implementación actual de monedas y países
+- ✅ Expandir opciones de monedas en opciones.html
+- ✅ Agregar más países para soportar las nuevas monedas
+- ✅ Verificar y actualizar símbolos de monedas en app/__init__.py
+- ✅ Mantener unidades de medida solo en Kg, Lbs, Ton
 
-### 1. Base de Datos
-- [x] Crear tabla `actividades` con usuario_id para actividades por usuario
-- [x] Crear script de migración `ejecutar_migracion_actividades.py`
-- [x] Crear scripts adicionales para Railway
-- [ ] Ejecutar migración en Railway
+## Progreso
+- ✅ Plan aprobado por el usuario
+- ✅ Cambios implementados exitosamente
 
-### 2. Backend - Funcionalidad de Actividades
-- [x] Actualizar `app/routes/usuarios.py` para obtener actividades del usuario actual
-- [x] Crear función helper para registrar actividades por usuario
-- [x] Agregar logging de actividades en `app/routes/ingredientes.py`
-- [x] Agregar logging de actividades en `app/routes/mezclas.py`
-- [x] Código subido a GitHub y desplegado en Railway
+## Cambios Realizados
 
-### 3. Frontend - Panel de Control
-- [x] Eliminar sección redundante "Resumen General" de `templates/operaciones/panel.html`
-- [x] Mantener solo las tarjetas de resumen superiores
-- [x] Mejorar la sección de historial de actividades
-- [x] Cambios desplegados en Railway
+### Países Agregados:
+**Centroamérica:** Panamá, Belice
+**Norteamérica:** México, Estados Unidos, Canadá
+**Sudamérica:** Colombia, Venezuela, Ecuador, Perú, Bolivia, Brasil, Paraguay, Uruguay, Argentina, Chile
+**Europa:** España, Francia, Alemania, Italia, Portugal, Reino Unido
+**Otros:** República Dominicana, Cuba, Puerto Rico
 
-### 4. Pruebas
-- [x] Verificar que el panel se muestre correctamente sin la sección redundante
-- [x] Probar servidor local sin errores
-- [ ] Verificar que las actividades se registren correctamente por usuario
-- [ ] Verificar que el historial muestre solo actividades del usuario actual
+### Monedas Agregadas:
+**Centroamérica:** NIO (C$), PAB (B/.)
+**Norteamérica:** MXN ($), CAD (C$)
+**Sudamérica:** COP ($), VES (Bs.), PEN (S/), BOB (Bs.), BRL (R$), PYG (₲), UYU ($U), ARS ($), CLP ($)
+**Europa:** EUR (€), GBP (£)
+**Otros:** DOP (RD$), CUP ($), JPY (¥)
 
-## Estado: Esperando migración de base de datos en Railway
-
-### Archivos creados para Railway:
-- `railway_actividades.sql` - SQL para ejecutar en Railway/MySQL Workbench
-- `conectar_railway_publico.py` - Script de conexión automática (probando hosts)
-- `conectar_railway_directo.py` - Script con host interno
-- `conexion_railway_workbench.md` - Instrucciones para MySQL Workbench
-
-### Credenciales de Railway obtenidas:
-- Host interno: mysql.railway.internal
-- Host público: (determinando automáticamente)
-- Puerto: 3306
-- Base de datos: railway
-- Usuario: root
-- Contraseña: KIJShdTBbFcWOGCgabsVbrOjwoNHiPJh
-
-### Próximo paso:
-Ejecutar la migración usando MySQL Workbench o esperar resultado del script automático
-
-### Resumen de cambios realizados:
-
-1. **Base de datos**: Creada tabla `actividades` con relación a usuarios
-2. **Backend**: 
-   - Función helper `registrar_actividad()` en `usuarios.py`
-   - Logging agregado en ingredientes (crear, editar, eliminar)
-   - Logging agregado en mezclas/formulaciones (guardar, eliminar)
-   - Panel actualizado para mostrar actividades del usuario actual
-3. **Frontend**: 
-   - Eliminada sección redundante "Resumen General"
-   - Historial de actividades funcional por usuario
-4. **Despliegue**: Todos los cambios están en Railway, solo falta la migración de BD
+## Notas
+- Usuario confirmó: expandir símbolos de monedas incluyendo Euro ✅
+- Usuario confirmó: mantener medidas de peso solo en Lbs, Kg, Ton (es visual) ✅
+- Agregados más países latinoamericanos y europeos ✅
+- Todos los símbolos de monedas están correctamente mapeados ✅

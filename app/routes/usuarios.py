@@ -233,6 +233,28 @@ def hoja_impresion():
         return jsonify({'error': 'No autorizado'}), 401
     
     try:
+        # Obtener configuración del usuario
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT unidad_medida, moneda, tipo_moneda
+            FROM usuarios
+            WHERE id = %s
+        """, (session['user_id'],))
+        config_usuario = cursor.fetchone()
+        
+        # Si no hay configuración, usar valores por defecto
+        if not config_usuario:
+            config_usuario = {
+                'unidad_medida': 'kg',
+                'moneda': 'USD',
+                'tipo_moneda': '$'
+            }
+        
+        cursor.close()
+        conn.close()
+        
         # Recibir datos JSON
         data = request.get_json()
         if not data:
@@ -268,7 +290,8 @@ def hoja_impresion():
                              total_nutrientes=len(nutrientes),
                              ingredientes=ingredientes,
                              nutrientes=nutrientes,
-                             fecha_actual=fecha_actual)
+                             fecha_actual=fecha_actual,
+                             config_usuario=config_usuario)
     
     except Exception as e:
         print("❌ Error en hoja_impresion:", e)
