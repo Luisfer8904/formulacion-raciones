@@ -77,8 +77,16 @@ def procesar_solicitud():
         
         mensaje += f"\n\nFecha de solicitud: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}"
         
-        # Enviar correo electrónico
-        enviar_correo_solicitud(asunto, mensaje)
+        # Enviar correo electrónico (optimizado para Railway)
+        try:
+            from config_email_railway import enviar_correo_railway_optimizado
+            correo_enviado = enviar_correo_railway_optimizado(asunto, mensaje)
+            if not correo_enviado:
+                # Fallback al método original
+                enviar_correo_solicitud(asunto, mensaje)
+        except ImportError:
+            # Si no está disponible el módulo optimizado, usar el original
+            enviar_correo_solicitud(asunto, mensaje)
         
         print("📧 Solicitud recibida:")
         print(f"Asunto: {asunto}")

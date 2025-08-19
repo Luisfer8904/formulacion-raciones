@@ -1,23 +1,66 @@
 # Configuración de Email para Railway
 
-## Variables de Entorno Requeridas en Railway
+## ⚡ NUEVO: Sistema Optimizado para Railway
 
-Para que el envío de correos funcione correctamente en Railway, configura las siguientes variables de entorno:
+El sistema ahora incluye múltiples métodos de envío para garantizar que funcione en Railway:
 
-### Variables Obligatorias:
+1. **SendGrid API** (Recomendado para Railway)
+2. **Webhook personalizado** 
+3. **SMTP optimizado** (con configuración específica para Railway)
+4. **Base de datos** (respaldo automático)
+
+## Variables de Entorno para Railway
+
+### Método 1: SendGrid API (Recomendado)
+```bash
+# En Railway Dashboard > Variables
+SENDGRID_API_KEY=SG.tu_api_key_aqui
+SENDGRID_FROM_EMAIL=noreply@tudominio.com
+RECIPIENT_EMAIL=destinatario@gmail.com
 ```
+
+### Método 2: Webhook Personalizado
+```bash
+EMAIL_WEBHOOK_URL=https://tu-webhook.com/send-email
+SENDER_EMAIL=noreply@tudominio.com
+RECIPIENT_EMAIL=destinatario@gmail.com
+```
+
+### Método 3: SMTP Tradicional (Respaldo)
+```bash
 SENDER_EMAIL=tu_email@gmail.com
 SENDER_PASSWORD=tu_contraseña_de_aplicacion
 RECIPIENT_EMAIL=destinatario@gmail.com
 ```
 
-### Variables Opcionales:
-```
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
+## 🚀 Configuración de SendGrid (Recomendado para Railway)
+
+### 1. Crear Cuenta en SendGrid
+- Ve a https://sendgrid.com/
+- Crea una cuenta gratuita (100 emails/día gratis)
+- Verifica tu email
+
+### 2. Generar API Key
+- Ve a Settings → API Keys
+- Clic en "Create API Key"
+- Nombre: "Railway FeedPro"
+- Permisos: "Full Access" o "Mail Send"
+- Copia la API Key generada
+
+### 3. Configurar Dominio (Opcional pero Recomendado)
+- Ve a Settings → Sender Authentication
+- Configura "Single Sender Verification" con tu email
+- O configura "Domain Authentication" si tienes dominio propio
+
+### 4. Variables en Railway
+```bash
+# En Railway Dashboard > Variables
+SENDGRID_API_KEY=SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+SENDGRID_FROM_EMAIL=noreply@tudominio.com  # o tu email verificado
+RECIPIENT_EMAIL=destinatario@gmail.com
 ```
 
-## Configuración de Gmail para Railway
+## Configuración de Gmail para Railway (Método de Respaldo)
 
 ### 1. Habilitar 2FA en Gmail
 - Ve a tu cuenta de Google
