@@ -25,6 +25,79 @@ def caracteristicas():
 def precios():
     return render_template('sitio/precios.html')
 
+@usuarios_bp.route('/formulario_cobro')
+def formulario_cobro():
+    return render_template('sitio/formulario_cobro.html')
+
+@usuarios_bp.route('/procesar_solicitud', methods=['POST'])
+def procesar_solicitud():
+    try:
+        # Obtener datos del formulario
+        nombre = request.form.get('nombre', '').strip()
+        email = request.form.get('email', '').strip()
+        telefono = request.form.get('telefono', '').strip()
+        empresa = request.form.get('empresa', '').strip()
+        pais = request.form.get('pais', '').strip()
+        tipo_solicitud = request.form.get('tipo_solicitud', '').strip()
+        plan = request.form.get('plan', '').strip()
+        comentarios = request.form.get('comentarios', '').strip()
+        
+        # Validaciones básicas
+        if not nombre or not email or not pais or not tipo_solicitud:
+            flash('Por favor completa todos los campos obligatorios.', 'error')
+            return redirect(url_for('usuarios_bp.formulario_cobro'))
+        
+        # Si es suscripción, validar que se haya seleccionado un plan
+        if tipo_solicitud == 'suscripcion' and not plan:
+            flash('Por favor selecciona un plan de suscripción.', 'error')
+            return redirect(url_for('usuarios_bp.formulario_cobro'))
+        
+        # Preparar información para el correo
+        asunto = f"Nueva solicitud de {tipo_solicitud.replace('_', ' ').title()} - FeedPro"
+        
+        mensaje = f"""
+        Nueva solicitud recibida:
+        
+        INFORMACIÓN PERSONAL:
+        - Nombre: {nombre}
+        - Email: {email}
+        - Teléfono: {telefono if telefono else 'No proporcionado'}
+        - Empresa: {empresa if empresa else 'No proporcionado'}
+        - País: {pais}
+        
+        TIPO DE SOLICITUD: {tipo_solicitud.replace('_', ' ').title()}
+        """
+        
+        if tipo_solicitud == 'suscripcion' and plan:
+            precio_plan = '$24/mes' if plan == 'personal' else '$76/mes'
+            mensaje += f"\nPLAN SELECCIONADO: {plan.title()} ({precio_plan})"
+        
+        if comentarios:
+            mensaje += f"\n\nCOMENTARIOS ADICIONALES:\n{comentarios}"
+        
+        mensaje += f"\n\nFecha de solicitud: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}"
+        
+        # Enviar correo electrónico
+        enviar_correo_solicitud(asunto, mensaje)
+        
+        print("📧 Solicitud recibida:")
+        print(f"Asunto: {asunto}")
+        print(f"Mensaje: {mensaje}")
+        
+        # Mensaje de éxito diferente según el tipo de solicitud
+        if tipo_solicitud == 'prueba_gratis':
+            flash('¡Solicitud de prueba gratuita enviada exitosamente! Te contactaremos pronto para configurar tu acceso.', 'success')
+        else:
+            plan_nombre = plan.title() if plan else ''
+            flash(f'¡Solicitud de suscripción {plan_nombre} enviada exitosamente! Te contactaremos pronto para procesar tu suscripción.', 'success')
+        
+        return redirect(url_for('usuarios_bp.formulario_cobro'))
+        
+    except Exception as e:
+        print(f"❌ Error al procesar solicitud: {e}")
+        flash('Error al procesar la solicitud. Por favor, inténtalo de nuevo.', 'danger')
+        return redirect(url_for('usuarios_bp.formulario_cobro'))
+
 @usuarios_bp.route('/panel')
 def panel():
     if 'user_id' not in session:
@@ -227,3 +300,60 @@ def registrar_actividad(usuario_id: int, descripcion: str, tipo_actividad: str =
             print(f"⚠️ Tabla actividades no existe aún - Actividad no registrada: {descripcion}")
         else:
             print(f"❌ Error al registrar actividad: {e}")
+
+def enviar_correo_solicitud(asunto, mensaje):
+    """Envía un correo electrónico con la información de la solicitud"""
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    import os
+    
+    try:
+        # Configuración del correo usando variables de entorno
+        smtp_server = "smtp.gmail.com"
+        smtp_port = 587
+        sender_email = os.getenv('SENDER_EMAIL', 'feedpro07@gmail.com')
+        sender_password = os.getenv('SENDER_PASSWORD', 'Luis82847')
+        recipient_email = os.getenv('RECIPIENT_EMAIL', 'lfrivera8904@gmail.com')
+        
+        print(f"📧 Configuración de correo:")
+        print(f"   Servidor: {smtp_server}:{smtp_port}")
+        print(f"   Remitente: {sender_email}")
+        print(f"   Destinatario: {recipient_email}")
+        print(f"   Contraseña configurada: {'Sí' if sender_password else 'No'}")
+        
+        # Crear el mensaje
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = recipient_email
+        message["Subject"] = asunto
+        
+        # Agregar el cuerpo del mensaje
+        message.attach(MIMEText(mensaje, "plain"))
+        
+        # Enviar el correo
+        print("🔄 Conectando al servidor SMTP...")
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        
+        print("🔄 Autenticando...")
+        server.login(sender_email, sender_password)
+        
+        print("🔄 Enviando correo...")
+        text = message.as_string()
+        server.sendmail(sender_email, recipient_email, text)
+        server.quit()
+        
+        print(f"✅ Correo enviado exitosamente a {recipient_email}")
+        
+    except Exception as e:
+        print(f"❌ Error al enviar correo: {e}")
+        print("💡 Para configurar el envío de correos:")
+        print("   1. Configura las variables de entorno:")
+        print(f"      export SENDER_EMAIL='{sender_email}'")
+        print(f"      export SENDER_PASSWORD='tu_contraseña_de_aplicacion'")
+        print(f"      export RECIPIENT_EMAIL='{recipient_email}'")
+        print("   2. Para Gmail, necesitas usar una 'Contraseña de aplicación' en lugar de tu contraseña normal")
+        print("   3. Ve a: https://myaccount.google.com/ > Seguridad > Contraseñas de aplicaciones")
+        # No lanzamos la excepción para que no falle el formulario
+        pass

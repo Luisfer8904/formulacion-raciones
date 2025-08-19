@@ -2,15 +2,15 @@
 -- Cada actividad estará asociada a un usuario específico
 
 CREATE TABLE IF NOT EXISTS `actividades` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `usuario_id` int NOT NULL,
-  `descripcion` varchar(255) NOT NULL,
-  `tipo_actividad` varchar(50) NOT NULL,
-  `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_usuario_fecha` (`usuario_id`, `fecha`),
-  CONSTRAINT `fk_actividades_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `id` int NOT NULL AUTO_INCREMENT,
+    `usuario_id` int NOT NULL,
+    `descripcion` varchar(255) NOT NULL,
+    `tipo_actividad` varchar(50) NOT NULL,
+    `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_usuario_fecha` (`usuario_id`, `fecha`),
+    CONSTRAINT `fk_actividades_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Insertar algunas actividades de ejemplo para el usuario con ID 3 (basado en los datos existentes)
 INSERT INTO `actividades` (`usuario_id`, `descripcion`, `tipo_actividad`, `fecha`) VALUES

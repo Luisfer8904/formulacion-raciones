@@ -1,0 +1,376 @@
+{% include "sitio/cabecera.html" %}
+
+<!-- Sección de Formulario de Cobro -->
+<section class="py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold text-dark mb-3">Solicitar Acceso</h2>
+                            <p class="text-muted">Completa el formulario para acceder a FeedPro</p>
+                        </div>
+
+                        <form id="formularioCobro" method="POST" action="/procesar_solicitud">
+                            <!-- Información Personal -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label fw-bold">Nombre Completo *</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label fw-bold">Correo Electrónico *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="telefono" class="form-label fw-bold">Teléfono</label>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="empresa" class="form-label fw-bold">Empresa/Organización</label>
+                                    <input type="text" class="form-control" id="empresa" name="empresa">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="pais" class="form-label fw-bold">País *</label>
+                                <select class="form-select" id="pais" name="pais" required>
+                                    <option value="">Selecciona tu país</option>
+                                    <option value="Argentina">Argentina</option>
+                                    <option value="Bolivia">Bolivia</option>
+                                    <option value="Brasil">Brasil</option>
+                                    <option value="Chile">Chile</option>
+                                    <option value="Colombia">Colombia</option>
+                                    <option value="Costa Rica">Costa Rica</option>
+                                    <option value="Ecuador">Ecuador</option>
+                                    <option value="El Salvador">El Salvador</option>
+                                    <option value="Guatemala">Guatemala</option>
+                                    <option value="Honduras">Honduras</option>
+                                    <option value="México">México</option>
+                                    <option value="Nicaragua">Nicaragua</option>
+                                    <option value="Panamá">Panamá</option>
+                                    <option value="Paraguay">Paraguay</option>
+                                    <option value="Perú">Perú</option>
+                                    <option value="República Dominicana">República Dominicana</option>
+                                    <option value="Uruguay">Uruguay</option>
+                                    <option value="Venezuela">Venezuela</option>
+                                    <option value="Estados Unidos">Estados Unidos</option>
+                                    <option value="Canadá">Canadá</option>
+                                    <option value="España">España</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <!-- Tipo de Solicitud -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Tipo de Solicitud *</label>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="card h-100 border-2" id="card-prueba">
+                                            <div class="card-body text-center p-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="tipo_solicitud" id="prueba_gratis" value="prueba_gratis" required>
+                                                    <label class="form-check-label w-100" for="prueba_gratis">
+                                                        <i class="fas fa-gift text-success mb-2" style="font-size: 2rem;"></i>
+                                                        <h5 class="fw-bold">Prueba Gratis</h5>
+                                                        <p class="text-muted small mb-0">14 días gratuitos</p>
+                                                        <p class="text-muted small">Sin tarjeta de crédito</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card h-100 border-2" id="card-suscripcion">
+                                            <div class="card-body text-center p-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="tipo_solicitud" id="suscripcion" value="suscripcion" required>
+                                                    <label class="form-check-label w-100" for="suscripcion">
+                                                        <i class="fas fa-crown text-warning mb-2" style="font-size: 2rem;"></i>
+                                                        <h5 class="fw-bold">Suscripción</h5>
+                                                        <p class="text-muted small mb-0">Acceso completo</p>
+                                                        <p class="text-muted small">Facturación mensual</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Plan de Suscripción (solo visible si se selecciona suscripción) -->
+                            <div id="planes-suscripcion" class="mb-4" style="display: none;">
+                                <label class="form-label fw-bold">Plan de Suscripción</label>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="card border-2" id="card-personal">
+                                            <div class="card-body text-center p-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="plan" id="plan_personal" value="personal">
+                                                    <label class="form-check-label w-100" for="plan_personal">
+                                                        <h6 class="fw-bold text-primary">Personal</h6>
+                                                        <p class="h5 fw-bold mb-1">$24<small class="text-muted">/mes</small></p>
+                                                        <p class="text-muted small mb-0">Hasta 50 formulaciones</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-2" id="card-profesional">
+                                            <div class="card-body text-center p-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="plan" id="plan_profesional" value="profesional">
+                                                    <label class="form-check-label w-100" for="plan_profesional">
+                                                        <h6 class="fw-bold text-warning">Profesional</h6>
+                                                        <p class="h5 fw-bold mb-1">$76<small class="text-muted">/mes</small></p>
+                                                        <p class="text-muted small mb-0">Formulaciones ilimitadas</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información Adicional -->
+                            <div class="mb-4">
+                                <label for="comentarios" class="form-label fw-bold">Comentarios Adicionales</label>
+                                <textarea class="form-control" id="comentarios" name="comentarios" rows="3" placeholder="Cuéntanos sobre tu operación, número de animales, especies que manejas, etc."></textarea>
+                            </div>
+
+                            <!-- Términos y Condiciones -->
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terminos" name="terminos" required>
+                                    <label class="form-check-label" for="terminos">
+                                        Acepto los <a href="#" class="text-decoration-none">términos y condiciones</a> y la <a href="#" class="text-decoration-none">política de privacidad</a>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Botón de Envío -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-lg px-5" style="background: linear-gradient(45deg, #8A72C7, #B39DDB); color: white; border: none; border-radius: 50px; font-weight: 600;">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Enviar Solicitud
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include "sitio/pie.html" %}
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .form-check-input:checked + .form-check-label .card {
+        border-color: #8A72C7 !important;
+        background-color: #f8f6ff;
+    }
+    
+    .card.selected {
+        border-color: #8A72C7 !important;
+        background-color: #f8f6ff;
+        transform: translateY(-2px);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #8A72C7;
+        box-shadow: 0 0 0 0.2rem rgba(138, 114, 199, 0.25);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(138, 114, 199, 0.3);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Formulario cargado correctamente');
+    
+    // Elementos principales
+    const tipoSolicitudRadios = document.querySelectorAll('input[name="tipo_solicitud"]');
+    const planesSuscripcion = document.getElementById('planes-suscripcion');
+    const cardPrueba = document.getElementById('card-prueba');
+    const cardSuscripcion = document.getElementById('card-suscripcion');
+    
+    console.log('Elementos encontrados:', {
+        tipoSolicitudRadios: tipoSolicitudRadios.length,
+        planesSuscripcion: planesSuscripcion ? 'Sí' : 'No',
+        cardPrueba: cardPrueba ? 'Sí' : 'No',
+        cardSuscripcion: cardSuscripcion ? 'Sí' : 'No'
+    });
+    
+    // Función para mostrar/ocultar planes
+    function togglePlanes() {
+        const suscripcionSelected = document.getElementById('suscripcion').checked;
+        console.log('Suscripción seleccionada:', suscripcionSelected);
+        
+        if (suscripcionSelected) {
+            planesSuscripcion.style.display = 'block';
+            // Hacer requerido el plan
+            document.querySelectorAll('input[name="plan"]').forEach(plan => {
+                plan.required = true;
+            });
+        } else {
+            planesSuscripcion.style.display = 'none';
+            // Quitar requerido y limpiar selección
+            document.querySelectorAll('input[name="plan"]').forEach(plan => {
+                plan.required = false;
+                plan.checked = false;
+            });
+        }
+        updateCardStyles();
+    }
+    
+    // Función para actualizar estilos de las tarjetas
+    function updateCardStyles() {
+        // Resetear todos los estilos
+        document.querySelectorAll('.card').forEach(card => {
+            card.classList.remove('selected');
+            card.style.borderColor = '';
+            card.style.backgroundColor = '';
+        });
+        
+        // Aplicar estilos a las tarjetas seleccionadas
+        document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+            const card = radio.closest('.card');
+            if (card) {
+                card.classList.add('selected');
+                card.style.borderColor = '#8A72C7';
+                card.style.backgroundColor = '#f8f6ff';
+            }
+        });
+    }
+    
+    // Event listeners para radio buttons
+    tipoSolicitudRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            console.log('Radio cambiado:', this.value);
+            togglePlanes();
+        });
+        
+        radio.addEventListener('click', function() {
+            console.log('Radio clickeado:', this.value);
+            togglePlanes();
+        });
+    });
+    
+    // Event listeners para planes
+    document.querySelectorAll('input[name="plan"]').forEach(radio => {
+        radio.addEventListener('change', updateCardStyles);
+    });
+    
+    // Hacer las tarjetas clickeables - MEJORADO
+    function makeCardClickable(card, radioId) {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const radio = document.getElementById(radioId);
+            console.log('Tarjeta clickeada:', radioId, 'Radio encontrado:', radio ? 'Sí' : 'No');
+            
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                togglePlanes();
+            }
+        });
+    }
+    
+    // Aplicar click handlers a las tarjetas principales
+    if (cardPrueba) makeCardClickable(cardPrueba, 'prueba_gratis');
+    if (cardSuscripcion) makeCardClickable(cardSuscripcion, 'suscripcion');
+    
+    // Aplicar click handlers a las tarjetas de planes
+    const cardPersonal = document.getElementById('card-personal');
+    const cardProfesional = document.getElementById('card-profesional');
+    
+    if (cardPersonal) makeCardClickable(cardPersonal, 'plan_personal');
+    if (cardProfesional) makeCardClickable(cardProfesional, 'plan_profesional');
+    
+    // Manejar envío del formulario
+    document.getElementById('formularioCobro').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const tipoSolicitud = formData.get('tipo_solicitud');
+        const plan = formData.get('plan');
+        
+        console.log('Enviando formulario:', { tipoSolicitud, plan });
+        
+        // Si es suscripción, redirigir a pasarela de pagos
+        if (tipoSolicitud === 'suscripcion') {
+            let paymentUrl = '';
+            
+            if (plan === 'personal') {
+                paymentUrl = 'https://pay.n1co.shop/pl/qrkDBfKLE';
+            } else if (plan === 'profesional') {
+                paymentUrl = 'https://pay.n1co.shop/pl/kDzVKfPjN';
+            }
+            
+            if (paymentUrl) {
+                // Abrir pasarela de pagos en nueva pestaña
+                window.open(paymentUrl, '_blank');
+                
+                // Enviar datos del formulario al servidor para registro
+                fetch('/procesar_solicitud', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        alert('¡Solicitud procesada! Se ha abierto la pasarela de pagos en una nueva pestaña.');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+                
+                return;
+            }
+        }
+        
+        // Para prueba gratis, enviar formulario normalmente
+        fetch('/procesar_solicitud', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                alert('¡Solicitud de prueba gratis enviada exitosamente! Te contactaremos pronto.');
+                this.reset(); // Limpiar formulario
+                planesSuscripcion.style.display = 'none'; // Ocultar planes al resetear
+                updateCardStyles();
+            } else {
+                alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.');
+        });
+    });
+    
+    // Inicializar estilos
+    updateCardStyles();
+});
+</script>
+
+<!-- Font Awesome para los iconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
