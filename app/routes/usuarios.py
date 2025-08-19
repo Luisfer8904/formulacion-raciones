@@ -302,58 +302,84 @@ def registrar_actividad(usuario_id: int, descripcion: str, tipo_actividad: str =
             print(f"❌ Error al registrar actividad: {e}")
 
 def enviar_correo_solicitud(asunto, mensaje):
-    """Envía un correo electrónico con la información de la solicitud"""
+    """Envía un correo electrónico con la información de la solicitud usando credenciales por variables de entorno.
+Requiere:
+- SENDER_EMAIL: cuenta Gmail que enviará el correo (debe coincidir con la autenticación)
+- SENDER_PASSWORD: contraseña de aplicación de 16 caracteres (sin espacios)
+- RECIPIENT_EMAIL: destinatario (si no se define, se envía a la misma SENDER_EMAIL)
+"""
     import smtplib
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
     import os
-    
+
     try:
-        # Configuración del correo usando variables de entorno
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        sender_email = os.getenv('SENDER_EMAIL', 'feedpro07@gmail.com')
-        sender_password = os.getenv('SENDER_PASSWORD', 'Luis82847')
-        recipient_email = os.getenv('RECIPIENT_EMAIL', 'lfrivera8904@gmail.com')
-        
-        print(f"📧 Configuración de correo:")
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))  # TLS
+        sender_email = os.getenv('SENDER_EMAIL')
+        sender_password = os.getenv('SENDER_PASSWORD')
+        recipient_email = os.getenv('RECIPIENT_EMAIL') or sender_email
+
+        # Normalizar: quitar espacios por si se pegó la contraseña de app con espacios
+        if sender_password:
+            sender_password = sender_password.replace(' ', '')
+
+        # Validaciones previas
+        missing = []
+        if not sender_email:
+            missing.append('SENDER_EMAIL')
+        if not sender_password:
+            missing.append('SENDER_PASSWORD')
+        if not recipient_email:
+            missing.append('RECIPIENT_EMAIL')
+
+        if missing:
+            print(f"❌ Faltan variables de entorno: {', '.join(missing)}")
+            return
+
+        # Asegurar que las variables no sean None (para satisfacer type checking)
+        if not all([sender_email, sender_password, recipient_email]):
+            print("❌ Error: Variables de entorno no configuradas correctamente")
+            return
+
+        # Type assertions para satisfacer Pylance (ya validamos que no son None arriba)
+        sender_email = str(sender_email)
+        sender_password = str(sender_password)
+        recipient_email = str(recipient_email)
+
+        # Log seguro (no mostrar contraseña)
+        print("📧 Configuración de correo:")
         print(f"   Servidor: {smtp_server}:{smtp_port}")
-        print(f"   Remitente: {sender_email}")
+        print(f"   Remitente/LOGIN: {sender_email}")
         print(f"   Destinatario: {recipient_email}")
         print(f"   Contraseña configurada: {'Sí' if sender_password else 'No'}")
-        
-        # Crear el mensaje
+
+        # Crear mensaje
         message = MIMEMultipart()
         message["From"] = sender_email
         message["To"] = recipient_email
         message["Subject"] = asunto
-        
-        # Agregar el cuerpo del mensaje
         message.attach(MIMEText(mensaje, "plain"))
-        
-        # Enviar el correo
+
+        # Envío con TLS
         print("🔄 Conectando al servidor SMTP...")
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-        
-        print("🔄 Autenticando...")
-        server.login(sender_email, sender_password)
-        
-        print("🔄 Enviando correo...")
-        text = message.as_string()
-        server.sendmail(sender_email, recipient_email, text)
-        server.quit()
-        
+        with smtplib.SMTP(smtp_server, smtp_port, timeout=20) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            print("🔄 Autenticando...")
+            server.login(sender_email, sender_password)
+            print("🔄 Enviando correo...")
+            server.sendmail(sender_email, [recipient_email], message.as_string())
+
         print(f"✅ Correo enviado exitosamente a {recipient_email}")
-        
+
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"❌ Error de autenticación SMTP: {e}")
+        print("💡 Verifica que:")
+        print("   1) La cuenta Gmail tenga 2FA activado.")
+        print("   2) Estés usando una 'Contraseña de aplicación' de 16 caracteres (sin espacios).")
+        print("   3) SENDER_EMAIL coincida con la cuenta para la que generaste la contraseña de aplicación.")
     except Exception as e:
         print(f"❌ Error al enviar correo: {e}")
-        print("💡 Para configurar el envío de correos:")
-        print("   1. Configura las variables de entorno:")
-        print(f"      export SENDER_EMAIL='{sender_email}'")
-        print(f"      export SENDER_PASSWORD='tu_contraseña_de_aplicacion'")
-        print(f"      export RECIPIENT_EMAIL='{recipient_email}'")
-        print("   2. Para Gmail, necesitas usar una 'Contraseña de aplicación' en lugar de tu contraseña normal")
-        print("   3. Ve a: https://myaccount.google.com/ > Seguridad > Contraseñas de aplicaciones")
-        # No lanzamos la excepción para que no falle el formulario
-        pass
+        print("💡 Revisa SMTP_SERVER/SMTP_PORT y la conectividad de red del contenedor.")
