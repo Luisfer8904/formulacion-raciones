@@ -326,19 +326,19 @@ def registrar_actividad(usuario_id: int, descripcion: str, tipo_actividad: str =
 
 def enviar_correo_solicitud(asunto, mensaje):
     """Envía un correo electrónico con la información de la solicitud usando credenciales por variables de entorno.
+Optimizado para Railway con múltiples proveedores SMTP y manejo robusto de errores.
 Requiere:
-- SENDER_EMAIL: cuenta Gmail que enviará el correo (debe coincidir con la autenticación)
-- SENDER_PASSWORD: contraseña de aplicación de 16 caracteres (sin espacios)
+- SENDER_EMAIL: cuenta de correo que enviará el correo
+- SENDER_PASSWORD: contraseña de aplicación o contraseña del correo
 - RECIPIENT_EMAIL: destinatario (si no se define, se envía a la misma SENDER_EMAIL)
 """
     import smtplib
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
     import os
+    import socket
 
     try:
-        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
-        smtp_port = int(os.getenv('SMTP_PORT', '587'))  # TLS
         sender_email = os.getenv('SENDER_EMAIL')
         sender_password = os.getenv('SENDER_PASSWORD')
         recipient_email = os.getenv('RECIPIENT_EMAIL') or sender_email
@@ -353,27 +353,60 @@ Requiere:
             missing.append('SENDER_EMAIL')
         if not sender_password:
             missing.append('SENDER_PASSWORD')
-        if not recipient_email:
-            missing.append('RECIPIENT_EMAIL')
 
         if missing:
             print(f"❌ Faltan variables de entorno: {', '.join(missing)}")
             return
 
-        # Asegurar que las variables no sean None (para satisfacer type checking)
-        if not all([sender_email, sender_password, recipient_email]):
-            print("❌ Error: Variables de entorno no configuradas correctamente")
-            return
-
-        # Type assertions para satisfacer Pylance (ya validamos que no son None arriba)
+        # Type assertions para satisfacer Pylance
         sender_email = str(sender_email)
         sender_password = str(sender_password)
-        recipient_email = str(recipient_email)
+        recipient_email = str(recipient_email or sender_email)
 
-        # Log seguro (no mostrar contraseña)
+        # Configuraciones SMTP múltiples para Railway
+        smtp_configs = [
+            # Gmail (principal)
+            {
+                'server': 'smtp.gmail.com',
+                'port': 587,
+                'use_tls': True,
+                'name': 'Gmail'
+            },
+            # Gmail SSL alternativo
+            {
+                'server': 'smtp.gmail.com',
+                'port': 465,
+                'use_tls': False,
+                'use_ssl': True,
+                'name': 'Gmail SSL'
+            },
+            # Outlook/Hotmail
+            {
+                'server': 'smtp-mail.outlook.com',
+                'port': 587,
+                'use_tls': True,
+                'name': 'Outlook'
+            },
+            # Yahoo
+            {
+                'server': 'smtp.mail.yahoo.com',
+                'port': 587,
+                'use_tls': True,
+                'name': 'Yahoo'
+            }
+        ]
+
+        # Detectar proveedor basado en el email
+        domain = sender_email.split('@')[1].lower()
+        if 'gmail' in domain:
+            smtp_configs = [c for c in smtp_configs if 'Gmail' in c['name']] + smtp_configs
+        elif 'outlook' in domain or 'hotmail' in domain:
+            smtp_configs = [c for c in smtp_configs if 'Outlook' in c['name']] + smtp_configs
+        elif 'yahoo' in domain:
+            smtp_configs = [c for c in smtp_configs if 'Yahoo' in c['name']] + smtp_configs
+
         print("📧 Configuración de correo:")
-        print(f"   Servidor: {smtp_server}:{smtp_port}")
-        print(f"   Remitente/LOGIN: {sender_email}")
+        print(f"   Remitente: {sender_email}")
         print(f"   Destinatario: {recipient_email}")
         print(f"   Contraseña configurada: {'Sí' if sender_password else 'No'}")
 
@@ -382,27 +415,67 @@ Requiere:
         message["From"] = sender_email
         message["To"] = recipient_email
         message["Subject"] = asunto
-        message.attach(MIMEText(mensaje, "plain"))
+        message.attach(MIMEText(mensaje, "plain", "utf-8"))
 
-        # Envío con TLS
-        print("🔄 Conectando al servidor SMTP...")
-        with smtplib.SMTP(smtp_server, smtp_port, timeout=20) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            print("🔄 Autenticando...")
-            server.login(sender_email, sender_password)
-            print("🔄 Enviando correo...")
-            server.sendmail(sender_email, [recipient_email], message.as_string())
+        # Intentar con cada configuración SMTP
+        for config in smtp_configs:
+            try:
+                print(f"🔄 Intentando con {config['name']} ({config['server']}:{config['port']})...")
+                
+                # Configurar timeout más largo para Railway
+                socket.setdefaulttimeout(30)
+                
+                if config.get('use_ssl', False):
+                    # Usar SSL directo
+                    server = smtplib.SMTP_SSL(config['server'], config['port'], timeout=30)
+                else:
+                    # Usar conexión normal con TLS
+                    server = smtplib.SMTP(config['server'], config['port'], timeout=30)
+                    server.ehlo()
+                    if config.get('use_tls', True):
+                        server.starttls()
+                        server.ehlo()
 
-        print(f"✅ Correo enviado exitosamente a {recipient_email}")
+                print("🔄 Autenticando...")
+                server.login(sender_email, sender_password)
+                
+                print("🔄 Enviando correo...")
+                server.sendmail(sender_email, [recipient_email], message.as_string())
+                server.quit()
 
-    except smtplib.SMTPAuthenticationError as e:
-        print(f"❌ Error de autenticación SMTP: {e}")
-        print("💡 Verifica que:")
-        print("   1) La cuenta Gmail tenga 2FA activado.")
-        print("   2) Estés usando una 'Contraseña de aplicación' de 16 caracteres (sin espacios).")
-        print("   3) SENDER_EMAIL coincida con la cuenta para la que generaste la contraseña de aplicación.")
+                print(f"✅ Correo enviado exitosamente a {recipient_email} usando {config['name']}")
+                return  # Éxito, salir de la función
+
+            except smtplib.SMTPAuthenticationError as e:
+                print(f"❌ Error de autenticación con {config['name']}: {e}")
+                continue
+            except smtplib.SMTPConnectError as e:
+                print(f"❌ Error de conexión con {config['name']}: {e}")
+                continue
+            except smtplib.SMTPServerDisconnected as e:
+                print(f"❌ Servidor desconectado {config['name']}: {e}")
+                continue
+            except socket.timeout as e:
+                print(f"❌ Timeout con {config['name']}: {e}")
+                continue
+            except Exception as e:
+                print(f"❌ Error con {config['name']}: {e}")
+                continue
+            finally:
+                try:
+                    if 'server' in locals():
+                        server.quit()
+                except:
+                    pass
+
+        # Si llegamos aquí, todos los intentos fallaron
+        print("❌ No se pudo enviar el correo con ningún proveedor SMTP")
+        print("💡 Sugerencias para Railway:")
+        print("   1) Verifica que las variables de entorno estén configuradas en Railway")
+        print("   2) Usa una contraseña de aplicación para Gmail (no la contraseña normal)")
+        print("   3) Verifica que Railway permita conexiones SMTP salientes")
+        print("   4) Considera usar un servicio de email como SendGrid o Mailgun")
+
     except Exception as e:
-        print(f"❌ Error al enviar correo: {e}")
-        print("💡 Revisa SMTP_SERVER/SMTP_PORT y la conectividad de red del contenedor.")
+        print(f"❌ Error general al enviar correo: {e}")
+        print("💡 Revisa la configuración de variables de entorno en Railway")
