@@ -5,6 +5,7 @@ SendGrid es más confiable en entornos de contenedores como Railway
 import os
 import requests
 import json
+import time
 from typing import Optional
 
 def enviar_correo_sendgrid(asunto: str, mensaje: str, destinatario: Optional[str] = None) -> bool:

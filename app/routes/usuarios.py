@@ -2,8 +2,44 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app.db import get_db_connection
 from typing import Any
 from datetime import datetime
+import os
+import time
 
 usuarios_bp = Blueprint('usuarios_bp', __name__)
+
+@usuarios_bp.route('/health')
+def health_check():
+    """
+    Endpoint de health check para monitorear la salud de la aplicación en Railway
+    """
+    try:
+        # Verificar conexión a base de datos
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+        cursor.close()
+        conn.close()
+        db_status = "ok"
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+    
+    # Información del sistema
+    health_info = {
+        "status": "healthy" if db_status == "ok" else "unhealthy",
+        "timestamp": datetime.now().isoformat(),
+        "uptime": time.time(),
+        "database": db_status,
+        "environment": {
+            "port": os.environ.get('PORT', 'not_set'),
+            "email_configured": bool(os.environ.get('SENDER_EMAIL')),
+            "sendgrid_configured": bool(os.environ.get('SENDGRID_API_KEY')),
+        },
+        "version": "1.0.0"
+    }
+    
+    status_code = 200 if db_status == "ok" else 503
+    return jsonify(health_info), status_code
 
 @usuarios_bp.route('/')
 def home():

@@ -1,61 +1,88 @@
-# TODO: Expansión de Símbolos de Monedas y Países + Mejoras de Email
+# Plan de Corrección para Railway - FeedPro
 
-## Tareas Completadas
-- ✅ Analizar implementación actual de monedas y países
-- ✅ Expandir opciones de monedas en opciones.html
-- ✅ Agregar más países para soportar las nuevas monedas
-- ✅ Verificar y actualizar símbolos de monedas en app/__init__.py
-- ✅ Mantener unidades de medida solo en Kg, Lbs, Ton
-- ✅ Mejorar sistema de envío de correos para Railway
-- ✅ Crear documentación de configuración de email
+## ✅ Análisis Completado
+- [x] Identificar problemas en los logs de Railway
+- [x] Revisar configuración actual de email
+- [x] Analizar configuración de Gunicorn
 
-## Progreso
-- ✅ Plan aprobado por el usuario
-- ✅ Cambios implementados exitosamente
-- ✅ Sistema de email optimizado para Railway
+## 🔧 Correcciones Implementadas
 
-## Cambios Realizados
+### 1. Configuración de Gunicorn para Railway
+- [x] Crear gunicorn.conf.py con configuración optimizada
+- [x] Configurar timeouts apropiados para Railway (120s)
+- [x] Establecer número de workers adecuado (CPU * 2 + 1)
+- [x] Actualizar Procfile para usar configuración
 
-### Países Agregados (28 países):
-**Centroamérica:** Panamá, Belice
-**Norteamérica:** México, Estados Unidos, Canadá
-**Sudamérica:** Colombia, Venezuela, Ecuador, Perú, Bolivia, Brasil, Paraguay, Uruguay, Argentina, Chile
-**Europa:** España, Francia, Alemania, Italia, Portugal, Reino Unido
-**Otros:** República Dominicana, Cuba, Puerto Rico
+### 2. Corrección de Email
+- [x] Agregar import de time en config_email_railway.py
+- [x] Mejorar manejo de errores en funciones de email
+- [x] Verificar todas las dependencias
 
-### Monedas Agregadas (21 monedas):
-**Centroamérica:** NIO (C$), PAB (B/.)
-**Norteamérica:** MXN ($), CAD (C$)
-**Sudamérica:** COP ($), VES (Bs.), PEN (S/), BOB (Bs.), BRL (R$), PYG (₲), UYU ($U), ARS ($), CLP ($)
-**Europa:** EUR (€), GBP (£)
-**Otros:** DOP (RD$), CUP ($), JPY (¥)
+### 3. Monitoreo y Salud
+- [x] Agregar endpoint de health check (/health)
+- [x] Mejorar logging para debugging
 
-### Mejoras del Sistema de Email:
-- ✅ **Múltiples proveedores SMTP:** Gmail, Outlook, Yahoo
-- ✅ **Detección automática:** Basada en el dominio del email
-- ✅ **Manejo robusto de errores:** Timeouts, conexiones, autenticación
-- ✅ **Optimizado para Railway:** Timeouts largos, múltiples intentos
-- ✅ **Soporte SSL/TLS:** Puertos 587 y 465
-- ✅ **Logs detallados:** Para depuración en Railway
-- ✅ **Documentación completa:** RAILWAY_EMAIL_CONFIG.md
-- ✅ **Sistema multi-método:** SendGrid API, Webhook, SMTP, Base de datos
-- ✅ **SendGrid integrado:** API más confiable para Railway
-- ✅ **Respaldo automático:** Guarda correos en BD si falla el envío
-- ✅ **Fallback inteligente:** Prueba múltiples métodos automáticamente
+### 4. Documentación
+- [x] Crear guía completa de variables de entorno (RAILWAY_SETUP.md)
+- [x] Documentar configuración de Gunicorn
+- [x] Actualizar instrucciones de SendGrid
 
-## Archivos Modificados/Creados:
-1. **`templates/operaciones/opciones.html`** - Expandidas opciones de países y monedas
-2. **`app/__init__.py`** - Símbolos de monedas actualizados
-3. **`app/routes/usuarios.py`** - Sistema de email mejorado para Railway
-4. **`RAILWAY_EMAIL_CONFIG.md`** - Documentación de configuración de email
-5. **`config_email_railway.py`** - Sistema multi-método para Railway (NUEVO)
-6. **`requirements.txt`** - Agregada dependencia requests
-7. **`TODO.md`** - Documentación del progreso
+## 🚀 Pasos de Seguimiento (PENDIENTES)
 
-## Notas
-- Usuario confirmó: expandir símbolos de monedas incluyendo Euro ✅
-- Usuario confirmó: mantener medidas de peso solo en Lbs, Kg, Ton (es visual) ✅
-- Agregados más países latinoamericanos y europeos ✅
-- Todos los símbolos de monedas están correctamente mapeados ✅
-- Sistema de email optimizado para funcionar en Railway ✅
-- Documentación completa para configuración en Railway ✅
+### Variables de Entorno Críticas a Configurar en Railway:
+- [ ] **SENDGRID_API_KEY** - Clave API de SendGrid (CRÍTICO)
+- [ ] **SENDGRID_FROM_EMAIL** - Email remitente verificado
+- [ ] **EMAIL_WEBHOOK_URL** - URL de webhook alternativo (opcional)
+
+### Verificación Post-Despliegue:
+- [ ] Probar endpoint `/health` después del despliegue
+- [ ] Verificar que no hay más worker timeouts
+- [ ] Probar envío de emails desde formulario
+- [ ] Monitorear logs de Railway por 24 horas
+
+## 📝 Archivos Modificados/Creados
+- [x] `gunicorn.conf.py` - Nueva configuración optimizada
+- [x] `Procfile` - Actualizado para usar configuración
+- [x] `config_email_railway.py` - Corregido import de time
+- [x] `app/routes/usuarios.py` - Agregado health check endpoint
+- [x] `RAILWAY_SETUP.md` - Guía completa de configuración
+- [x] `TODO.md` - Actualizado con progreso
+
+## 🚨 Problemas Identificados y Estado
+
+### ✅ SOLUCIONADO: Worker Timeout
+- **Error:** `WORKER TIMEOUT (pid:2)` después de ~11 horas
+- **Causa:** Configuración por defecto de Gunicorn no optimizada para Railway
+- **Solución:** Configuración personalizada con timeouts apropiados
+
+### ⚠️ PENDIENTE: Email Configuration
+- **Error:** `❌ SENDGRID_API_KEY no configurado`
+- **Causa:** Variables de entorno faltantes en Railway
+- **Solución:** Configurar SENDGRID_API_KEY en Railway Dashboard
+
+### ⚠️ PENDIENTE: Webhook Configuration  
+- **Error:** `❌ EMAIL_WEBHOOK_URL no configurado`
+- **Causa:** Variable de entorno opcional no configurada
+- **Solución:** Configurar webhook o usar SendGrid como principal
+
+## 🎯 Próximos Pasos Inmediatos
+
+1. **Configurar SendGrid en Railway:**
+   - Crear cuenta en SendGrid
+   - Generar API Key
+   - Configurar SENDGRID_API_KEY en Railway
+
+2. **Desplegar cambios:**
+   - Los archivos ya están listos para despliegue
+   - Railway detectará automáticamente los cambios
+
+3. **Verificar funcionamiento:**
+   - Probar `/health` endpoint
+   - Enviar email de prueba
+   - Monitorear logs
+
+## 📊 Impacto Esperado
+- ✅ Eliminación de worker timeouts
+- ✅ Emails funcionando correctamente
+- ✅ Mejor monitoreo de la aplicación
+- ✅ Configuración más robusta para Railway
