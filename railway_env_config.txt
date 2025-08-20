@@ -1,0 +1,15 @@
+# Variables de Entorno para Railway - FeedPro
+# Copia estas variables exactamente en Railway Dashboard > Variables
+
+SENDER_EMAIL=feedpro07@gmail.com
+SENDER_PASSWORD=hfawobjfxrtkaapi
+RECIPIENT_EMAIL=lfrivera8904@gmail.com
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+
+# Instrucciones:
+# 1. Ve a Railway Dashboard
+# 2. Selecciona tu proyecto "Formulador de raciones"
+# 3. Ve a la pestaña "Variables"
+# 4. Agrega cada variable una por una (sin los comentarios #)
+# 5. Guarda y Railway reiniciará automáticamente

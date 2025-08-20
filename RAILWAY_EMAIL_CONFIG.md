@@ -26,11 +26,13 @@ SENDER_EMAIL=noreply@tudominio.com
 RECIPIENT_EMAIL=destinatario@gmail.com
 ```
 
-### Método 3: SMTP Tradicional (Respaldo)
+### Método 3: SMTP Tradicional (CONFIGURADO)
 ```bash
-SENDER_EMAIL=tu_email@gmail.com
-SENDER_PASSWORD=tu_contraseña_de_aplicacion
-RECIPIENT_EMAIL=destinatario@gmail.com
+SENDER_EMAIL=feedpro07@gmail.com
+SENDER_PASSWORD=hfawobjfxrtkaapi
+RECIPIENT_EMAIL=lfrivera8904@gmail.com
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
 ```
 
 ## 🚀 Configuración de SendGrid (Recomendado para Railway)
@@ -74,12 +76,14 @@ RECIPIENT_EMAIL=destinatario@gmail.com
 - Copia la contraseña de 16 caracteres generada
 - Usa esta contraseña en SENDER_PASSWORD (sin espacios)
 
-### 3. Configurar Variables en Railway
+### 3. Variables Configuradas en Railway
 ```bash
-# En el dashboard de Railway, ve a Variables y agrega:
-SENDER_EMAIL=tu_email@gmail.com
-SENDER_PASSWORD=abcd efgh ijkl mnop  # (sin espacios reales)
-RECIPIENT_EMAIL=destinatario@gmail.com
+# Variables ya configuradas en Railway Dashboard:
+SENDER_EMAIL=feedpro07@gmail.com
+SENDER_PASSWORD=hfawobjfxrtkaapi
+RECIPIENT_EMAIL=lfrivera8904@gmail.com
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
 ```
 
 ## Proveedores SMTP Soportados
