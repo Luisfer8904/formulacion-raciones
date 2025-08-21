@@ -900,7 +900,7 @@ function imprimirTabla() {
     <p><strong>Especie:</strong> ${tipo}</p>
     <p><strong>Tipo de Dieta:</strong> ${etapa}</p>
     <p><strong>Nombre Mezcla:</strong> ${nombre}</p>
-    <p><strong>Tamaño de la bachada:</strong> ${tamanoBachada} kg</p>
+    <p><strong>Tamaño de la bachada:</strong> ${tamanoBachada} ${window.configUsuario ? window.configUsuario.unidad_medida : 'kg'}</p>
     <table border="1" cellspacing="0" cellpadding="5" width="100%">
       <thead>
         <tr>

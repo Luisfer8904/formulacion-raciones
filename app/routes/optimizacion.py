@@ -130,30 +130,74 @@ def formulacion_minerales():
 def obtener_requerimientos_usuario():
     """Obtener todos los requerimientos del usuario actual"""
     if 'user_id' not in session:
+        print("❌ Usuario no autenticado")
         return jsonify({'error': 'No autorizado'}), 401
     
     try:
+        print(f"🔍 Obteniendo requerimientos para usuario: {session['user_id']}")
+        
         conn = get_db_connection()
+        if not conn:
+            print("❌ Error: No se pudo conectar a la base de datos")
+            return jsonify({'error': 'Error de conexión a la base de datos'}), 500
+            
         cursor = conn.cursor(dictionary=True)
         
+        # Primero verificar si la tabla existe
+        cursor.execute("SHOW TABLES LIKE 'requerimientos'")
+        tabla_existe = cursor.fetchone()
+        
+        if not tabla_existe:
+            print("❌ Error: La tabla 'requerimientos' no existe")
+            cursor.close()
+            conn.close()
+            return jsonify({'error': 'Tabla de requerimientos no encontrada'}), 500
+        
+        # Verificar estructura de la tabla
+        cursor.execute("DESCRIBE requerimientos")
+        columnas = cursor.fetchall()
+        print(f"📋 Estructura de tabla requerimientos: {[col['Field'] for col in columnas]}")
+        
+        # Ejecutar consulta con manejo de errores mejorado
         cursor.execute("""
-            SELECT id, nombre, tipo_especie, comentario
+            SELECT id, nombre, 
+                   COALESCE(tipo_especie, especie, 'Sin especificar') as tipo_especie, 
+                   COALESCE(comentario, '') as comentario
             FROM requerimientos
             WHERE usuario_id = %s
             ORDER BY nombre ASC
         """, (session['user_id'],))
         
         requerimientos = cursor.fetchall()
+        print(f"✅ Requerimientos encontrados: {len(requerimientos)}")
+        
+        # Si no hay requerimientos, devolver lista vacía en lugar de error
+        if not requerimientos:
+            print("⚠️ No se encontraron requerimientos para este usuario")
+            cursor.close()
+            conn.close()
+            return jsonify([])
         
         cursor.close()
         conn.close()
         
-        # Retornar directamente la lista de requerimientos (sin wrapper)
+        # Retornar directamente la lista de requerimientos
         return jsonify(requerimientos)
         
     except Exception as e:
-        print("❌ Error al obtener requerimientos:", e)
-        return jsonify({'error': 'Error al cargar requerimientos'}), 500
+        print(f"❌ Error detallado al obtener requerimientos: {str(e)}")
+        print(f"❌ Tipo de error: {type(e).__name__}")
+        
+        # Intentar cerrar conexiones si están abiertas
+        try:
+            if 'cursor' in locals():
+                cursor.close()
+            if 'conn' in locals():
+                conn.close()
+        except:
+            pass
+            
+        return jsonify({'error': f'Error al cargar requerimientos: {str(e)}'}), 500
 
 @optimizacion_bp.route('/api/requerimiento/<int:requerimiento_id>/nutrientes', methods=['GET'])
 def obtener_nutrientes_requerimiento(requerimiento_id):

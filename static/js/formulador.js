@@ -824,15 +824,15 @@ function imprimirTabla() {
     <p><strong>Especie:</strong> ${tipo}</p>
     <p><strong>Tipo de Dieta:</strong> ${etapa}</p>
     <p><strong>Nombre Mezcla:</strong> ${nombre}</p>
-    <p><strong>Tamaño de la bachada:</strong> ${tamanoBachada} kg</p>
+    <p><strong>Tamaño de la bachada:</strong> ${tamanoBachada} ${window.configUsuario ? window.configUsuario.unidad_medida : 'kg'}</p>
     <table border="1" cellspacing="0" cellpadding="5" width="100%">
       <thead>
         <tr>
           <th>#</th>
           <th>Ingrediente</th>
           <th>Cant. (%)</th>
-          <th>Peso (kg)</th>
-          <th>Precio Lps/kg</th>
+          <th>Peso (${window.configUsuario ? window.configUsuario.unidad_medida : 'kg'})</th>
+          <th>Precio ${window.configUsuario ? window.configUsuario.moneda : 'Lps'}/${window.configUsuario ? window.configUsuario.unidad_medida : 'kg'}</th>
           <th>Precio Total</th>
         </tr>
       </thead>
@@ -863,7 +863,7 @@ function imprimirTabla() {
   contenido += `
       </tbody>
     </table>
-    <p><strong>Total Lps: </strong>${totalCosto}</p>
+    <p><strong>Total ${window.configUsuario ? window.configUsuario.moneda : 'Lps'}: </strong>${totalCosto}</p>
     <br>
     <p><strong>Observaciones:</strong> ${observaciones}</p>
     <br><br>

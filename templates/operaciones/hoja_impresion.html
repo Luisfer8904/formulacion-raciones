@@ -185,7 +185,7 @@
                     <input type="text" class="form-control form-control-sm" value="{{ etapa_produccion }}" readonly>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Tamaño de Bachada (kg):</label>
+                    <label class="form-label">Tamaño de Bachada ({{ config_usuario.unidad_medida }}):</label>
                     <input type="number" class="form-control form-control-sm" value="{{ tamano_bachada }}" readonly>
                 </div>
             </div>
@@ -197,7 +197,7 @@
 
         <div class="summary-cards">
             <div class="summary-card">
-                <h5>${{ total_costo }}</h5>
+                <h5>{{ config_usuario.moneda|simbolo_moneda }}{{ total_costo }}</h5>
                 <small>Costo Total</small>
             </div>
             <div class="summary-card">
@@ -227,7 +227,7 @@
                             <th>Inclusión (%)</th>
                             <th>Límite Mín. (%)</th>
                             <th>Límite Máx. (%)</th>
-                            <th>Peso en Bachada (kg)</th>
+                            <th>Peso en Bachada ({{ config_usuario.unidad_medida }})</th>
                             <th>Costo Ingrediente ({{ config_usuario.moneda|simbolo_moneda }}/{{ config_usuario.unidad_medida }})</th>
                             <th>Valor Total ({{ config_usuario.moneda|simbolo_moneda }})</th>
                             <th>Acciones</th>
