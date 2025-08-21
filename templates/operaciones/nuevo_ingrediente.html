@@ -18,8 +18,8 @@
         </div>
 
         <div class="col-md-6">
-          <label class="form-label">Precio del Ingrediente:</label>
-          <input type="number" step="0.01" name="precio" class="form-control" required placeholder="Precio por unidad" value="">
+          <label class="form-label">Precio del Ingrediente ({{ config_usuario.moneda|simbolo_moneda }}/{{ config_usuario.unidad_medida }}):</label>
+          <input type="number" step="0.01" name="precio" class="form-control" required placeholder="Precio por {{ config_usuario.unidad_medida }}" value="">
         </div>
 
         <div class="col-md-6">

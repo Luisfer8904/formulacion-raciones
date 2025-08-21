@@ -21,8 +21,8 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="precio" class="form-label">Precio</label>
-            <input type="number" class="form-control" id="precio" name="precio" step="any" value="{{ ingrediente.precio }}">
+            <label for="precio" class="form-label">Precio ({{ config_usuario.moneda|simbolo_moneda }}/{{ config_usuario.unidad_medida }})</label>
+            <input type="number" class="form-control" id="precio" name="precio" step="any" value="{{ ingrediente.precio }}" placeholder="Precio por {{ config_usuario.unidad_medida }}">
         </div>
         <div class="mb-3">
             <label for="ms" class="form-label">Materia Seca (%)</label>

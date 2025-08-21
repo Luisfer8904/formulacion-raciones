@@ -33,11 +33,25 @@ def formulacion_minerales():
     
     cursor = conn.cursor(dictionary=True)
     
-    # Configuraciones del usuario - por ahora usar valores por defecto
-    # TODO: Implementar consulta a base de datos cuando se resuelvan los tipos
-    moneda = 'HNL'
-    unidad_medida = 'kg'
-    tipo_moneda = 'Nacional'
+    # Obtener configuración del usuario
+    cursor.execute("""
+        SELECT moneda, tipo_moneda, unidad_medida
+        FROM usuarios
+        WHERE id = %s
+    """, (session['user_id'],))
+    config_usuario = cursor.fetchone()
+    
+    # Si no hay configuración, usar valores por defecto
+    if not config_usuario:
+        config_usuario = {
+            'moneda': 'USD',
+            'tipo_moneda': '$',
+            'unidad_medida': 'kg'
+        }
+    
+    moneda = config_usuario['moneda'] if config_usuario else 'USD'
+    unidad_medida = config_usuario['unidad_medida'] if config_usuario else 'kg'
+    tipo_moneda = config_usuario['tipo_moneda'] if config_usuario else '$'
 
     # Obtener todos los ingredientes
     cursor.execute("SELECT id, nombre, comentario, ms, precio FROM ingredientes WHERE usuario_id = %s", (session['user_id'],))

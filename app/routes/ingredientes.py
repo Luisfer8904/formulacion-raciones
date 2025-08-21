@@ -12,12 +12,33 @@ def ver_ingredientes():
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    
+    # Obtener ingredientes del usuario
     cursor.execute("SELECT id, nombre, comentario, tipo, precio, ms FROM ingredientes WHERE usuario_id = %s", (session['user_id'],))
     ingredientes = cursor.fetchall()
+    
+    # Obtener configuración del usuario para mostrar la moneda correcta
+    cursor.execute("""
+        SELECT moneda, tipo_moneda, unidad_medida
+        FROM usuarios
+        WHERE id = %s
+    """, (session['user_id'],))
+    config_usuario = cursor.fetchone()
+    
+    # Si no hay configuración, usar valores por defecto
+    if not config_usuario:
+        config_usuario = {
+            'moneda': 'USD',
+            'tipo_moneda': '$',
+            'unidad_medida': 'kg'
+        }
+    
     cursor.close()
     conn.close()
     
-    return render_template('operaciones/ingredientes.html', ingredientes=ingredientes)
+    return render_template('operaciones/ingredientes.html', 
+                         ingredientes=ingredientes, 
+                         config_usuario=config_usuario)
 
 @ingredientes_bp.route('/ver_ingrediente/<int:id>')
 def ver_ingrediente(id):
@@ -114,14 +135,39 @@ def nuevo_ingrediente():
         cursor.execute("SELECT id, nombre FROM especies")
         especies = cursor.fetchall()
 
+        # Obtener configuración del usuario para mostrar la moneda correcta
+        cursor.execute("""
+            SELECT moneda, tipo_moneda, unidad_medida
+            FROM usuarios
+            WHERE id = %s
+        """, (session['user_id'],))
+        config_usuario = cursor.fetchone()
+        
+        # Si no hay configuración, usar valores por defecto
+        if not config_usuario:
+            config_usuario = {
+                'moneda': 'USD',
+                'tipo_moneda': '$',
+                'unidad_medida': 'kg'
+            }
+
         cursor.close()
         conn.close()
     except Exception as e:
         print("❌ Error al obtener datos:", e)
         nuevo_id = 1
         especies = []
+        config_usuario = {
+            'moneda': 'USD',
+            'tipo_moneda': '$',
+            'unidad_medida': 'kg'
+        }
 
-    return render_template('operaciones/nuevo_ingrediente.html', ultimo_id=nuevo_id, especies=especies, mostrar_ms=True)
+    return render_template('operaciones/nuevo_ingrediente.html', 
+                         ultimo_id=nuevo_id, 
+                         especies=especies, 
+                         mostrar_ms=True,
+                         config_usuario=config_usuario)
 
 @ingredientes_bp.route('/guardar_ingrediente', methods=['POST'])
 def guardar_ingrediente():
@@ -277,6 +323,22 @@ def editar_ingrediente(id):
     """, (id, session['user_id']))
     nutrientes = cursor.fetchall()
 
+    # Obtener configuración del usuario para mostrar la moneda correcta
+    cursor.execute("""
+        SELECT moneda, tipo_moneda, unidad_medida
+        FROM usuarios
+        WHERE id = %s
+    """, (session['user_id'],))
+    config_usuario = cursor.fetchone()
+    
+    # Si no hay configuración, usar valores por defecto
+    if not config_usuario:
+        config_usuario = {
+            'moneda': 'USD',
+            'tipo_moneda': '$',
+            'unidad_medida': 'kg'
+        }
+
     cursor.close()
     conn.close()
 
@@ -284,7 +346,10 @@ def editar_ingrediente(id):
         flash('Ingrediente no encontrado.', 'warning')
         return redirect(url_for('ingredientes_bp.ver_ingredientes'))
 
-    return render_template('operaciones/editar_ingrediente.html', ingrediente=ingrediente, nutrientes=nutrientes)
+    return render_template('operaciones/editar_ingrediente.html', 
+                         ingrediente=ingrediente, 
+                         nutrientes=nutrientes,
+                         config_usuario=config_usuario)
 
 @ingredientes_bp.route('/actualizar_ingrediente/<int:id>', methods=['POST'])
 def actualizar_ingrediente(id):

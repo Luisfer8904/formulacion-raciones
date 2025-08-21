@@ -47,7 +47,7 @@
                     <tr>
                         <td class="fw-bold">{{ ing.get('nombre', '-') }}</td>
                         <td class="text-center">
-                            <span class="badge bg-success">${{ ing.get('precio', '-') }}</span>
+                            <span class="badge bg-success">{{ config_usuario.moneda|simbolo_moneda }}{{ ing.get('precio', '-') }}</span>
                         </td>
                         <td class="text-center">
                             <span class="badge bg-info">{{ ing.get('tipo', '-') }}</span>
