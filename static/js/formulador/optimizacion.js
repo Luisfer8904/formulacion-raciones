@@ -1,6 +1,10 @@
 // ===== OPTIMIZACIÓN =====
 
 function optimizarMezcla() {
+  // Obtener el tipo de optimización seleccionado
+  const tipoOptimizacion = document.querySelector('input[name="tipoOptimizacion"]:checked')?.value || 'base_humeda';
+  console.log("🎯 Tipo de optimización seleccionado:", tipoOptimizacion);
+
   // Recopilar ingredientes desde la tabla
   const filas = document.querySelectorAll("#tabla-ingredientes tr");
   let ingredientes = [];
@@ -13,6 +17,8 @@ function optimizarMezcla() {
     const limite_min = parseFloat(fila.querySelector('input[name^="min_"]')?.value || 0);
     const limite_max = parseFloat(fila.querySelector('input[name^="max_"]')?.value || 100);
     const costo = parseFloat(fila.querySelector('input[name^="costo_ingrediente_"]')?.value || 0);
+    const ms = parseFloat(selectedOption.getAttribute("data-ms")) || 100; // Obtener materia seca
+    
     // Recopilar aportes de nutrientes
     let aporte = {};
     const nutrientesJson = selectedOption.getAttribute("data-nutrientes");
@@ -45,6 +51,7 @@ function optimizarMezcla() {
       limite_min: limite_min,
       limite_max: limite_max,
       costo: costo,
+      ms: ms, // Agregar materia seca al objeto
       aporte: aporte
     });
   });
@@ -74,7 +81,11 @@ function optimizarMezcla() {
   });
 
   // Depuración: imprimir datos que se envían al backend
-  const data = { ingredientes, requerimientos };
+  const data = { 
+    ingredientes, 
+    requerimientos, 
+    tipo_optimizacion: tipoOptimizacion 
+  };
   console.log("🟢 Datos enviados a backend (optimizarMezcla):", data);
 
   fetch("/optimizar_formulacion", {

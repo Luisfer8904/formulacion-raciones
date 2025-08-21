@@ -135,6 +135,29 @@
       </button>
     </div>
     
+    <!-- Selector de Tipo de Optimización -->
+    <div class="optimization-type-selector mb-3">
+      <div class="d-flex justify-content-center">
+        <div class="btn-group optimization-toggle" role="group" aria-label="Tipo de Optimización">
+          <input type="radio" class="btn-check" name="tipoOptimizacion" id="baseHumeda" value="base_humeda" checked>
+          <label class="btn btn-outline-success" for="baseHumeda">
+            <i class="fas fa-droplet me-1"></i>Base Húmeda (TC)
+          </label>
+          
+          <input type="radio" class="btn-check" name="tipoOptimizacion" id="baseSeca" value="base_seca">
+          <label class="btn btn-outline-success" for="baseSeca">
+            <i class="fas fa-seedling me-1"></i>Base Seca (BS)
+          </label>
+        </div>
+      </div>
+      <div class="text-center mt-2">
+        <small class="text-muted">
+          <i class="fas fa-info-circle me-1"></i>
+          Selecciona el tipo de optimización: Base Húmeda (tal como) o Base Seca (materia seca)
+        </small>
+      </div>
+    </div>
+    
     <div class="table-responsive">
       <table class="table table-bordered table-sm nutrientes-table">
         <thead class="table-light text-center align-middle">
@@ -428,6 +451,52 @@ window.ingredientesPrecargados = {{ ingredientes_mezcla|tojson|safe }};
   
   .table tbody tr:hover {
     background-color: rgba(124, 179, 66, 0.05);
+  }
+  
+  /* Estilos para el selector de tipo de optimización */
+  .optimization-type-selector {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    padding: 20px;
+    border: 2px solid #7CB342;
+    box-shadow: 0 2px 8px rgba(124, 179, 66, 0.1);
+  }
+  
+  .optimization-toggle .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 12px 24px;
+    transition: all 0.3s ease;
+    border: 2px solid #7CB342;
+    color: #7CB342;
+    background: white;
+  }
+  
+  .optimization-toggle .btn:hover {
+    background: rgba(124, 179, 66, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 179, 66, 0.2);
+  }
+  
+  .optimization-toggle .btn-check:checked + .btn {
+    background: #7CB342;
+    color: white;
+    border-color: #7CB342;
+    box-shadow: 0 4px 12px rgba(124, 179, 66, 0.3);
+  }
+  
+  .optimization-toggle .btn-check:checked + .btn:hover {
+    background: #6da639;
+    border-color: #6da639;
+  }
+  
+  .optimization-toggle .btn i {
+    font-size: 1.1em;
+  }
+  
+  .optimization-type-selector small {
+    font-size: 0.9em;
+    font-weight: 500;
   }
 </style>
 

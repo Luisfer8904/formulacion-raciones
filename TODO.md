@@ -1,140 +1,64 @@
-# Plan de Corrección para Railway - FeedPro
+# TODO: Selector de Tipo de Optimización (Base Húmeda vs Base Seca)
 
-## ✅ Análisis Completado
-- [x] Identificar problemas en los logs de Railway
-- [x] Revisar configuración actual de email
-- [x] Analizar configuración de Gunicorn
-- [x] Identificar inconsistencias en sistema de monedas
+## Progreso de Implementación
 
-## 🔧 Correcciones Implementadas
+### ✅ Completado
+- [x] Análisis de la aplicación actual
+- [x] Identificación de archivos clave
+- [x] Creación del plan de implementación
+- [x] **Frontend**: Agregar selector en formulacion_minerales.html
+- [x] **JavaScript**: Modificar optimizacion.js para enviar tipo de optimización
+- [x] **Backend**: Actualizar optimizacion.py para manejar ambos tipos
+- [x] **Estilos**: Agregar CSS para el selector
+- [x] **Pruebas de funcionalidad**: ✅ Verificado en logs del servidor
+- [x] **Verificación de cálculos**: ✅ Base húmeda ($9.83) vs Base seca ($9.95)
+- [x] **Validación de UI/UX**: ✅ Selector implementado y funcional
 
-### 1. Configuración de Gunicorn para Railway
-- [x] Crear gunicorn.conf.py con configuración optimizada
-- [x] Configurar timeouts apropiados para Railway (120s)
-- [x] Establecer número de workers adecuado (CPU * 2 + 1)
-- [x] Actualizar Procfile para usar configuración
-- [x] Configurar límites de memoria y graceful shutdown
+### 🔄 En Progreso
+- [ ] Documentación final de cambios
 
-### 2. Corrección de Email
-- [x] Agregar import de time en config_email_railway.py
-- [x] Mejorar manejo de errores en funciones de email
-- [x] Sistema de respaldo con múltiples métodos (SendGrid, Webhook, SMTP, DB)
+### ⏳ Pendiente
+- [ ] Pruebas adicionales con diferentes escenarios
 
-### 3. Sistema de Monedas Consistente ⭐ NUEVO
-- [x] Corregir ruta de ingredientes para pasar config_usuario
-- [x] Actualizar template ingredientes.html con símbolo correcto
-- [x] Corregir ruta nuevo_ingrediente con config_usuario
-- [x] Actualizar template nuevo_ingrediente.html
-- [x] Corregir ruta editar_ingrediente con config_usuario
-- [x] Actualizar template editar_ingrediente.html
-- [x] Corregir ruta optimizacion.py para usar config del usuario
-- [x] Verificar que mezclas.py ya usa config del usuario
+## Detalles de Implementación
 
-### 4. Monitoreo y Salud
-- [x] Agregar endpoint de health check (/health)
-- [x] Mejorar logging para debugging
+### 1. Selector UI
+- Ubicación: Arriba de la tabla de nutrientes
+- Estilo: Similar al selector de precios
+- Opciones: "Base Húmeda (TC)" y "Base Seca (BS)"
 
-### 5. Documentación
-- [x] Crear guía completa de variables de entorno (RAILWAY_SETUP.md)
-- [x] Documentar configuración de Gunicorn
-- [x] Actualizar instrucciones de SendGrid
-- [x] Crear test_railway_config.py para verificar configuración
+### 2. Lógica de Cálculo
+- **Base Húmeda**: `(inclusión * valor_nutriente) / 100`
+- **Base Seca**: `(inclusión * ms * valor_nutriente) / 10000`
 
-## ✅ Templates Verificados con Símbolo de Moneda Correcto
-- [x] templates/operaciones/ingredientes.html
-- [x] templates/operaciones/nuevo_ingrediente.html  
-- [x] templates/operaciones/editar_ingrediente.html
-- [x] templates/operaciones/formulacion_minerales.html
-- [x] templates/operaciones/hoja_impresion.html
+### 3. Archivos Modificados
+- `templates/operaciones/formulacion_minerales.html` - Selector UI y estilos CSS
+- `static/js/formulador/optimizacion.js` - Envío de tipo de optimización
+- `app/routes/optimizacion.py` - Lógica de backend para ambos tipos
 
-## 🚀 Pasos de Seguimiento (PENDIENTES)
+## Resultados de Pruebas
 
-### Variables de Entorno Críticas a Configurar en Railway:
-- [ ] **SENDGRID_API_KEY** - Clave API de SendGrid (CRÍTICO)
-- [ ] **SENDGRID_FROM_EMAIL** - Email remitente verificado
-- [ ] **EMAIL_WEBHOOK_URL** - URL de webhook alternativo (opcional)
+### Prueba Funcional Exitosa
+- **Base Húmeda**: Costo optimizado $9.83
+- **Base Seca**: Costo optimizado $9.95
+- **Diferencia**: $0.12 (1.2% más caro en base seca)
 
-### Verificación Post-Despliegue:
-- [ ] Probar endpoint `/health` después del despliegue
-- [ ] Verificar que no hay más worker timeouts
-- [ ] Probar envío de emails desde formulario
-- [ ] **Verificar sistema de monedas:** Cambiar moneda en perfil y confirmar que se refleja en toda la app
-- [ ] **Probar formulador:** Verificar que costos se muestran con símbolo correcto
-- [ ] Monitorear logs de Railway por 24 horas
+### Logs de Verificación
+```
+🎯 Tipo de optimización: base_humeda
+🧪 Fosforo (base_humeda): aportes por ingrediente = [0.01, 22.7]
+💰 Costo total optimizado: $9.83
 
-## 📝 Archivos Modificados/Creados
+🎯 Tipo de optimización: base_seca  
+🧪 Fosforo (base_seca): aportes por ingrediente = [0.0098, 22.39355]
+💰 Costo total optimizado: $9.95
+```
 
-### Archivos Creados:
-- [x] `gunicorn.conf.py` - Configuración optimizada para Railway
-- [x] `RAILWAY_SETUP.md` - Guía completa de configuración
-- [x] `test_railway_config.py` - Script de verificación
+## Estado Final
+✅ **IMPLEMENTACIÓN COMPLETA Y FUNCIONAL**
 
-### Archivos Modificados:
-- [x] `Procfile` - Usar configuración de Gunicorn
-- [x] `config_email_railway.py` - Agregar import time
-- [x] `app/routes/usuarios.py` - Agregado health check endpoint
-- [x] `app/routes/ingredientes.py` - Pasar config_usuario en todas las rutas ⭐
-- [x] `app/routes/optimizacion.py` - Usar config del usuario en lugar de valores fijos ⭐
-- [x] `templates/operaciones/ingredientes.html` - Símbolo de moneda dinámico ⭐
-- [x] `templates/operaciones/nuevo_ingrediente.html` - Símbolo de moneda dinámico ⭐
-- [x] `templates/operaciones/editar_ingrediente.html` - Símbolo de moneda dinámico ⭐
-- [x] `TODO.md` - Actualizado con progreso completo
+El selector de tipo de optimización está completamente implementado y permite a los usuarios elegir entre:
+- **Base Húmeda (TC)**: Optimización tal como, sin aplicar materia seca
+- **Base Seca (BS)**: Optimización aplicando el porcentaje de materia seca
 
-## 🚨 Problemas Identificados y Estado
-
-### ✅ SOLUCIONADO: Worker Timeout
-- **Error:** `WORKER TIMEOUT (pid:2)` después de ~11 horas
-- **Causa:** Configuración por defecto de Gunicorn no optimizada para Railway
-- **Solución:** Configuración personalizada con timeouts apropiados
-
-### ✅ SOLUCIONADO: Sistema de Monedas Inconsistente ⭐
-- **Error:** Símbolo $ fijo en lugar del símbolo de moneda del usuario
-- **Causa:** Templates y rutas no pasaban/usaban la configuración del usuario
-- **Solución:** Todas las rutas ahora pasan config_usuario y templates usan filtro simbolo_moneda
-
-### ⚠️ PENDIENTE: Email Configuration
-- **Error:** `❌ SENDGRID_API_KEY no configurado`
-- **Causa:** Variables de entorno faltantes en Railway
-- **Solución:** Configurar SENDGRID_API_KEY en Railway Dashboard
-
-### ⚠️ PENDIENTE: Webhook Configuration  
-- **Error:** `❌ EMAIL_WEBHOOK_URL no configurado`
-- **Causa:** Variable de entorno opcional no configurada
-- **Solución:** Configurar webhook o usar SendGrid como principal
-
-## 🎯 Próximos Pasos Inmediatos
-
-1. **Configurar SendGrid en Railway:**
-   - Crear cuenta en SendGrid
-   - Generar API Key
-   - Configurar SENDGRID_API_KEY en Railway
-
-2. **Desplegar cambios:**
-   - Los archivos ya están listos para despliegue
-   - Railway detectará automáticamente los cambios
-
-3. **Verificar funcionamiento:**
-   - Probar `/health` endpoint
-   - Enviar email de prueba
-   - **Probar sistema de monedas:** Cambiar moneda en perfil y verificar cambios
-   - Monitorear logs
-
-## 📊 Impacto Esperado
-- ✅ Eliminación de worker timeouts
-- ✅ Emails funcionando correctamente
-- ✅ **Sistema de monedas consistente en toda la aplicación** ⭐
-- ✅ Mejor monitoreo de la aplicación
-- ✅ Configuración más robusta para Railway
-
-## 🔧 Funcionalidad del Sistema de Monedas
-Ahora cuando un usuario:
-1. **Cambie su moneda en Opciones** (ej: de USD a HNL)
-2. **El símbolo se actualizará automáticamente en:**
-   - Lista de ingredientes (precios)
-   - Formulario de nuevo ingrediente
-   - Formulario de editar ingrediente
-   - Formulador de mezclas (costos)
-   - Reportes de impresión
-   - Hoja de cálculo de costos
-
-**Nota:** Los precios de suscripción permanecen en USD como se solicitó.
+La funcionalidad ha sido probada y verificada exitosamente.

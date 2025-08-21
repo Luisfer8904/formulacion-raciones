@@ -251,6 +251,9 @@ def optimizar_formulacion():
 
     ingredientes = data.get('ingredientes', [])
     requerimientos = data.get('requerimientos', [])
+    tipo_optimizacion = data.get('tipo_optimizacion', 'base_humeda')  # Por defecto base húmeda
+
+    print(f"🎯 Tipo de optimización: {tipo_optimizacion}")
 
     if not ingredientes or not requerimientos:
         print("❌ Error: Ingredientes o requerimientos vacíos")
@@ -327,32 +330,33 @@ def optimizar_formulacion():
     print("PASO 3: AJUSTAR LÍMITES MÍNIMOS Y MÁXIMOS DE NUTRIENTES")
     print("="*60)
     
-    # Construir matriz de nutrientes (USANDO VALORES EN BASE SECA: valor_bs)
+    # Construir matriz de nutrientes según el tipo de optimización seleccionado
     for req in requerimientos:
         fila = []
         for ing in ingredientes:
             nutrientes = ing.get('aporte', {})
             valor_nutriente = 0
-            if req['nombre'].lower() == 'fósforo' or req['nombre'].lower() == 'fosforo':
-                # Calcular fósforo en base seca: inclusion * fosforo * (ms / 100)
-                # fosforo = valor del nutriente, ms = materia seca del ingrediente
-                fosforo = 0.0
-                ms = float(ing.get('ms', 100))
-                inclusion = 1.0  # Inclusion será multiplicada en la optimización, por ahora 1
-                if isinstance(nutrientes.get(req['nombre']), dict):
-                    fosforo = float(nutrientes.get(req['nombre'], {}).get('valor', 0))
-                else:
-                    fosforo = float(nutrientes.get(req['nombre'], 0))
-                # El valor base seca por unidad de inclusión:
-                valor_nutriente = fosforo * (ms / 100)
+            ms = float(ing.get('ms', 100))
+            
+            # Obtener el valor base del nutriente
+            if isinstance(nutrientes.get(req['nombre']), dict):
+                valor_base = float(nutrientes.get(req['nombre'], {}).get('valor', 0))
             else:
-                if isinstance(nutrientes.get(req['nombre']), dict):
-                    valor_nutriente = float(nutrientes.get(req['nombre'], {}).get('valor_bs', 0))
-                else:
-                    valor_nutriente = float(nutrientes.get(req['nombre'] + '_bs', nutrientes.get(req['nombre'], 0)))
+                valor_base = float(nutrientes.get(req['nombre'], 0))
+            
+            # Aplicar cálculo según el tipo de optimización
+            if tipo_optimizacion == 'base_seca':
+                # Base seca: aplicar materia seca
+                valor_nutriente = valor_base * (ms / 100)
+                print(f"🧪 {ing['nombre']} - {req['nombre']} (base seca): {valor_base} * ({ms}/100) = {valor_nutriente}")
+            else:
+                # Base húmeda (tal como): usar valor directo
+                valor_nutriente = valor_base
+                print(f"🧪 {ing['nombre']} - {req['nombre']} (base húmeda): {valor_nutriente}")
+            
             fila.append(valor_nutriente)
         matriz_nutrientes.append(fila)
-        print(f"🧪 {req['nombre']} (base seca): aportes por ingrediente = {fila}")
+        print(f"🧪 {req['nombre']} ({tipo_optimizacion}): aportes por ingrediente = {fila}")
 
     # Procesar requerimientos de nutrientes
     restricciones_nutrientes = []
@@ -498,43 +502,39 @@ def optimizar_formulacion():
     print(f"📊 Resultado de optimización: {resultado.success}")
     print(f"📊 Mensaje: {resultado.message}")
     
-    # === BLOQUE DE VALIDACIÓN DE NUTRIENTES (USANDO BASE SECA) ===
-    # Generar los resultados de nutrientes de la mezcla optimizada en base seca
+    # === BLOQUE DE VALIDACIÓN DE NUTRIENTES ===
+    # Generar los resultados de nutrientes de la mezcla optimizada según el tipo seleccionado
     resultados_nutrientes = {}
     for idx_req, req in enumerate(requerimientos):
         nombre_nutriente = req['nombre']
         valor = 0.0
-        # DEBUG: imprimir aportes por ingrediente para fósforo
-        if nombre_nutriente.lower() == 'fósforo' or nombre_nutriente.lower() == 'fosforo':
-            print("🧮 Aportes de fósforo por ingrediente (antes de restricción mínima):")
-            for idx_ing, ing in enumerate(ingredientes):
-                ms = float(ing.get('ms', 100))
-                inclusion = resultado.x[idx_ing]
-                nutrientes = ing.get('aporte', {})
-                if isinstance(nutrientes.get(nombre_nutriente), dict):
-                    fosforo = float(nutrientes.get(nombre_nutriente, {}).get('valor', 0))
-                else:
-                    fosforo = float(nutrientes.get(nombre_nutriente, 0))
-                print(f"Ingrediente: {ing['nombre']}, MS: {ms}, Fósforo: {fosforo}, Inclusión: {inclusion}")
+        
+        print(f"🧮 Calculando aportes de {nombre_nutriente} ({tipo_optimizacion}):")
+        
         for idx_ing, ing in enumerate(ingredientes):
             nutrientes = ing.get('aporte', {})
             inclusion = resultado.x[idx_ing]
-            if nombre_nutriente.lower() == 'fósforo' or nombre_nutriente.lower() == 'fosforo':
-                # Calcular fósforo en base seca: inclusion * fosforo * (ms / 100)
-                ms = float(ing.get('ms', 100))
-                if isinstance(nutrientes.get(nombre_nutriente), dict):
-                    fosforo = float(nutrientes.get(nombre_nutriente, {}).get('valor', 0))
-                else:
-                    fosforo = float(nutrientes.get(nombre_nutriente, 0))
-                aporte_base_seca = inclusion * fosforo * (ms / 100)
-                valor += aporte_base_seca  # Sin división adicional por 100
+            ms = float(ing.get('ms', 100))
+            
+            # Obtener valor base del nutriente
+            if isinstance(nutrientes.get(nombre_nutriente), dict):
+                valor_base = float(nutrientes.get(nombre_nutriente, {}).get('valor', 0))
             else:
-                if isinstance(nutrientes.get(nombre_nutriente), dict):
-                    aporte_nutriente = float(nutrientes.get(nombre_nutriente, {}).get('valor_bs', 0))
-                else:
-                    aporte_nutriente = float(nutrientes.get(nombre_nutriente + '_bs', nutrientes.get(nombre_nutriente, 0)))
-                valor += aporte_nutriente * inclusion  # Sin división adicional por 100
+                valor_base = float(nutrientes.get(nombre_nutriente, 0))
+            
+            # Calcular aporte según el tipo de optimización
+            if tipo_optimizacion == 'base_seca':
+                # Base seca: inclusion * valor_base * (ms / 100) / 100
+                aporte = inclusion * valor_base * (ms / 100) / 100
+            else:
+                # Base húmeda: inclusion * valor_base / 100
+                aporte = inclusion * valor_base / 100
+            
+            valor += aporte
+            print(f"  {ing['nombre']}: inclusión={inclusion:.2f}%, valor_base={valor_base}, ms={ms}%, aporte={aporte:.4f}")
+        
         resultados_nutrientes[nombre_nutriente] = valor
+        print(f"🎯 Total {nombre_nutriente}: {valor:.4f}")
 
     # Validar si se cumplen los mínimos y máximos de nutrientes antes de evaluar el éxito de la optimización
     for nutriente in resultados_nutrientes:
