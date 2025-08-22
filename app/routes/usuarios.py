@@ -89,7 +89,10 @@ def procesar_solicitud():
             return redirect(url_for('usuarios_bp.formulario_cobro'))
         
         # Preparar información para el correo
-        asunto = f"Nueva solicitud de {tipo_solicitud.replace('_', ' ').title()} - FeedPro"
+        if tipo_solicitud == 'demo':
+            asunto = "Nueva solicitud de demostración - FeedPro"
+        else:
+            asunto = f"Nueva solicitud de {tipo_solicitud.replace('_', ' ').title()} - FeedPro"
         
         mensaje = f"""
         Nueva solicitud recibida:
@@ -99,7 +102,7 @@ def procesar_solicitud():
         - Email: {email}
         - Teléfono: {telefono if telefono else 'No proporcionado'}
         - Empresa: {empresa if empresa else 'No proporcionado'}
-        - País: {pais}
+        - País: {pais if pais != 'No especificado' else 'No proporcionado'}
         
         TIPO DE SOLICITUD: {tipo_solicitud.replace('_', ' ').title()}
         """
@@ -109,7 +112,10 @@ def procesar_solicitud():
             mensaje += f"\nPLAN SELECCIONADO: {plan.title()} ({precio_plan})"
         
         if comentarios:
-            mensaje += f"\n\nCOMENTARIOS ADICIONALES:\n{comentarios}"
+            if tipo_solicitud == 'demo':
+                mensaje += f"\n\nCONSULTA SOBRE FEEDPRO:\n{comentarios}"
+            else:
+                mensaje += f"\n\nCOMENTARIOS ADICIONALES:\n{comentarios}"
         
         mensaje += f"\n\nFecha de solicitud: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}"
         
@@ -129,13 +135,16 @@ def procesar_solicitud():
         print(f"Mensaje: {mensaje}")
         
         # Mensaje de éxito diferente según el tipo de solicitud
-        if tipo_solicitud == 'prueba_gratis':
+        if tipo_solicitud == 'demo':
+            flash('¡Solicitud de demostración enviada exitosamente! Te contactaremos pronto para agendar tu demo personalizada.', 'success')
+            return redirect(url_for('usuarios_bp.home'))
+        elif tipo_solicitud == 'prueba_gratis':
             flash('¡Solicitud de prueba gratuita enviada exitosamente! Te contactaremos pronto para configurar tu acceso.', 'success')
+            return redirect(url_for('usuarios_bp.formulario_cobro'))
         else:
             plan_nombre = plan.title() if plan else ''
             flash(f'¡Solicitud de suscripción {plan_nombre} enviada exitosamente! Te contactaremos pronto para procesar tu suscripción.', 'success')
-        
-        return redirect(url_for('usuarios_bp.formulario_cobro'))
+            return redirect(url_for('usuarios_bp.formulario_cobro'))
         
     except Exception as e:
         print(f"❌ Error al procesar solicitud: {e}")

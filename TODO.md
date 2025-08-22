@@ -1,64 +1,52 @@
-# TODO: Selector de Tipo de Optimización (Base Húmeda vs Base Seca)
+# Plan de Mejoras del Sitio Web FeedPro
 
 ## Progreso de Implementación
 
 ### ✅ Completado
-- [x] Análisis de la aplicación actual
-- [x] Identificación de archivos clave
-- [x] Creación del plan de implementación
-- [x] **Frontend**: Agregar selector en formulacion_minerales.html
-- [x] **JavaScript**: Modificar optimizacion.js para enviar tipo de optimización
-- [x] **Backend**: Actualizar optimizacion.py para manejar ambos tipos
-- [x] **Estilos**: Agregar CSS para el selector
-- [x] **Pruebas de funcionalidad**: ✅ Verificado en logs del servidor
-- [x] **Verificación de cálculos**: ✅ Base húmeda ($9.83) vs Base seca ($9.95)
-- [x] **Validación de UI/UX**: ✅ Selector implementado y funcional
+- [x] 1. **Consistencia de Email**
+  - [x] Actualizar footer de "info@feedpro.com" a "feedpro07@gmail.com"
+  - [x] Verificar otras referencias de email en el sitio
+
+- [x] 2. **Corrección de Branding en Login**
+  - [x] Cambiar título de "Iniciar Sesión | Nutrición Animal" a "Iniciar Sesión | FeedPro"
+
+- [x] 3. **Funcionalidad del Formulario de Demo**
+  - [x] Agregar action al formulario para usar ruta `/procesar_solicitud`
+  - [x] Implementar JavaScript para manejo del formulario
+  - [x] Conectar con la funcionalidad de email existente
+  - [x] Actualizar ruta en usuarios.py para manejar tipo "demo"
+
+- [x] 4. **Testimonial Real**
+  - [x] Reemplazar "Juan Pérez - Granja Avícola El Progreso" 
+  - [x] Implementar "Cosme Rivera - Concentrados San Francisco"
+  - [x] Agregar logo de la empresa (san_francisco.png)
+  - [x] Actualizar texto del testimonial
+
+- [x] 5. **Consistencia de CTAs**
+  - [x] Unificar botones a "Empezar prueba gratis (14 días)" en página de precios
+  - [x] Mantener "Contactar ventas" solo para plan Institucional
+
+- [x] 6. **Limpieza del Hero**
+  - [x] Cambiar texto "Tecnología" por "Innovación"
+
+- [x] 7. **Ocultar Recursos**
+  - [x] Ocultar menú "Recursos" temporalmente
+  - [x] Comentar enlaces a /libros en navegación
 
 ### 🔄 En Progreso
-- [ ] Documentación final de cambios
+- Ninguna tarea en progreso
 
 ### ⏳ Pendiente
-- [ ] Pruebas adicionales con diferentes escenarios
+- Ninguna tarea pendiente
 
-## Detalles de Implementación
+## Archivos a Modificar
+- `templates/sitio/index.html` (demo form, testimonial, hero)
+- `templates/sitio/login.html` (título)
+- `templates/sitio/precios.html` (CTAs)
+- `templates/sitio/pie.html` (email)
+- `templates/sitio/cabecera.html` (ocultar recursos)
 
-### 1. Selector UI
-- Ubicación: Arriba de la tabla de nutrientes
-- Estilo: Similar al selector de precios
-- Opciones: "Base Húmeda (TC)" y "Base Seca (BS)"
-
-### 2. Lógica de Cálculo
-- **Base Húmeda**: `(inclusión * valor_nutriente) / 100`
-- **Base Seca**: `(inclusión * ms * valor_nutriente) / 10000`
-
-### 3. Archivos Modificados
-- `templates/operaciones/formulacion_minerales.html` - Selector UI y estilos CSS
-- `static/js/formulador/optimizacion.js` - Envío de tipo de optimización
-- `app/routes/optimizacion.py` - Lógica de backend para ambos tipos
-
-## Resultados de Pruebas
-
-### Prueba Funcional Exitosa
-- **Base Húmeda**: Costo optimizado $9.83
-- **Base Seca**: Costo optimizado $9.95
-- **Diferencia**: $0.12 (1.2% más caro en base seca)
-
-### Logs de Verificación
-```
-🎯 Tipo de optimización: base_humeda
-🧪 Fosforo (base_humeda): aportes por ingrediente = [0.01, 22.7]
-💰 Costo total optimizado: $9.83
-
-🎯 Tipo de optimización: base_seca  
-🧪 Fosforo (base_seca): aportes por ingrediente = [0.0098, 22.39355]
-💰 Costo total optimizado: $9.95
-```
-
-## Estado Final
-✅ **IMPLEMENTACIÓN COMPLETA Y FUNCIONAL**
-
-El selector de tipo de optimización está completamente implementado y permite a los usuarios elegir entre:
-- **Base Húmeda (TC)**: Optimización tal como, sin aplicar materia seca
-- **Base Seca (BS)**: Optimización aplicando el porcentaje de materia seca
-
-La funcionalidad ha sido probada y verificada exitosamente.
+## Notas
+- Email de contacto: feedpro07@gmail.com
+- Logo de San Francisco ya existe en static/san_francisco.png
+- Testimonial: Cosme Rivera agradece mejor control de fórmulas

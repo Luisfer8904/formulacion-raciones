@@ -15,7 +15,7 @@
                 <!-- Recuadro moderno con contenido -->
                 <div class="hero-content-card">
                     <div class="hero-badge mb-3">
-                        <span class="badge-text">Tecnología</span>
+                        <span class="badge-text">Innovación</span>
                     </div>
                     
                     <h1 class="hero-title mb-4">
@@ -168,11 +168,15 @@
                     <div class="text-center">
                         <i class="fas fa-quote-left fs-1 text-primary mb-4"></i>
                         <p class="lead mb-4">
-                            "El software ha revolucionado nuestra forma de trabajar. La precisión en las formulaciones y el control de costos nos ha permitido mejorar significativamente nuestra operación."
+                            "Gracias a FeedPro tenemos un mejor control de nuestras fórmulas. La aplicación nos ha permitido optimizar nuestros procesos de formulación y mejorar la eficiencia de nuestra operación."
                         </p>
-                        <div class="testimonial-author">
-                            <h5 class="fw-bold mb-1">Juan Pérez</h5>
-                            <p class="text-muted">Granja Avícola El Progreso</p>
+                        <div class="testimonial-author d-flex align-items-center justify-content-center">
+                            <img src="{{ url_for('static', filename='san_francisco.png') }}" alt="Concentrados San Francisco" class="testimonial-logo me-3">
+                            <div class="text-start">
+                                <h5 class="fw-bold mb-1">Cosme Rivera</h5>
+                                <p class="text-muted mb-0">Gerente</p>
+                                <p class="text-muted">Concentrados San Francisco</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -246,27 +250,29 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="demo-form bg-white p-5 rounded-3 shadow">
-                    <form>
+                    <form id="formularioDemo" method="POST" action="/procesar_solicitud">
+                        <input type="hidden" name="tipo_solicitud" value="demo">
+                        <input type="hidden" name="pais" value="No especificado">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="nombre" class="form-label">Nombre completo</label>
-                                <input type="text" class="form-control" id="nombre" required>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Correo electrónico</label>
-                                <input type="email" class="form-control" id="email" required>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="telefono">
+                                <input type="tel" class="form-control" id="telefono" name="telefono">
                             </div>
                             <div class="col-md-6">
                                 <label for="empresa" class="form-label">Empresa</label>
-                                <input type="text" class="form-control" id="empresa">
+                                <input type="text" class="form-control" id="empresa" name="empresa">
                             </div>
                             <div class="col-12">
-                                <label for="mensaje" class="form-label">¿Qué te gustaría saber sobre FeedPro?</label>
-                                <textarea class="form-control" id="mensaje" rows="4"></textarea>
+                                <label for="comentarios" class="form-label">¿Qué te gustaría saber sobre FeedPro?</label>
+                                <textarea class="form-control" id="comentarios" name="comentarios" rows="4"></textarea>
                             </div>
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-primary btn-lg px-5">Solicitar demostración</button>
@@ -484,4 +490,94 @@
     .accordion-button:focus {
         box-shadow: 0 0 0 0.25rem rgba(124, 179, 66, 0.25);
     }
+    
+    /* Testimonial logo */
+    .testimonial-logo {
+        height: 60px;
+        width: auto;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const formularioDemo = document.getElementById('formularioDemo');
+    
+    if (formularioDemo) {
+        formularioDemo.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            
+            // Mostrar estado de carga
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Enviando...';
+            
+            fetch('/procesar_solicitud', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Mostrar mensaje de éxito
+                    submitButton.innerHTML = '<i class="fas fa-check me-2"></i>¡Enviado!';
+                    submitButton.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                    
+                    // Limpiar formulario después de 2 segundos
+                    setTimeout(() => {
+                        this.reset();
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalText;
+                        submitButton.style.background = '';
+                        
+                        // Mostrar alerta de éxito
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+                        alertDiv.innerHTML = `
+                            <i class="fas fa-check-circle me-2"></i>
+                            ¡Solicitud de demostración enviada exitosamente! Te contactaremos pronto.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        `;
+                        this.parentNode.insertBefore(alertDiv, this);
+                        
+                        // Auto-ocultar alerta después de 5 segundos
+                        setTimeout(() => {
+                            if (alertDiv.parentNode) {
+                                alertDiv.remove();
+                            }
+                        }, 5000);
+                    }, 2000);
+                } else {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+                
+                // Mostrar alerta de error
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Error al enviar la solicitud. Por favor, inténtalo de nuevo.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                this.parentNode.insertBefore(alertDiv, this);
+                
+                // Auto-ocultar alerta después de 5 segundos
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            });
+        });
+    }
+});
+</script>
