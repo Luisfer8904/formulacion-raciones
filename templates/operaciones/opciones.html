@@ -12,7 +12,49 @@
 
         <div class="mb-3">
             <label for="email" class="form-label">Correo Electrónico</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" value="{{ usuario.email or '' }}">
+            <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" value="{{ usuario.email or '' }}" readonly>
+            <small class="form-text text-muted">El correo electrónico no se puede modificar desde aquí.</small>
+        </div>
+
+        <!-- Sección de Plan de Suscripción -->
+        <div class="mb-4">
+            <h5 class="mb-3">Plan de Suscripción</h5>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h6 class="card-title mb-1">Plan Actual: 
+                                <span class="badge {% if usuario.get('tipo_plan') == 'personal' %}bg-success{% elif usuario.get('tipo_plan') == 'profesional' %}bg-warning{% elif usuario.get('tipo_plan') == 'premium' %}bg-info{% elif usuario.get('tipo_plan') == 'enterprise' %}bg-dark{% else %}bg-primary{% endif %}">
+                                    {{ usuario.get('tipo_plan', 'basico').title() }}
+                                </span>
+                            </h6>
+                            <p class="card-text text-muted mb-0">
+                                {% if usuario.get('tipo_plan') == 'personal' %}
+                                    Acceso completo con funciones avanzadas - $24/mes
+                                {% elif usuario.get('tipo_plan') == 'profesional' %}
+                                    Acceso profesional con todas las funciones - $76/mes
+                                {% elif usuario.get('tipo_plan') == 'premium' %}
+                                    Plan premium con funciones exclusivas
+                                {% elif usuario.get('tipo_plan') == 'enterprise' %}
+                                    Plan empresarial con soporte dedicado
+                                {% else %}
+                                    Acceso básico a las funcionalidades de formulación
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="mejorarPlan()">
+                                    <i class="fas fa-arrow-up"></i> Mejorar Plan
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="cancelarPlan()">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -91,16 +133,6 @@
         </div>
 
         <div class="mb-3">
-            <label for="tipo_moneda" class="form-label">Tipo de Moneda</label>
-            <select class="form-select" id="tipo_moneda" name="tipo_moneda">
-                <option value="">Seleccione...</option>
-                <option value="Nacional" {% if usuario.tipo_moneda == 'Nacional' %}selected{% endif %}>Moneda Nacional</option>
-                <option value="Extranjera" {% if usuario.tipo_moneda == 'Extranjera' %}selected{% endif %}>Moneda Extranjera</option>
-                <option value="Criptomoneda" {% if usuario.tipo_moneda == 'Criptomoneda' %}selected{% endif %}>Criptomoneda</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
             <label for="unidad_medida" class="form-label">Unidad de Medida</label>
             <select class="form-select" id="unidad_medida" name="unidad_medida" required>
                 <option value="">Seleccione...</option>
@@ -129,6 +161,223 @@
         <button type="submit" class="btn btn-primary">Guardar Configuración</button>
     </form>
 </div>
+
+<!-- Modal para mejorar plan -->
+<div class="modal fade" id="modalMejorarPlan" tabindex="-1" aria-labelledby="modalMejorarPlanLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalMejorarPlanLabel">Mejorar Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Envía un mensaje a nuestros administradores para solicitar información sobre mejoras a tu plan actual.</p>
+                <form id="formMejorarPlan">
+                    <div class="mb-3">
+                        <label for="tipoMejora" class="form-label">Tipo de consulta</label>
+                        <select class="form-select" id="tipoMejora" name="tipo_mejora" required>
+                            <option value="">Selecciona una opción...</option>
+                            <option value="upgrade">Actualizar a plan superior</option>
+                            <option value="funciones">Consultar funciones adicionales</option>
+                            <option value="precios">Información sobre precios</option>
+                            <option value="personalizado">Plan personalizado</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mensajeMejora" class="form-label">Mensaje</label>
+                        <textarea class="form-control" id="mensajeMejora" name="mensaje" rows="4" 
+                                  placeholder="Describe tu consulta o necesidades específicas..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefonoContacto" class="form-label">Teléfono de contacto (opcional)</label>
+                        <input type="tel" class="form-control" id="telefonoContacto" name="telefono" 
+                               placeholder="Número de teléfono para contactarte">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviarSolicitudMejora()">
+                    <i class="fas fa-paper-plane"></i> Enviar Solicitud
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para cancelar plan -->
+<div class="modal fade" id="modalCancelarPlan" tabindex="-1" aria-labelledby="modalCancelarPlanLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCancelarPlanLabel">Solicitar Cancelación de Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Información:</strong> Esta es una solicitud de cancelación que será revisada por nuestro equipo. Te contactaremos para confirmar los detalles.
+                </div>
+                
+                <p>¿Deseas solicitar la cancelación de tu plan actual?</p>
+                <p class="text-muted">Por favor, ayúdanos a entender mejor tu decisión completando la siguiente información:</p>
+                
+                <div class="mt-3">
+                    <label for="motivoCancelacion" class="form-label">Motivo principal de cancelación <span class="text-danger">*</span></label>
+                    <select class="form-select" id="motivoCancelacion" name="motivo_cancelacion" required>
+                        <option value="">Selecciona un motivo...</option>
+                        <option value="costo">El costo es muy alto para mi presupuesto</option>
+                        <option value="funciones">No utilizo todas las funciones del plan</option>
+                        <option value="temporal">Necesito una pausa temporal</option>
+                        <option value="competencia">Encontré una alternativa mejor</option>
+                        <option value="satisfaccion">El servicio no cumple mis expectativas</option>
+                        <option value="cambio_negocio">Cambios en mi negocio/necesidades</option>
+                        <option value="otro">Otro motivo</option>
+                    </select>
+                </div>
+                
+                <div class="mt-3">
+                    <label for="comentariosCancelacion" class="form-label">Comentarios adicionales</label>
+                    <textarea class="form-control" id="comentariosCancelacion" name="comentarios" rows="4" 
+                              placeholder="Cuéntanos más sobre tu decisión. Esto nos ayuda a mejorar nuestro servicio..."></textarea>
+                </div>
+                
+                <div class="mt-3">
+                    <label for="telefonoCancelacion" class="form-label">Teléfono de contacto (opcional)</label>
+                    <input type="tel" class="form-control" id="telefonoCancelacion" name="telefono" 
+                           placeholder="Para contactarte y confirmar la cancelación">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left"></i> Mantener Plan
+                </button>
+                <button type="button" class="btn btn-danger" onclick="confirmarCancelacion()">
+                    <i class="fas fa-paper-plane"></i> Enviar Solicitud
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mejorarPlan() {
+    const modal = new bootstrap.Modal(document.getElementById('modalMejorarPlan'));
+    modal.show();
+}
+
+function enviarSolicitudMejora() {
+    const form = document.getElementById('formMejorarPlan');
+    const formData = new FormData(form);
+    
+    // Validar campos requeridos
+    const tipoMejora = formData.get('tipo_mejora');
+    const mensaje = formData.get('mensaje');
+    
+    if (!tipoMejora || !mensaje.trim()) {
+        alert('Por favor completa todos los campos obligatorios.');
+        return;
+    }
+    
+    // Deshabilitar botón mientras se envía
+    const btnEnviar = document.querySelector('#modalMejorarPlan .btn-primary');
+    const textoOriginal = btnEnviar.innerHTML;
+    btnEnviar.disabled = true;
+    btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+    
+    fetch('/mejorar_plan', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Solicitud enviada exitosamente. Nuestro equipo técnico se pondrá en contacto contigo pronto.');
+            // Cerrar modal y limpiar formulario
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalMejorarPlan'));
+            modal.hide();
+            form.reset();
+        } else {
+            alert('Error al enviar la solicitud: ' + (data.error || 'Error desconocido'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.');
+    })
+    .finally(() => {
+        // Restaurar botón
+        btnEnviar.disabled = false;
+        btnEnviar.innerHTML = textoOriginal;
+    });
+}
+
+function cancelarPlan() {
+    const modal = new bootstrap.Modal(document.getElementById('modalCancelarPlan'));
+    modal.show();
+}
+
+function confirmarCancelacion() {
+    // Obtener datos del formulario de cancelación
+    const motivo = document.getElementById('motivoCancelacion').value;
+    const comentarios = document.getElementById('comentariosCancelacion').value;
+    const telefono = document.getElementById('telefonoCancelacion').value;
+    
+    // Validar que se haya seleccionado un motivo
+    if (!motivo) {
+        alert('Por favor selecciona un motivo de cancelación.');
+        document.getElementById('motivoCancelacion').focus();
+        return;
+    }
+    
+    // Deshabilitar botón mientras se procesa
+    const btnConfirmar = document.querySelector('#modalCancelarPlan .btn-danger');
+    const textoOriginal = btnConfirmar.innerHTML;
+    btnConfirmar.disabled = true;
+    btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+    
+    fetch('/cancelar_plan', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            motivo: motivo,
+            comentarios: comentarios,
+            telefono: telefono
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Cerrar modal primero
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCancelarPlan'));
+            modal.hide();
+            
+            // Mostrar mensaje de éxito mejorado
+            setTimeout(() => {
+                alert('✅ Tu solicitud de cancelación ha sido procesada exitosamente.\n\n' +
+                      'Nuestro equipo técnico se pondrá en contacto contigo pronto para confirmar los detalles.\n\n' +
+                      'Gracias por tu retroalimentación, nos ayuda a mejorar nuestro servicio.');
+                location.reload();
+            }, 300);
+        } else {
+            alert('❌ Error al procesar la solicitud: ' + (data.error || 'Error desconocido'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Error al enviar la solicitud. Por favor, inténtalo de nuevo.');
+    })
+    .finally(() => {
+        // Restaurar botón
+        btnConfirmar.disabled = false;
+        btnConfirmar.innerHTML = textoOriginal;
+    });
+}
+</script>
+
 {% endblock %}
 <style>
     .form-label {
@@ -138,8 +387,19 @@
         font-size: 0.85rem;
         padding: 6px 10px;
     }
+    .form-control[readonly] {
+        background-color: #f8f9fa;
+        opacity: 1;
+    }
     button[type="submit"] {
         font-size: 0.85rem;
         padding: 6px 12px;
+    }
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+    }
+    .badge {
+        font-size: 0.875em;
     }
 </style>

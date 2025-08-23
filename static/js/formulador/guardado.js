@@ -130,7 +130,7 @@ function confirmarGuardarComo() {
     return;
   }
 
-  console.log('Datos a enviar (Guardar Como):', {
+  console.log('Datos a enviar (Actualizar Dieta):', {
     nombre: nombreMezcla,
     tipo_animales: tipoAnimales,
     etapa_produccion: etapaProduccion,
@@ -139,7 +139,8 @@ function confirmarGuardarComo() {
     nutrientes: nutrientesSeleccionados
   });
 
-  fetch('/guardar_mezcla_como', {
+  // Usar actualizar_mezcla en lugar de guardar_mezcla_como para actualizar la dieta existente
+  fetch('/actualizar_mezcla', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
@@ -153,22 +154,24 @@ function confirmarGuardarComo() {
   })
   .then(response => response.json())
   .then(data => {
-    console.log('Respuesta del servidor (Guardar Como):', data);
-    if (data.mensaje) {
-      alert(data.mensaje);
+    console.log('Respuesta del servidor (Actualizar Dieta):', data);
+    if (data.mensaje || data.success) {
+      alert(data.mensaje || 'Dieta actualizada exitosamente.');
       if (!data.error) {
         // Marcar como guardado exitosamente
         marcarComoGuardado();
+        // Actualizar el nombre en el formulario si es diferente
+        document.getElementById('nombre-mezcla').value = nombreMezcla;
         // Cerrar modal pero no redirigir - user stays in formulador
         const modal = bootstrap.Modal.getInstance(document.getElementById('modalGuardarComo'));
         modal.hide();
       }
     } else {
-      alert('Error al guardar la mezcla.');
+      alert('Error al actualizar la dieta.');
     }
   })
   .catch(error => {
     console.error('Error:', error);
-    alert('No se pudo guardar la mezcla.');
+    alert('No se pudo actualizar la dieta.');
   });
 }

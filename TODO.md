@@ -1,61 +1,83 @@
-# Plan de Mejoras del Sitio Web FeedPro
+# Plan Improvement and Cancellation Features - TODO
 
-## Progreso de Implementación
+## ✅ Completed Steps
+- [x] Analyzed current system structure
+- [x] Identified email system configuration
+- [x] Created implementation plan
 
-### ✅ Completado
-- [x] 1. **Consistencia de Email**
-  - [x] Actualizar footer de "info@feedpro.com" a "feedpro07@gmail.com"
-  - [x] Verificar otras referencias de email en el sitio
+### 1. Update UI Template (templates/operaciones/opciones.html)
+- [x] Add modal form for "Mejorar Plan" functionality
+- [x] Enhance "Cancelar Plan" modal with automatic email notification
+- [x] Add JavaScript handlers for both forms
+- [x] Update button behaviors and user feedback messages
+- [x] Show dynamic plan type from database (tipo_plan column)
+- [x] Add "Cancelar" button for all users
+- [x] Improve cancellation form with required motives and feedback
 
-- [x] 2. **Corrección de Branding en Login**
-  - [x] Cambiar título de "Iniciar Sesión | Nutrición Animal" a "Iniciar Sesión | FeedPro"
+### 2. Update Backend Routes (app/routes/usuarios.py)
+- [x] Create `/mejorar_plan` endpoint for plan improvement requests
+- [x] Enhance `/cancelar_plan` endpoint with automatic email notifications
+- [x] Add email templates for both scenarios
+- [x] Implement proper error handling and user feedback
+- [x] Include tipo_plan in opciones query
+- [x] Handle telephone field in cancellation requests
 
-- [x] 3. **Funcionalidad del Formulario de Demo**
-  - [x] Agregar action al formulario para usar ruta `/procesar_solicitud`
-  - [x] Implementar JavaScript para manejo del formulario
-  - [x] Conectar con la funcionalidad de email existente
-  - [x] Actualizar ruta en usuarios.py para manejar tipo "demo"
+### 3. Testing and Validation
+- [x] Test plan improvement form submission
+- [x] Test plan cancellation with email notification
+- [x] Verify email delivery using existing system
+- [x] Test error handling scenarios
 
-- [x] 4. **Testimonial Real**
-  - [x] Reemplazar "Juan Pérez - Granja Avícola El Progreso" 
-  - [x] Implementar "Cosme Rivera - Concentrados San Francisco"
-  - [x] Agregar logo de la empresa (san_francisco.png)
-  - [x] Actualizar texto del testimonial
+## 📋 Implementation Summary
 
-- [x] 5. **Consistencia de CTAs**
-  - [x] Unificar botones a "Empezar prueba gratis (14 días)" en página de precios
-  - [x] Mantener "Contactar ventas" solo para plan Institucional
+### Plan Improvement Features:
+✅ Modal form with consultation type selection
+✅ Message input and optional telephone
+✅ Email sent to administrators with user details
+✅ Success message: "Nuestro equipo técnico se pondrá en contacto"
 
-- [x] 6. **Limpieza del Hero**
-  - [x] Cambiar texto "Tecnología" por "Innovación"
+### Plan Cancellation Features:
+✅ Enhanced cancellation form with required motive selection
+✅ Email sent to administrators about cancellation request
+✅ User feedback collection (comments + telephone)
+✅ Improved success message: "Tu solicitud ha sido procesada exitosamente"
+✅ Request-based system (no automatic plan downgrade)
 
-- [x] 7. **Ocultar Recursos**
-  - [x] Ocultar menú "Recursos" temporalmente
-  - [x] Comentar enlaces a /libros en navegación
+### Technical Implementation:
+✅ Uses existing `config_email_railway.py` system
+✅ SendGrid API / SMTP fallback
+✅ Proper error handling and logging
+✅ Dynamic plan type display from database
+✅ Form validation and user experience improvements
 
-- [x] 8. **Actualizar Redes Sociales**
-  - [x] Actualizar redes sociales en footer y página nosotros
-  - [x] Solo mantener Facebook, LinkedIn y WhatsApp con enlaces reales
-  - [x] Actualizar branding en chat WhatsApp de "Nutrición Animal" a "FeedPro"
-  - [x] Remover Twitter e Instagram
+## 🎯 Features Implemented
 
-### 🔄 En Progreso
-- Ninguna tarea en progreso
+### User Interface:
+- **Dynamic Plan Display**: Shows actual plan type from database (básico, personal, profesional, premium, enterprise)
+- **Universal Buttons**: Both "Mejorar Plan" and "Cancelar" buttons available for all users
+- **Enhanced Modals**: Improved forms with better UX and validation
 
-### ⏳ Pendiente
-- Ninguna tarea pendiente
+### Plan Improvement:
+- Consultation type selection (upgrade, functions, pricing, custom, other)
+- Message input with detailed placeholder
+- Optional telephone contact
+- Form validation and loading states
+- Success feedback with contact promise
 
-## 🎯 Estado Final: ✅ COMPLETADO
-Todas las mejoras del sitio web FeedPro han sido implementadas y subidas a GitHub exitosamente.
+### Plan Cancellation:
+- Required motive selection with specific options
+- Comments field for detailed feedback
+- Optional telephone for follow-up
+- Information alert explaining the process
+- Enhanced success message
+- Email notification to administrators
 
-## Archivos a Modificar
-- `templates/sitio/index.html` (demo form, testimonial, hero)
-- `templates/sitio/login.html` (título)
-- `templates/sitio/precios.html` (CTAs)
-- `templates/sitio/pie.html` (email)
-- `templates/sitio/cabecera.html` (ocultar recursos)
+### Backend Processing:
+- Robust email system with multiple fallbacks
+- Proper error handling and logging
+- Activity tracking for user actions
+- Database integration for plan types
+- JSON API responses with proper status codes
 
-## Notas
-- Email de contacto: feedpro07@gmail.com
-- Logo de San Francisco ya existe en static/san_francisco.png
-- Testimonial: Cosme Rivera agradece mejor control de fórmulas
+## 🎯 Ready for Production
+The system is now fully implemented and ready for end-to-end testing with real users.

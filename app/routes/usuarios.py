@@ -225,7 +225,7 @@ def opciones():
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
-        SELECT nombre, email, pais, moneda, tipo_moneda, unidad_medida, idioma, tema
+        SELECT nombre, email, pais, moneda, unidad_medida, idioma, tema, tipo_plan
         FROM usuarios
         WHERE id = %s
     """, (session['user_id'],))
@@ -244,10 +244,9 @@ def guardar_opciones():
         return redirect(url_for('auth_bp.login'))
 
     nombre = request.form.get('nombre')
-    email = request.form.get('email')
+    # No permitir cambiar el email desde opciones
     pais = request.form.get('pais')
     moneda = request.form.get('moneda')
-    tipo_moneda = request.form.get('tipo_moneda')
     unidad_medida = request.form.get('unidad_medida')
     idioma = request.form.get('idioma')
     tema = request.form.get('tema')
@@ -259,15 +258,13 @@ def guardar_opciones():
         cursor.execute("""
             UPDATE usuarios SET 
                 nombre = %s,
-                email = %s,
                 pais = %s,
                 moneda = %s,
-                tipo_moneda = %s,
                 unidad_medida = %s,
                 idioma = %s,
                 tema = %s
             WHERE id = %s
-        """, (nombre, email, pais, moneda, tipo_moneda, unidad_medida, idioma, tema, session['user_id']))
+        """, (nombre, pais, moneda, unidad_medida, idioma, tema, session['user_id']))
 
         conn.commit()
         cursor.close()
@@ -532,3 +529,192 @@ Requiere:
     except Exception as e:
         print(f"❌ Error general al enviar correo: {e}")
         print("💡 Revisa la configuración de variables de entorno en Railway")
+
+@usuarios_bp.route('/mejorar_plan', methods=['POST'])
+def mejorar_plan():
+    """Procesar solicitud de mejora de plan"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'No autorizado'}), 401
+
+    try:
+        # Obtener datos del usuario
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT nombre, email, tipo_plan
+            FROM usuarios
+            WHERE id = %s
+        """, (session['user_id'],))
+        
+        usuario_data: Any = cursor.fetchone()
+        if not usuario_data:
+            return jsonify({'error': 'Usuario no encontrado'}), 404
+
+        # Obtener datos del formulario
+        tipo_mejora = request.form.get('tipo_mejora', '').strip()
+        mensaje = request.form.get('mensaje', '').strip()
+        telefono = request.form.get('telefono', '').strip()
+        
+        # Validaciones
+        if not tipo_mejora or not mensaje:
+            return jsonify({'error': 'Todos los campos obligatorios deben ser completados'}), 400
+
+        # Mapear tipos de mejora para el email
+        tipos_mejora_map = {
+            'upgrade': 'Actualizar a plan superior',
+            'funciones': 'Consultar funciones adicionales',
+            'precios': 'Información sobre precios',
+            'personalizado': 'Plan personalizado',
+            'otro': 'Otro'
+        }
+        
+        tipo_mejora_texto = tipos_mejora_map.get(tipo_mejora, tipo_mejora)
+        plan_actual = str(usuario_data.get('tipo_plan', 'básico')).title()
+
+        # Preparar email
+        asunto = f"Solicitud de mejora de plan - {str(usuario_data['nombre'])} - FeedPro"
+        
+        mensaje_email = f"""
+Nueva solicitud de mejora de plan recibida:
+
+INFORMACIÓN DEL USUARIO:
+- Nombre: {str(usuario_data['nombre'])}
+- Email: {str(usuario_data['email'])}
+- Plan actual: {plan_actual}
+- Teléfono: {telefono if telefono else 'No proporcionado'}
+
+SOLICITUD:
+- Tipo de consulta: {tipo_mejora_texto}
+- Mensaje del usuario:
+{mensaje}
+
+Fecha de solicitud: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
+
+---
+Este mensaje fue enviado automáticamente desde el panel de usuario de FeedPro.
+        """
+
+        # Enviar correo electrónico
+        try:
+            from config_email_railway import enviar_correo_railway_optimizado
+            correo_enviado = enviar_correo_railway_optimizado(asunto, mensaje_email)
+            if not correo_enviado:
+                # Fallback al método original
+                enviar_correo_solicitud(asunto, mensaje_email)
+        except ImportError:
+            # Si no está disponible el módulo optimizado, usar el original
+            enviar_correo_solicitud(asunto, mensaje_email)
+
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Solicitó mejora de plan: {tipo_mejora_texto}', 'plan')
+
+        cursor.close()
+        conn.close()
+
+        print("📧 Solicitud de mejora de plan enviada:")
+        print(f"Usuario: {usuario_data['nombre']} ({usuario_data['email']})")
+        print(f"Tipo: {tipo_mejora_texto}")
+        print(f"Plan actual: {plan_actual}")
+
+        return jsonify({'success': True, 'mensaje': 'Solicitud enviada exitosamente'}), 200
+
+    except Exception as e:
+        print(f"❌ Error al procesar solicitud de mejora: {e}")
+        return jsonify({'error': 'Error al procesar la solicitud'}), 500
+
+@usuarios_bp.route('/cancelar_plan', methods=['POST'])
+def cancelar_plan():
+    """Cancelar el plan actual del usuario y volver al plan básico"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'No autorizado'}), 401
+
+    try:
+        # Obtener datos del usuario
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT nombre, email, tipo_plan
+            FROM usuarios
+            WHERE id = %s
+        """, (session['user_id'],))
+        
+        usuario_data: Any = cursor.fetchone()
+        if not usuario_data:
+            return jsonify({'error': 'Usuario no encontrado'}), 404
+
+        # Obtener datos adicionales de la cancelación
+        data = request.get_json() or {}
+        motivo = data.get('motivo', '').strip()
+        comentarios = data.get('comentarios', '').strip()
+        telefono = data.get('telefono', '').strip()
+
+        plan_anterior = str(usuario_data.get('tipo_plan', 'básico')).title()
+
+        # Actualizar el plan del usuario a básico
+        cursor.execute("""
+            UPDATE usuarios 
+            SET tipo_plan = 'basico'
+            WHERE id = %s
+        """, (session['user_id'],))
+
+        conn.commit()
+
+        # Preparar email de notificación de cancelación
+        asunto = f"Cancelación de plan - {str(usuario_data['nombre'])} - FeedPro"
+        
+        mensaje_email = f"""
+Un usuario ha solicitado la cancelación de su plan de suscripción:
+
+INFORMACIÓN DEL USUARIO:
+- Nombre: {str(usuario_data['nombre'])}
+- Email: {str(usuario_data['email'])}
+- Teléfono: {telefono if telefono else 'No proporcionado'}
+- Plan actual: {plan_anterior}
+
+DETALLES DE LA SOLICITUD:
+- Motivo: {motivo if motivo else 'No especificado'}
+- Comentarios adicionales: {comentarios if comentarios else 'Ninguno'}
+
+Fecha de solicitud: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
+
+ACCIÓN REQUERIDA:
+El usuario solicita cancelar su plan {plan_anterior}. 
+Se recomienda contactar al usuario para:
+1. Confirmar los detalles de la cancelación
+2. Entender mejor sus necesidades 
+3. Posiblemente ofrecer alternativas antes de procesar la baja definitiva
+
+---
+Este mensaje fue enviado automáticamente desde el sistema de FeedPro.
+        """
+
+        # Enviar correo electrónico de notificación
+        try:
+            from config_email_railway import enviar_correo_railway_optimizado
+            correo_enviado = enviar_correo_railway_optimizado(asunto, mensaje_email)
+            if not correo_enviado:
+                # Fallback al método original
+                enviar_correo_solicitud(asunto, mensaje_email)
+        except ImportError:
+            # Si no está disponible el módulo optimizado, usar el original
+            enviar_correo_solicitud(asunto, mensaje_email)
+
+        # Registrar actividad
+        motivo_texto = f" (Motivo: {motivo})" if motivo else ""
+        registrar_actividad(session['user_id'], f'Canceló su plan de suscripción{motivo_texto}', 'plan')
+
+        cursor.close()
+        conn.close()
+
+        print("📧 Cancelación de plan procesada:")
+        print(f"Usuario: {usuario_data['nombre']} ({usuario_data['email']})")
+        print(f"Plan cancelado: {plan_anterior}")
+        print(f"Motivo: {motivo if motivo else 'No especificado'}")
+
+        return jsonify({'success': True, 'mensaje': 'Plan cancelado exitosamente'}), 200
+
+    except Exception as e:
+        print(f"❌ Error al cancelar plan: {e}")
+        return jsonify({'error': 'Error al cancelar el plan'}), 500
