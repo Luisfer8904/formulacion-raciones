@@ -1,26 +1,4 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-header {
-  background-color: #2e7d32;
-  color: white;
-  padding: 1rem;
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-}
-
-nav ul li a {
-  color: white;
-  text-decoration: none;
-}
-
+/* Basic styles for landing page - kept minimal to avoid conflicts */
 .hero {
   background-color: #f1f8e9;
   padding: 2rem;

@@ -110,7 +110,6 @@
 .table th,
 .table td {
     vertical-align: middle;
-    border: 1px solid #dee2e6;
 }
 
 /* Asegurar que los botones mantengan su tamaño */

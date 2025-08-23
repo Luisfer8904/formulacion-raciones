@@ -1,83 +1,29 @@
-# Plan Improvement and Cancellation Features - TODO
+# TODO - Fix Visual Border Issues
 
-## ✅ Completed Steps
-- [x] Analyzed current system structure
-- [x] Identified email system configuration
-- [x] Created implementation plan
+## Progress Tracker
 
-### 1. Update UI Template (templates/operaciones/opciones.html)
-- [x] Add modal form for "Mejorar Plan" functionality
-- [x] Enhance "Cancelar Plan" modal with automatic email notification
-- [x] Add JavaScript handlers for both forms
-- [x] Update button behaviors and user feedback messages
-- [x] Show dynamic plan type from database (tipo_plan column)
-- [x] Add "Cancelar" button for all users
-- [x] Improve cancellation form with required motives and feedback
+### ✅ Analysis Complete
+- [x] Identified visual border issues in dashboard cards
+- [x] Located relevant CSS files
+- [x] Created fix plan
 
-### 2. Update Backend Routes (app/routes/usuarios.py)
-- [x] Create `/mejorar_plan` endpoint for plan improvement requests
-- [x] Enhance `/cancelar_plan` endpoint with automatic email notifications
-- [x] Add email templates for both scenarios
-- [x] Implement proper error handling and user feedback
-- [x] Include tipo_plan in opciones query
-- [x] Handle telephone field in cancellation requests
+### ✅ Implementation Steps
+- [x] Fix border issues in feedpro-theme.css
+- [x] Clean up safari-fixes.css conflicts
+- [x] Remove conflicting styles in style.css
+- [x] Test visual changes - SUCCESS!
 
-### 3. Testing and Validation
-- [x] Test plan improvement form submission
-- [x] Test plan cancellation with email notification
-- [x] Verify email delivery using existing system
-- [x] Test error handling scenarios
+### 📋 Files to Update
+1. `static/css/feedpro-theme.css` - Remove problematic borders on nav-cards and summary-cards
+2. `static/css/safari-fixes.css` - Clean up border-related fixes
+3. `static/style.css` - Remove conflicting border styles
 
-## 📋 Implementation Summary
+### ✅ Results Achieved
+- ✅ Clean dashboard cards without unwanted borders
+- ✅ Consistent visual styling across all elements
+- ✅ Maintained responsive design functionality
+- ✅ Professional appearance restored
+- ✅ All visual artifacts removed successfully
 
-### Plan Improvement Features:
-✅ Modal form with consultation type selection
-✅ Message input and optional telephone
-✅ Email sent to administrators with user details
-✅ Success message: "Nuestro equipo técnico se pondrá en contacto"
-
-### Plan Cancellation Features:
-✅ Enhanced cancellation form with required motive selection
-✅ Email sent to administrators about cancellation request
-✅ User feedback collection (comments + telephone)
-✅ Improved success message: "Tu solicitud ha sido procesada exitosamente"
-✅ Request-based system (no automatic plan downgrade)
-
-### Technical Implementation:
-✅ Uses existing `config_email_railway.py` system
-✅ SendGrid API / SMTP fallback
-✅ Proper error handling and logging
-✅ Dynamic plan type display from database
-✅ Form validation and user experience improvements
-
-## 🎯 Features Implemented
-
-### User Interface:
-- **Dynamic Plan Display**: Shows actual plan type from database (básico, personal, profesional, premium, enterprise)
-- **Universal Buttons**: Both "Mejorar Plan" and "Cancelar" buttons available for all users
-- **Enhanced Modals**: Improved forms with better UX and validation
-
-### Plan Improvement:
-- Consultation type selection (upgrade, functions, pricing, custom, other)
-- Message input with detailed placeholder
-- Optional telephone contact
-- Form validation and loading states
-- Success feedback with contact promise
-
-### Plan Cancellation:
-- Required motive selection with specific options
-- Comments field for detailed feedback
-- Optional telephone for follow-up
-- Information alert explaining the process
-- Enhanced success message
-- Email notification to administrators
-
-### Backend Processing:
-- Robust email system with multiple fallbacks
-- Proper error handling and logging
-- Activity tracking for user actions
-- Database integration for plan types
-- JSON API responses with proper status codes
-
-## 🎯 Ready for Production
-The system is now fully implemented and ready for end-to-end testing with real users.
+### 🎉 Task Completed Successfully!
+The visual border issues highlighted in the original screenshot have been completely resolved. The dashboard now displays with clean, professional styling without any unwanted borders or visual artifacts.
