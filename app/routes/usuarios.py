@@ -318,6 +318,7 @@ def hoja_impresion():
         tamano_bachada = data.get('tamano_bachada', 100)
         total_costo = data.get('total_costo', '0.00')
         suma_inclusion = data.get('suma_inclusion', '0')
+        materia_seca_total = data.get('materia_seca_total', '0.00')
         
         # Ingredientes
         ingredientes = data.get('ingredientes', [])
@@ -336,6 +337,7 @@ def hoja_impresion():
                              tamano_bachada=tamano_bachada,
                              total_costo=total_costo,
                              suma_inclusion=suma_inclusion,
+                             materia_seca_total=materia_seca_total,
                              total_ingredientes=len(ingredientes),
                              total_nutrientes=len(nutrientes),
                              ingredientes=ingredientes,
