@@ -614,14 +614,169 @@ body {
     }
 }
 
+/* Responsive mejorado para tablets */
+@media (max-width: 1024px) and (min-width: 769px) {
+
+    /* Tablets */
+    .container {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+
+    .formulador-table {
+        font-size: 0.8rem;
+    }
+
+    .formulador-table th:nth-child(1) {
+        width: 240px;
+        min-width: 240px;
+    }
+
+    /* INGREDIENTE */
+    .formulador-table th:nth-child(2) {
+        width: 85px;
+        min-width: 85px;
+    }
+
+    /* INCLUSIÓN */
+    .formulador-table th:nth-child(3) {
+        width: 85px;
+        min-width: 85px;
+    }
+
+    /* LÍMITE MÍN */
+    .formulador-table th:nth-child(4) {
+        width: 85px;
+        min-width: 85px;
+    }
+
+    /* LÍMITE MÁX */
+    .formulador-table th:nth-child(5) {
+        width: 95px;
+        min-width: 95px;
+    }
+
+    /* PESO BACHADA */
+    .formulador-table th:nth-child(6) {
+        width: 85px;
+        min-width: 85px;
+    }
+
+    /* COSTO */
+    .formulador-table th:nth-child(7) {
+        width: 95px;
+        min-width: 95px;
+    }
+
+    /* VALOR TOTAL */
+    .formulador-table th:nth-child(8) {
+        width: 75px;
+        min-width: 75px;
+    }
+
+    /* ACCIONES */
+
+    .formulador-table th,
+    .formulador-table td {
+        padding: 8px 5px !important;
+    }
+
+    .form-control-sm,
+    .form-select-sm {
+        font-size: 0.75rem;
+        padding: 4px 6px;
+    }
+
+    .btn-action {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+    }
+
+    .info-section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .feedpro-header {
+        padding: 15px;
+    }
+
+    .feedpro-header h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Mejorar el layout de las tarjetas de resumen en tablets */
+    .summary-cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .summary-card {
+        padding: 15px 12px;
+    }
+
+    .summary-card h5 {
+        font-size: 1.8rem;
+    }
+
+    /* Tabla de nutrientes en tablets */
+    .nutrientes-table th:nth-child(1) {
+        width: 160px;
+        min-width: 160px;
+    }
+
+    .nutrientes-table th:nth-child(2) {
+        width: 70px;
+        min-width: 70px;
+    }
+
+    .nutrientes-table th:nth-child(3) {
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .nutrientes-table th:nth-child(4) {
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .nutrientes-table th:nth-child(5) {
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .nutrientes-table th:nth-child(6) {
+        width: 90px;
+        min-width: 90px;
+    }
+
+    .nutrientes-table th:nth-child(7) {
+        width: 90px;
+        min-width: 90px;
+    }
+
+    .nutrientes-table th:nth-child(8) {
+        width: 70px;
+        min-width: 70px;
+    }
+}
+
 @media (max-width: 768px) {
+
+    /* Móviles */
+    .formulador-table {
+        font-size: 0.7rem;
+        min-width: 800px;
+        /* Forzar scroll horizontal */
+    }
 
     .formulador-table th,
     .formulador-table td,
     .nutrientes-table th,
     .nutrientes-table td {
         padding: 4px 2px !important;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
 
     .formulador-table .btn-action,
@@ -629,5 +784,95 @@ body {
         width: 20px;
         height: 20px;
         font-size: 8px;
+    }
+
+    .form-control-sm,
+    .form-select-sm {
+        font-size: 0.65rem;
+        padding: 3px 4px;
+    }
+
+    .info-section {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .feedpro-header {
+        padding: 10px;
+    }
+
+    .feedpro-header h2 {
+        font-size: 1.2rem;
+    }
+
+    /* Layout de dos columnas para móviles */
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .summary-card {
+        padding: 10px 8px;
+    }
+
+    .summary-card h5 {
+        font-size: 1.4rem;
+    }
+
+    /* Hacer que las tablas sean scrollables horizontalmente */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nutrientes-table {
+        min-width: 700px;
+        /* Forzar scroll horizontal */
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Móviles pequeños */
+    .formulador-table {
+        font-size: 0.6rem;
+        min-width: 750px;
+    }
+
+    .nutrientes-table {
+        min-width: 650px;
+    }
+
+    .formulador-table th,
+    .formulador-table td,
+    .nutrientes-table th,
+    .nutrientes-table td {
+        padding: 3px 1px !important;
+        font-size: 0.6rem;
+    }
+
+    .btn-action {
+        width: 18px;
+        height: 18px;
+        font-size: 7px;
+    }
+
+    .form-control-sm,
+    .form-select-sm {
+        font-size: 0.6rem;
+        padding: 2px 3px;
+    }
+
+    .summary-cards {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .feedpro-header h2 {
+        font-size: 1rem;
+    }
+
+    .summary-card h5 {
+        font-size: 1.2rem;
     }
 }

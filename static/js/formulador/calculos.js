@@ -144,4 +144,32 @@ function calcularSumaInclusion() {
     suma += parseFloat(input.value) || 0;
   });
   document.getElementById("suma-inclusion").textContent = suma.toFixed(0);
+  
+  // Calcular materia seca total
+  calcularMateriaSeca();
+}
+
+function calcularMateriaSeca() {
+  let materiaSecaTotal = 0;
+  
+  const filas = document.querySelectorAll("#tabla-ingredientes tr");
+  filas.forEach(fila => {
+    const select = fila.querySelector("select");
+    const inclusion = parseFloat(fila.querySelector('input[name^="inclusion_"]')?.value || 0);
+    
+    if (select?.value && inclusion > 0) {
+      const selectedOption = select.options[select.selectedIndex];
+      const ms = parseFloat(selectedOption.getAttribute("data-ms")) || 100;
+      
+      // Calcular aporte de materia seca: (inclusión % * materia seca %) / 100
+      const aporteMS = (inclusion * ms) / 100;
+      materiaSecaTotal += aporteMS;
+    }
+  });
+  
+  // Actualizar el elemento en la interfaz
+  const elementoMS = document.getElementById("materia-seca-total");
+  if (elementoMS) {
+    elementoMS.textContent = materiaSecaTotal.toFixed(2);
+  }
 }

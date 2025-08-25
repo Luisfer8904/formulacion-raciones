@@ -85,16 +85,133 @@ function mostrarInfo(boton) {
       if (data.error) {
         document.getElementById("contenidoInfoIngrediente").innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
       } else {
-        let html = `<strong>Ingrediente:</strong> ${data.nombre}<br>`;
+        let html = `
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="text-success"><i class="fas fa-seedling me-2"></i>Información General</h5>
+              <table class="table table-sm">
+                <tr><td><strong>Nombre:</strong></td><td>${data.nombre}</td></tr>
+                <tr><td><strong>Tipo:</strong></td><td>${data.tipo || 'No especificado'}</td></tr>
+                <tr><td><strong>Materia Seca:</strong></td><td>${data.ms || 100}%</td></tr>
+                <tr><td><strong>Precio:</strong></td><td>${data.precio || 0}</td></tr>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h5 class="text-primary"><i class="fas fa-chart-bar me-2"></i>Composición Básica</h5>
+              <div id="composicion-basica">
+                <!-- Se llenará con los nutrientes básicos -->
+              </div>
+            </div>
+          </div>
+        `;
+        
         if (data.nutrientes && data.nutrientes.length > 0) {
-          html += `<table class="table table-sm table-bordered mt-3"><thead><tr><th>Nutriente</th><th>Valor</th><th>Unidad</th></tr></thead><tbody>`;
+          // Categorizar nutrientes
+          const categorias = {
+            'Energía': [],
+            'Proteína': [],
+            'Minerales': [],
+            'Aminoácidos': [],
+            'Vitaminas': [],
+            'Otros': []
+          };
+          
           data.nutrientes.forEach(n => {
-            html += `<tr><td>${n.nombre}</td><td>${n.valor}</td><td>${n.unidad}</td></tr>`;
+            const nombre = n.nombre.toLowerCase();
+            if (nombre.includes('energía') || nombre.includes('energia') || nombre.includes('em') || nombre.includes('ed')) {
+              categorias['Energía'].push(n);
+            } else if (nombre.includes('proteína') || nombre.includes('proteina') || nombre.includes('pc') || nombre.includes('pb')) {
+              categorias['Proteína'].push(n);
+            } else if (nombre.includes('calcio') || nombre.includes('fósforo') || nombre.includes('fosforo') || 
+                      nombre.includes('sodio') || nombre.includes('potasio') || nombre.includes('magnesio') ||
+                      nombre.includes('hierro') || nombre.includes('zinc') || nombre.includes('cobre') ||
+                      nombre.includes('manganeso') || nombre.includes('selenio') || nombre.includes('yodo')) {
+              categorias['Minerales'].push(n);
+            } else if (nombre.includes('lisina') || nombre.includes('metionina') || nombre.includes('treonina') ||
+                      nombre.includes('triptófano') || nombre.includes('triptofano') || nombre.includes('arginina') ||
+                      nombre.includes('histidina') || nombre.includes('isoleucina') || nombre.includes('leucina') ||
+                      nombre.includes('fenilalanina') || nombre.includes('valina') || nombre.includes('cistina')) {
+              categorias['Aminoácidos'].push(n);
+            } else if (nombre.includes('vitamina') || nombre.includes('retinol') || nombre.includes('tocoferol') ||
+                      nombre.includes('tiamina') || nombre.includes('riboflavina') || nombre.includes('niacina') ||
+                      nombre.includes('ácido fólico') || nombre.includes('acido folico') || nombre.includes('biotina') ||
+                      nombre.includes('colina') || nombre.includes('caroteno')) {
+              categorias['Vitaminas'].push(n);
+            } else {
+              categorias['Otros'].push(n);
+            }
           });
-          html += `</tbody></table>`;
+          
+          // Mostrar composición básica (Energía y Proteína)
+          let composicionBasica = '';
+          if (categorias['Energía'].length > 0 || categorias['Proteína'].length > 0) {
+            composicionBasica += '<table class="table table-sm">';
+            [...categorias['Energía'], ...categorias['Proteína']].forEach(n => {
+              composicionBasica += `<tr><td><strong>${n.nombre}:</strong></td><td>${n.valor} ${n.unidad}</td></tr>`;
+            });
+            composicionBasica += '</table>';
+          } else {
+            composicionBasica = '<p class="text-muted">No hay información básica disponible</p>';
+          }
+          
+          html += `<div class="mt-4">`;
+          
+          // Mostrar cada categoría con nutrientes
+          Object.keys(categorias).forEach(categoria => {
+            if (categorias[categoria].length > 0) {
+              const iconos = {
+                'Energía': 'fas fa-bolt text-warning',
+                'Proteína': 'fas fa-dna text-info', 
+                'Minerales': 'fas fa-gem text-primary',
+                'Aminoácidos': 'fas fa-link text-success',
+                'Vitaminas': 'fas fa-pills text-danger',
+                'Otros': 'fas fa-list text-secondary'
+              };
+              
+              html += `
+                <div class="mb-3">
+                  <h6 class="text-${categoria === 'Minerales' ? 'primary' : categoria === 'Aminoácidos' ? 'success' : categoria === 'Vitaminas' ? 'danger' : 'secondary'}">
+                    <i class="${iconos[categoria]} me-2"></i>${categoria}
+                  </h6>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                      <thead class="table-light">
+                        <tr><th>Nutriente</th><th>Valor</th><th>Unidad</th></tr>
+                      </thead>
+                      <tbody>`;
+              
+              categorias[categoria].forEach(n => {
+                const valor = parseFloat(n.valor) || 0;
+                const valorFormateado = valor > 0 ? valor.toFixed(4) : '0.0000';
+                const claseValor = valor > 0 ? 'text-success fw-bold' : 'text-muted';
+                html += `<tr><td>${n.nombre}</td><td class="${claseValor}">${valorFormateado}</td><td>${n.unidad}</td></tr>`;
+              });
+              
+              html += `
+                      </tbody>
+                    </table>
+                  </div>
+                </div>`;
+            }
+          });
+          
+          html += `</div>`;
+          
+          // Actualizar composición básica
+          setTimeout(() => {
+            const composicionDiv = document.getElementById('composicion-basica');
+            if (composicionDiv) {
+              composicionDiv.innerHTML = composicionBasica;
+            }
+          }, 100);
+          
         } else {
-          html += `<p class="text-muted">Este ingrediente no tiene nutrientes registrados para tu usuario.</p>`;
+          html += `<div class="alert alert-info mt-3">
+            <i class="fas fa-info-circle me-2"></i>
+            Este ingrediente no tiene nutrientes registrados para tu usuario.
+          </div>`;
         }
+        
         document.getElementById("contenidoInfoIngrediente").innerHTML = html;
       }
 

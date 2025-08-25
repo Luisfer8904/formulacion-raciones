@@ -8,6 +8,7 @@ function imprimirTabla() {
   const tamanoBachada = parseFloat(document.getElementById("tamano-bachada").value) || 100;
   const totalCosto = document.getElementById("suma-total").textContent || "0.00";
   const sumaInclusion = document.getElementById("suma-inclusion").textContent || "0";
+  const materiaSecaTotal = document.getElementById("materia-seca-total").textContent || "0.00";
 
   // Recopilar ingredientes
   let ingredientes = [];
@@ -64,6 +65,7 @@ function imprimirTabla() {
     tamano_bachada: tamanoBachada,
     total_costo: totalCosto,
     suma_inclusion: sumaInclusion,
+    materia_seca_total: materiaSecaTotal,
     ingredientes: ingredientes,
     nutrientes: nutrientes
   };
