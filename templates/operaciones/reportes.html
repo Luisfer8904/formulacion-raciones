@@ -1,0 +1,616 @@
+{% extends "operaciones/layout.html" %}
+
+{% block titulo %}Generador de Reportes{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="fas fa-chart-line me-2 text-primary"></i>Generador de Reportes</h2>
+            <p class="text-muted mb-0">Crea reportes profesionales para análisis y comparaciones</p>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Reportes -->
+    <div class="row g-4">
+        <!-- Reporte Comparativo -->
+        <div class="col-lg-4 col-md-6">
+            <div class="report-card" onclick="abrirReporteComparativo()">
+                <div class="report-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="report-content">
+                    <h5>Reporte Comparativo</h5>
+                    <p>Compara dos fórmulas lado a lado con análisis detallado de nutrientes, costos y recomendaciones.</p>
+                    <div class="report-features">
+                        <span class="feature-tag"><i class="fas fa-chart-bar me-1"></i>Gráficos</span>
+                        <span class="feature-tag"><i class="fas fa-dollar-sign me-1"></i>Costos</span>
+                        <span class="feature-tag"><i class="fas fa-file-pdf me-1"></i>PDF</span>
+                    </div>
+                </div>
+                <div class="report-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte de Formulación -->
+        <div class="col-lg-4 col-md-6">
+            <div class="report-card coming-soon">
+                <div class="report-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="report-content">
+                    <h5>Reporte de Formulación</h5>
+                    <p>Genera un reporte completo de una fórmula individual con todos los detalles técnicos.</p>
+                    <div class="report-features">
+                        <span class="feature-tag"><i class="fas fa-seedling me-1"></i>Ingredientes</span>
+                        <span class="feature-tag"><i class="fas fa-pills me-1"></i>Nutrientes</span>
+                        <span class="feature-tag"><i class="fas fa-calculator me-1"></i>Cálculos</span>
+                    </div>
+                </div>
+                <div class="coming-soon-badge">
+                    <span>Próximamente</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte de Costos -->
+        <div class="col-lg-4 col-md-6">
+            <div class="report-card coming-soon">
+                <div class="report-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="report-content">
+                    <h5>Análisis de Costos</h5>
+                    <p>Analiza la estructura de costos de tus fórmulas con gráficos detallados y proyecciones.</p>
+                    <div class="report-features">
+                        <span class="feature-tag"><i class="fas fa-trending-up me-1"></i>Tendencias</span>
+                        <span class="feature-tag"><i class="fas fa-percentage me-1"></i>Márgenes</span>
+                        <span class="feature-tag"><i class="fas fa-calendar me-1"></i>Histórico</span>
+                    </div>
+                </div>
+                <div class="coming-soon-badge">
+                    <span>Próximamente</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte Nutricional -->
+        <div class="col-lg-4 col-md-6">
+            <div class="report-card coming-soon">
+                <div class="report-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="report-content">
+                    <h5>Perfil Nutricional</h5>
+                    <p>Evalúa el perfil nutricional completo con recomendaciones y alertas de deficiencias.</p>
+                    <div class="report-features">
+                        <span class="feature-tag"><i class="fas fa-check-circle me-1"></i>Validación</span>
+                        <span class="feature-tag"><i class="fas fa-exclamation-triangle me-1"></i>Alertas</span>
+                        <span class="feature-tag"><i class="fas fa-star me-1"></i>Calidad</span>
+                    </div>
+                </div>
+                <div class="coming-soon-badge">
+                    <span>Próximamente</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte de Producción -->
+        <div class="col-lg-4 col-md-6">
+            <div class="report-card coming-soon">
+                <div class="report-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <div class="report-content">
+                    <h5>Planificación de Producción</h5>
+                    <p>Optimiza la producción con reportes de bachadas, inventarios y programación.</p>
+                    <div class="report-features">
+                        <span class="feature-tag"><i class="fas fa-boxes me-1"></i>Inventario</span>
+                        <span class="feature-tag"><i class="fas fa-clock me-1"></i>Tiempos</span>
+                        <span class="feature-tag"><i class="fas fa-truck me-1"></i>Logística</span>
+                    </div>
+                </div>
+                <div class="coming-soon-badge">
+                    <span>Próximamente</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte Ejecutivo -->
+        <div class="col-lg-4 col-md-6">
+            <div class="report-card coming-soon">
+                <div class="report-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="report-content">
+                    <h5>Dashboard Ejecutivo</h5>
+                    <p>Resumen ejecutivo con KPIs, métricas clave y análisis de rendimiento general.</p>
+                    <div class="report-features">
+                        <span class="feature-tag"><i class="fas fa-tachometer-alt me-1"></i>KPIs</span>
+                        <span class="feature-tag"><i class="fas fa-chart-line me-1"></i>Métricas</span>
+                        <span class="feature-tag"><i class="fas fa-trophy me-1"></i>Performance</span>
+                    </div>
+                </div>
+                <div class="coming-soon-badge">
+                    <span>Próximamente</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Reportes -->
+    <div class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4><i class="fas fa-history me-2 text-secondary"></i>Reportes Generados</h4>
+            <button class="btn btn-outline-secondary btn-sm" onclick="limpiarHistorial()">
+                <i class="fas fa-trash me-1"></i>Limpiar Historial
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div id="historial-reportes" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-file me-1"></i>Reporte</th>
+                                <th><i class="fas fa-calendar me-1"></i>Fecha</th>
+                                <th><i class="fas fa-info-circle me-1"></i>Detalles</th>
+                                <th><i class="fas fa-cogs me-1"></i>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-historial">
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                    No hay reportes generados aún
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Reporte Comparativo -->
+<div class="modal fade" id="modalReporteComparativo" tabindex="-1" aria-labelledby="modalReporteComparativoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalReporteComparativoLabel">
+                    <i class="fas fa-balance-scale me-2"></i>Reporte Comparativo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formReporteComparativo">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="formula-a" class="form-label">
+                                <i class="fas fa-flask me-1"></i>Fórmula A
+                            </label>
+                            <select class="form-select" id="formula-a" required>
+                                <option value="">Seleccionar fórmula...</option>
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="formula-b" class="form-label">
+                                <i class="fas fa-flask me-1"></i>Fórmula B
+                            </label>
+                            <select class="form-select" id="formula-b" required>
+                                <option value="">Seleccionar fórmula...</option>
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="nombre-cliente" class="form-label">
+                                <i class="fas fa-user me-1"></i>Nombre del Cliente (Opcional)
+                            </label>
+                            <input type="text" class="form-control" id="nombre-cliente" placeholder="Ej: Granja San José">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="observaciones-reporte" class="form-label">
+                                <i class="fas fa-comment me-1"></i>Observaciones (Opcional)
+                            </label>
+                            <input type="text" class="form-control" id="observaciones-reporte" placeholder="Notas adicionales...">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h6><i class="fas fa-cog me-1"></i>Opciones del Reporte</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="incluir-graficos" checked>
+                            <label class="form-check-label" for="incluir-graficos">
+                                Incluir gráficos comparativos
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="incluir-conclusion" checked>
+                            <label class="form-check-label" for="incluir-conclusion">
+                                Generar conclusión automática
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="incluir-costos" checked>
+                            <label class="form-check-label" for="incluir-costos">
+                                Análisis detallado de costos
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="generarReporteComparativo()">
+                    <i class="fas fa-file-pdf me-1"></i>Generar Reporte PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.report-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid transparent;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.report-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    border-color: #7CB342;
+}
+
+.report-card.coming-soon {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.report-card.coming-soon:hover {
+    transform: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-color: transparent;
+}
+
+.report-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #7CB342, #8BC34A);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(124, 179, 66, 0.3);
+}
+
+.report-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.report-content {
+    flex-grow: 1;
+}
+
+.report-content h5 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.report-content p {
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.report-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.feature-tag {
+    background: rgba(124, 179, 66, 0.1);
+    color: #7CB342;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.report-arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    color: #7CB342;
+    font-size: 18px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.report-card:hover .report-arrow {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+.coming-soon-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #FF9800, #F57C00);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.btn-outline-secondary {
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .report-card {
+        padding: 20px;
+    }
+    
+    .report-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .report-icon i {
+        font-size: 20px;
+    }
+    
+    .report-content h5 {
+        font-size: 16px;
+    }
+}
+</style>
+
+<script>
+function abrirReporteComparativo() {
+    // Cargar fórmulas disponibles
+    cargarFormulasDisponibles();
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('modalReporteComparativo'));
+    modal.show();
+}
+
+function cargarFormulasDisponibles() {
+    fetch('/api/mezclas_usuario')
+        .then(response => response.json())
+        .then(data => {
+            const selectA = document.getElementById('formula-a');
+            const selectB = document.getElementById('formula-b');
+            
+            // Limpiar opciones existentes
+            selectA.innerHTML = '<option value="">Seleccionar fórmula...</option>';
+            selectB.innerHTML = '<option value="">Seleccionar fórmula...</option>';
+            
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(mezcla => {
+                    const optionA = new Option(mezcla.nombre, mezcla.id);
+                    const optionB = new Option(mezcla.nombre, mezcla.id);
+                    selectA.add(optionA);
+                    selectB.add(optionB);
+                });
+            } else {
+                const noDataOption = new Option('No hay fórmulas disponibles', '');
+                noDataOption.disabled = true;
+                selectA.add(noDataOption);
+                selectB.add(noDataOption.cloneNode(true));
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar fórmulas:', error);
+            alert('Error al cargar las fórmulas disponibles');
+        });
+}
+
+function generarReporteComparativo() {
+    const formulaA = document.getElementById('formula-a').value;
+    const formulaB = document.getElementById('formula-b').value;
+    const nombreCliente = document.getElementById('nombre-cliente').value;
+    const observaciones = document.getElementById('observaciones-reporte').value;
+    const incluirGraficos = document.getElementById('incluir-graficos').checked;
+    const incluirConclusion = document.getElementById('incluir-conclusion').checked;
+    const incluirCostos = document.getElementById('incluir-costos').checked;
+    
+    if (!formulaA || !formulaB) {
+        alert('Por favor selecciona ambas fórmulas para comparar');
+        return;
+    }
+    
+    if (formulaA === formulaB) {
+        alert('Por favor selecciona dos fórmulas diferentes');
+        return;
+    }
+    
+    // Mostrar loading
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generando...';
+    btn.disabled = true;
+    
+    // Datos para el reporte
+    const datosReporte = {
+        formula_a_id: formulaA,
+        formula_b_id: formulaB,
+        nombre_cliente: nombreCliente,
+        observaciones: observaciones,
+        opciones: {
+            incluir_graficos: incluirGraficos,
+            incluir_conclusion: incluirConclusion,
+            incluir_costos: incluirCostos
+        }
+    };
+    
+    // Generar reporte
+    fetch('/api/generar_reporte_comparativo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datosReporte)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalReporteComparativo'));
+            modal.hide();
+            
+            // Mostrar mensaje de éxito
+            alert(`Reporte comparativo generado exitosamente!\n\nFórmulas: ${data.formulas.join(' vs ')}\nCliente: ${data.cliente || 'No especificado'}\nFecha: ${data.fecha}\n\nNota: Esta es una versión de demostración. El PDF se implementará próximamente.`);
+            
+            // Actualizar historial
+            actualizarHistorialReportes();
+            
+            // Agregar al historial visual
+            agregarReporteAlHistorial({
+                tipo: 'Reporte Comparativo',
+                fecha: data.fecha,
+                detalles: `${data.formulas.join(' vs ')}${data.cliente ? ' - ' + data.cliente : ''}`,
+                estado: 'Completado (Demo)'
+            });
+        } else {
+            throw new Error(data.error || 'Error desconocido');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al generar el reporte: ' + error.message);
+    })
+    .finally(() => {
+        // Restaurar botón
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+
+function actualizarHistorialReportes() {
+    // Esta función se implementará para cargar el historial desde el servidor
+    console.log('Actualizando historial de reportes...');
+}
+
+function agregarReporteAlHistorial(reporte) {
+    const tablaHistorial = document.getElementById('tabla-historial');
+    
+    // Si es la primera entrada, limpiar el mensaje de "no hay reportes"
+    if (tablaHistorial.children.length === 1 && tablaHistorial.children[0].children.length === 1) {
+        tablaHistorial.innerHTML = '';
+    }
+    
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+        <td>
+            <i class="fas fa-balance-scale me-2 text-primary"></i>
+            ${reporte.tipo}
+        </td>
+        <td>${reporte.fecha}</td>
+        <td>
+            <small class="text-muted">${reporte.detalles}</small>
+        </td>
+        <td>
+            <span class="badge bg-success">${reporte.estado}</span>
+            <button class="btn btn-sm btn-outline-danger ms-2" onclick="eliminarReporte(this)" title="Eliminar">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    `;
+    
+    tablaHistorial.appendChild(fila);
+}
+
+function eliminarReporte(btn) {
+    if (confirm('¿Estás seguro de que deseas eliminar este reporte del historial?')) {
+        btn.closest('tr').remove();
+        
+        // Si no quedan reportes, mostrar mensaje
+        const tablaHistorial = document.getElementById('tabla-historial');
+        if (tablaHistorial.children.length === 0) {
+            tablaHistorial.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                        No hay reportes generados aún
+                    </td>
+                </tr>
+            `;
+        }
+    }
+}
+
+function limpiarHistorial() {
+    if (confirm('¿Estás seguro de que deseas limpiar el historial de reportes?')) {
+        const tablaHistorial = document.getElementById('tabla-historial');
+        tablaHistorial.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted py-4">
+                    <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                    No hay reportes generados aún
+                </td>
+            </tr>
+        `;
+        console.log('Historial limpiado');
+    }
+}
+
+// Cargar historial al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarHistorialReportes();
+});
+</script>
+{% endblock %}

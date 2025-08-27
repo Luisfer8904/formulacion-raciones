@@ -8,6 +8,9 @@ from .routes.auth import auth_bp
 from .routes.mezclas import mezclas_bp
 from .routes.optimizacion import optimizacion_bp
 from .routes.usuarios import usuarios_bp
+from .routes.reportes import reportes_bp
+from .routes.herramientas import herramientas_bp
+from .routes.planificador import planificador_bp
 
 def create_app():
     # Cargar variables de entorno desde archivo .env
@@ -88,5 +91,8 @@ def create_app():
     app.register_blueprint(mezclas_bp)
     app.register_blueprint(optimizacion_bp)
     app.register_blueprint(usuarios_bp)
+    app.register_blueprint(reportes_bp)
+    app.register_blueprint(herramientas_bp)
+    app.register_blueprint(planificador_bp)
 
     return app

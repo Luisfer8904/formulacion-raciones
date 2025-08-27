@@ -1,0 +1,802 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<!-- Header del Planificador -->
+<div class="planificador-header fade-in-up">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title"><i class="fas fa-calendar-alt me-3"></i>Planificador de Producción</h1>
+            <p class="page-subtitle">Optimice la producción con reportes de bachadas, inventarios y programación</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline-light btn-sm me-2" onclick="actualizarPlanificador()">
+                <i class="fas fa-sync-alt me-1"></i>Actualizar
+            </button>
+            <button class="btn btn-light btn-sm" onclick="nuevaBachada()">
+                <i class="fas fa-plus me-1"></i>Nueva Bachada
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Resumen de Producción -->
+<div class="production-summary fade-in-up">
+    <div class="summary-card">
+        <div class="summary-icon bg-primary">
+            <i class="fas fa-industry"></i>
+        </div>
+        <div class="summary-content">
+            <h4 id="bachadas-activas">3</h4>
+            <small>Bachadas Activas</small>
+            <div class="summary-trend">
+                <i class="fas fa-arrow-up text-success"></i>
+                <span class="text-success">+1 esta semana</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="summary-card">
+        <div class="summary-icon bg-success">
+            <i class="fas fa-boxes"></i>
+        </div>
+        <div class="summary-content">
+            <h4 id="inventario-total">2,450</h4>
+            <small>kg en Inventario</small>
+            <div class="summary-trend">
+                <i class="fas fa-minus text-muted"></i>
+                <span class="text-muted">Estable</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="summary-card">
+        <div class="summary-icon bg-warning">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="summary-content">
+            <h4 id="tiempo-promedio">4.2</h4>
+            <small>Horas Promedio</small>
+            <div class="summary-trend">
+                <i class="fas fa-arrow-down text-success"></i>
+                <span class="text-success">-0.3h optimizado</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="summary-card">
+        <div class="summary-icon bg-info">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="summary-content">
+            <h4 id="eficiencia">94.5</h4>
+            <small>% Eficiencia</small>
+            <div class="summary-trend">
+                <i class="fas fa-arrow-up text-success"></i>
+                <span class="text-success">+2.1% mejorado</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Herramientas de Planificación -->
+<div class="planning-tools fade-in-up">
+    <!-- Programación de Bachadas -->
+    <div class="tool-card" onclick="abrirProgramacion()">
+        <div class="tool-icon bg-primary">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Programación de Bachadas</h5>
+            <p>Programe y gestione la producción de bachadas de alimento</p>
+            <div class="tool-features">
+                <span class="feature-tag">Programación</span>
+                <span class="feature-tag">Calendario</span>
+                <span class="feature-tag">Recursos</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Control de Inventarios -->
+    <div class="tool-card" onclick="abrirInventarios()">
+        <div class="tool-icon bg-success">
+            <i class="fas fa-warehouse"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Control de Inventarios</h5>
+            <p>Monitoree niveles de stock y disponibilidad de ingredientes</p>
+            <div class="tool-features">
+                <span class="feature-tag">Stock</span>
+                <span class="feature-tag">Alertas</span>
+                <span class="feature-tag">Reposición</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Optimización de Tiempos -->
+    <div class="tool-card" onclick="abrirOptimizacionTiempos()">
+        <div class="tool-icon bg-warning">
+            <i class="fas fa-stopwatch"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Optimización de Tiempos</h5>
+            <p>Analice y optimice los tiempos de producción</p>
+            <div class="tool-features">
+                <span class="feature-tag">Tiempos</span>
+                <span class="feature-tag">Eficiencia</span>
+                <span class="feature-tag">Análisis</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Reportes de Producción -->
+    <div class="tool-card" onclick="abrirReportesProduccion()">
+        <div class="tool-icon bg-info">
+            <i class="fas fa-chart-bar"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Reportes de Producción</h5>
+            <p>Genere reportes detallados de producción y rendimiento</p>
+            <div class="tool-features">
+                <span class="feature-tag">Reportes</span>
+                <span class="feature-tag">KPIs</span>
+                <span class="feature-tag">Análisis</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Gestión de Recursos -->
+    <div class="tool-card" onclick="abrirGestionRecursos()">
+        <div class="tool-icon bg-secondary">
+            <i class="fas fa-users-cog"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Gestión de Recursos</h5>
+            <p>Administre personal, equipos y recursos de producción</p>
+            <div class="tool-features">
+                <span class="feature-tag">Personal</span>
+                <span class="feature-tag">Equipos</span>
+                <span class="feature-tag">Recursos</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-development">En Desarrollo</span>
+        </div>
+    </div>
+
+    <!-- Logística y Distribución -->
+    <div class="tool-card" onclick="abrirLogistica()">
+        <div class="tool-icon bg-danger">
+            <i class="fas fa-truck"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Logística y Distribución</h5>
+            <p>Planifique rutas de entrega y gestione la distribución</p>
+            <div class="tool-features">
+                <span class="feature-tag">Rutas</span>
+                <span class="feature-tag">Entregas</span>
+                <span class="feature-tag">Distribución</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-development">En Desarrollo</span>
+        </div>
+    </div>
+</div>
+
+<!-- Panel de Control de Producción -->
+<div class="row fade-in-up mt-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Bachadas Programadas</h5>
+                <button class="btn btn-outline-primary btn-sm" onclick="verCalendario()">
+                    <i class="fas fa-calendar me-1"></i>Ver Calendario
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Bachada</th>
+                                <th>Fórmula</th>
+                                <th>Cantidad</th>
+                                <th>Fecha Programada</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-bachadas">
+                            <tr>
+                                <td><strong>BCH-001</strong></td>
+                                <td>Pollo Engorde Inicial</td>
+                                <td>500 kg</td>
+                                <td>Hoy, 14:00</td>
+                                <td><span class="badge bg-warning">En Proceso</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="verDetalleBachada('BCH-001')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="completarBachada('BCH-001')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>BCH-002</strong></td>
+                                <td>Cerdo Crecimiento</td>
+                                <td>750 kg</td>
+                                <td>Mañana, 09:00</td>
+                                <td><span class="badge bg-info">Programada</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="verDetalleBachada('BCH-002')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="editarBachada('BCH-002')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>BCH-003</strong></td>
+                                <td>Gallina Postura</td>
+                                <td>300 kg</td>
+                                <td>Pasado mañana, 11:00</td>
+                                <td><span class="badge bg-secondary">Pendiente</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="verDetalleBachada('BCH-003')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="editarBachada('BCH-003')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Alertas de Inventario</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert-item">
+                    <div class="alert-icon bg-warning">
+                        <i class="fas fa-exclamation"></i>
+                    </div>
+                    <div class="alert-content">
+                        <strong>Maíz Amarillo</strong>
+                        <small>Stock bajo: 150 kg restantes</small>
+                    </div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-icon bg-danger">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <div class="alert-content">
+                        <strong>Harina de Pescado</strong>
+                        <small>Agotado - Reposición urgente</small>
+                    </div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-icon bg-info">
+                        <i class="fas fa-info"></i>
+                    </div>
+                    <div class="alert-content">
+                        <strong>Soya Integral</strong>
+                        <small>Entrega programada mañana</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Eficiencia Semanal</h5>
+            </div>
+            <div class="card-body">
+                <div class="efficiency-chart">
+                    <div class="efficiency-item">
+                        <div class="efficiency-label">Lunes</div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill" style="width: 92%"></div>
+                        </div>
+                        <div class="efficiency-value">92%</div>
+                    </div>
+                    <div class="efficiency-item">
+                        <div class="efficiency-label">Martes</div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill" style="width: 96%"></div>
+                        </div>
+                        <div class="efficiency-value">96%</div>
+                    </div>
+                    <div class="efficiency-item">
+                        <div class="efficiency-label">Miércoles</div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill" style="width: 89%"></div>
+                        </div>
+                        <div class="efficiency-value">89%</div>
+                    </div>
+                    <div class="efficiency-item">
+                        <div class="efficiency-label">Jueves</div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill" style="width: 94%"></div>
+                        </div>
+                        <div class="efficiency-value">94%</div>
+                    </div>
+                    <div class="efficiency-item">
+                        <div class="efficiency-label">Viernes</div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill" style="width: 98%"></div>
+                        </div>
+                        <div class="efficiency-value">98%</div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <small class="text-muted">Promedio: 94.5%</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nueva Bachada -->
+<div class="modal fade" id="nuevaBachadaModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Nueva Bachada de Producción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNuevaBachada">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Código de Bachada</label>
+                                <input type="text" class="form-control" id="codigoBachada" placeholder="BCH-004" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fórmula</label>
+                                <select class="form-select" id="formulaBachada" required>
+                                    <option value="">Seleccionar fórmula...</option>
+                                    <option value="pollo-inicial">Pollo Engorde Inicial</option>
+                                    <option value="cerdo-crecimiento">Cerdo Crecimiento</option>
+                                    <option value="gallina-postura">Gallina Postura</option>
+                                    <option value="bovino-engorde">Bovino Engorde</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Cantidad (kg)</label>
+                                <input type="number" class="form-control" id="cantidadBachada" placeholder="1000" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fecha y Hora Programada</label>
+                                <input type="datetime-local" class="form-control" id="fechaBachada" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observacionesBachada" rows="3" placeholder="Notas adicionales..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarBachada()">
+                    <i class="fas fa-save me-1"></i>Programar Bachada
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.planificador-header {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    padding: 2.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    color: white;
+    box-shadow: 0 8px 32px rgba(23, 162, 184, 0.2);
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0 0;
+    color: rgba(255,255,255,0.9);
+    font-weight: 400;
+}
+
+.production-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.summary-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.summary-content h4 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2c3e50;
+}
+
+.summary-content small {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.summary-trend {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.planning-tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.tool-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    border-color: #17a2b8;
+}
+
+.tool-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+.tool-content h5 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.tool-content p {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.tool-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.feature-tag {
+    background: #f8f9fa;
+    color: #6c757d;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.tool-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-development {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.alert-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.alert-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 0.75rem;
+    font-size: 12px;
+}
+
+.alert-content strong {
+    display: block;
+    font-size: 0.9rem;
+}
+
+.alert-content small {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.efficiency-chart {
+    space-y: 0.75rem;
+}
+
+.efficiency-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.efficiency-label {
+    width: 80px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.efficiency-bar {
+    flex: 1;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    margin: 0 0.75rem;
+    overflow: hidden;
+}
+
+.efficiency-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #17a2b8, #20c997);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.efficiency-value {
+    width: 40px;
+    text-align: right;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #17a2b8;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .planning-tools {
+        grid-template-columns: 1fr;
+    }
+    
+    .production-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .planificador-header {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<script>
+function actualizarPlanificador() {
+    const btn = event.target.closest('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Actualizando...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        mostrarNotificacion('Planificador actualizado', 'success');
+    }, 1500);
+}
+
+function nuevaBachada() {
+    const modal = new bootstrap.Modal(document.getElementById('nuevaBachadaModal'));
+    modal.show();
+    
+    // Establecer fecha mínima como ahora
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('fechaBachada').min = now.toISOString().slice(0, 16);
+}
+
+function guardarBachada() {
+    const form = document.getElementById('formNuevaBachada');
+    const formData = new FormData(form);
+    
+    // Validar campos requeridos
+    const codigo = document.getElementById('codigoBachada').value;
+    const formula = document.getElementById('formulaBachada').value;
+    const cantidad = document.getElementById('cantidadBachada').value;
+    const fecha = document.getElementById('fechaBachada').value;
+    
+    if (!codigo || !formula || !cantidad || !fecha) {
+        mostrarNotificacion('Por favor complete todos los campos requeridos', 'warning');
+        return;
+    }
+    
+    // Simular guardado
+    mostrarNotificacion('Bachada programada exitosamente', 'success');
+    
+    // Cerrar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('nuevaBachadaModal'));
+    modal.hide();
+    
+    // Limpiar formulario
+    form.reset();
+    
+    // Actualizar tabla (simulado)
+    setTimeout(() => {
+        actualizarTablaBachadas();
+    }, 500);
+}
+
+function actualizarTablaBachadas() {
+    // Simular actualización de la tabla
+    mostrarNotificacion('Tabla de bachadas actualizada', 'info');
+}
+
+function abrirProgramacion() {
+    mostrarNotificacion('Programación de Bachadas - Funcionalidad en desarrollo', 'info');
+}
+
+function abrirInventarios() {
+    mostrarNotificacion('Control de Inventarios - Funcionalidad en desarrollo', 'info');
+}
+
+function abrirOptimizacionTiempos() {
+    mostrarNotificacion('Optimización de Tiempos - Funcionalidad en desarrollo', 'info');
+}
+
+function abrirReportesProduccion() {
+    mostrarNotificacion('Reportes de Producción - Funcionalidad en desarrollo', 'info');
+}
+
+function abrirGestionRecursos() {
+    mostrarNotificacion('Gestión de Recursos - En desarrollo', 'warning');
+}
+
+function abrirLogistica() {
+    mostrarNotificacion('Logística y Distribución - En desarrollo', 'warning');
+}
+
+function verCalendario() {
+    mostrarNotificacion('Vista de Calendario - Funcionalidad en desarrollo', 'info');
+}
+
+function verDetalleBachada(codigo) {
+    mostrarNotificacion(`Ver detalles de ${codigo} - Funcionalidad en desarrollo`, 'info');
+}
+
+function completarBachada(codigo) {
+    if (confirm(`¿Marcar la bachada ${codigo} como completada?`)) {
+        mostrarNotificacion(`Bachada ${codigo} marcada como completada`, 'success');
+    }
+}
+
+function editarBachada(codigo) {
+    mostrarNotificacion(`Editar bachada ${codigo} - Funcionalidad en desarrollo`, 'info');
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 3000);
+}
+</script>
+{% endblock %}

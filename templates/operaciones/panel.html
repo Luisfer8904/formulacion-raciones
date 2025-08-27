@@ -3,86 +3,555 @@
 {% block contenido %}
 <!-- Header profesional -->
 <div class="feedpro-header fade-in-up">
-    <h2><i class="fas fa-tachometer-alt me-2"></i>Panel de Control - Nutrición Animal</h2>
-    <small>Bienvenido, {{ session.get('nombre', 'Usuario') }} FeedPro.</small>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="panel-title"><i class="fas fa-tachometer-alt me-3"></i>Panel de Control FeedPro</h1>
+            <p class="panel-subtitle">Bienvenido, {{ session.get('nombre', 'Usuario') }} - Sistema de Nutrición Animal Profesional</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline-primary btn-sm me-2" onclick="actualizarDatos()">
+                <i class="fas fa-sync-alt me-1"></i>Actualizar
+            </button>
+            <div class="dropdown">
+                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-plus me-1"></i>Acciones Rápidas
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ url_for('usuarios_bp.panelformulador') }}">
+                        <i class="fas fa-balance-scale me-2"></i>Nueva Formulación
+                    </a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('ingredientes_bp.nuevo_ingrediente') }}">
+                        <i class="fas fa-seedling me-2"></i>Nuevo Ingrediente
+                    </a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('reportes_bp.reportes') }}">
+                        <i class="fas fa-chart-line me-2"></i>Generar Reporte
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Tarjetas de resumen -->
+<!-- Tarjetas de resumen mejoradas -->
 <div class="summary-cards fade-in-up">
-    <div class="summary-card">
-        <h4><i class="fas fa-balance-scale me-2"></i>{{ total_formulaciones }}</h4>
-        <small>Formulaciones</small>
-    </div>
-    <div class="summary-card">
-        <h4><i class="fas fa-seedling me-2"></i>{{ total_ingredientes }}</h4>
-        <small>Ingredientes</small>
-    </div>
-    <div class="summary-card">
-        <h4><i class="fas fa-chart-line me-2"></i>{{ total_reportes }}</h4>
-        <small>Reportes</small>
-    </div>
-</div>
-
-<!-- Navegación principal -->
-<div class="row fade-in-up">
-    <div class="col-md-4 mb-4">
-        <a href="{{ url_for('usuarios_bp.panelformulador') }}" class="nav-card">
-            <div class="nav-card-icon">
+    <div class="summary-card" onclick="navegarA('{{ url_for('mezclas_bp.ver_mezclas') }}')">
+        <div class="summary-card-content">
+            <div class="summary-icon">
                 <i class="fas fa-balance-scale"></i>
             </div>
-            <h5>Formular Raciones</h5>
-            <p>Cree, modifique y gestione las formulaciones de raciones para diferentes especies.</p>
-        </a>
+            <div class="summary-info">
+                <h4 id="total-formulaciones">{{ total_formulaciones }}</h4>
+                <small>Formulaciones</small>
+                <div class="summary-trend">
+                    <i class="fas fa-arrow-up text-success"></i>
+                    <span class="text-success">+2 esta semana</span>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="col-md-4 mb-4">
-        <a href="{{ url_for('ingredientes_bp.ver_ingredientes') }}" class="nav-card">
-            <div class="nav-card-icon">
+    
+    <div class="summary-card" onclick="navegarA('{{ url_for('ingredientes_bp.ver_ingredientes') }}')">
+        <div class="summary-card-content">
+            <div class="summary-icon">
                 <i class="fas fa-seedling"></i>
             </div>
-            <h5>Ingredientes</h5>
-            <p>Administre los ingredientes disponibles y sus características nutricionales.</p>
-        </a>
+            <div class="summary-info">
+                <h4 id="total-ingredientes">{{ total_ingredientes }}</h4>
+                <small>Ingredientes</small>
+                <div class="summary-trend">
+                    <i class="fas fa-minus text-muted"></i>
+                    <span class="text-muted">Sin cambios</span>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="col-md-4 mb-4">
-        <a href="{{ url_for('mezclas_bp.ver_mezclas') }}" class="nav-card">
-            <div class="nav-card-icon">
+    
+    <div class="summary-card" onclick="navegarA('{{ url_for('reportes_bp.reportes') }}')">
+        <div class="summary-card-content">
+            <div class="summary-icon">
                 <i class="fas fa-chart-line"></i>
             </div>
-            <h5>Reportes</h5>
-            <p>Genere reportes detallados de sus formulaciones y resultados de producción.</p>
-        </a>
+            <div class="summary-info">
+                <h4 id="total-reportes">{{ total_reportes }}</h4>
+                <small>Reportes</small>
+                <div class="summary-trend">
+                    <i class="fas fa-arrow-up text-success"></i>
+                    <span class="text-success">+1 hoy</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="summary-card" onclick="navegarA('{{ url_for('nutrientes_bp.ver_nutrientes') }}')">
+        <div class="summary-card-content">
+            <div class="summary-icon">
+                <i class="fas fa-pills"></i>
+            </div>
+            <div class="summary-info">
+                <h4 id="total-nutrientes">{{ total_nutrientes or 0 }}</h4>
+                <small>Nutrientes</small>
+                <div class="summary-trend">
+                    <i class="fas fa-check text-info"></i>
+                    <span class="text-info">Activos</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Navegación principal mejorada -->
+<div class="row fade-in-up">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-rocket me-2"></i>Acceso Rápido</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('usuarios_bp.panelformulador') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-primary">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Formular Raciones</h6>
+                                <p class="mb-0">Cree y optimice formulaciones nutricionales</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
 
-<!-- Historial de actividades -->
-<div class="info-section fade-in-up">
-    <h5 class="section-title"><i class="fas fa-history me-2"></i>Historial de Actividades</h5>
-    {% if actividades %}
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th><i class="fas fa-tasks me-1"></i>Actividad</th>
-                        <th><i class="fas fa-calendar me-1"></i>Fecha</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for actividad in actividades %}
-                    <tr>
-                        <td>{{ actividad.descripcion }}</td>
-                        <td><span class="badge bg-primary">{{ actividad.fecha }}</span></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('ingredientes_bp.ver_ingredientes') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-success">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Gestión de Ingredientes</h6>
+                                <p class="mb-0">Administre su base de datos nutricional</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6">
+                        <a href="{{ url_for('reportes_bp.reportes') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-warning">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Generador de Reportes</h6>
+                                <p class="mb-0">Análisis y comparaciones detalladas</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6">
+                        <a href="{{ url_for('mezclas_bp.ver_mezclas') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-info">
+                                <i class="fas fa-file-medical"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Mis Fórmulas</h6>
+                                <p class="mb-0">Revise y gestione sus formulaciones</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% else %}
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle me-2"></i>No hay actividades recientes.
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Estado del Sistema</h5>
+            </div>
+            <div class="card-body">
+                <div class="system-status">
+                    <div class="status-item">
+                        <div class="status-indicator bg-success"></div>
+                        <div class="status-info">
+                            <small class="text-muted">Base de Datos</small>
+                            <div class="fw-bold text-success">Conectado</div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator bg-success"></div>
+                        <div class="status-info">
+                            <small class="text-muted">Optimizador</small>
+                            <div class="fw-bold text-success">Funcionando</div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator bg-warning"></div>
+                        <div class="status-info">
+                            <small class="text-muted">Reportes PDF</small>
+                            <div class="fw-bold text-warning">En Desarrollo</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-clock text-primary me-2"></i>
+                        <small>Última actividad: <span id="ultima-actividad">Hace 5 min</span></small>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-user text-success me-2"></i>
+                        <small>Sesión activa desde: <span id="sesion-inicio">{{ session.get('login_time', 'Hoy') }}</span></small>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% endif %}
+    </div>
 </div>
+
+<!-- Historial de actividades mejorado -->
+<div class="info-section fade-in-up mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historial de Actividades</h5>
+            <button class="btn btn-outline-secondary btn-sm" onclick="cargarActividades()">
+                <i class="fas fa-refresh me-1"></i>Actualizar
+            </button>
+        </div>
+        <div class="card-body">
+            {% if actividades %}
+                <div class="activity-timeline">
+                    {% for actividad in actividades %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-description">{{ actividad.descripcion }}</div>
+                            <div class="activity-time">
+                                <i class="fas fa-clock me-1"></i>{{ actividad.fecha }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h6 class="text-muted">No hay actividades recientes</h6>
+                    <p class="text-muted mb-0">Las actividades aparecerán aquí cuando comiences a usar el sistema</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.feedpro-header {
+    background: linear-gradient(135deg, #7CB342 0%, #8BC34A 100%);
+    padding: 2.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    border: none;
+    box-shadow: 0 8px 32px rgba(124, 179, 66, 0.2);
+    color: white;
+}
+
+.panel-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.panel-subtitle {
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0 0;
+    color: rgba(255,255,255,0.9);
+    font-weight: 400;
+}
+
+.header-actions .btn {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    border-color: #7CB342;
+}
+
+.summary-card-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.summary-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #7CB342, #8BC34A);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.summary-info h4 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2c3e50;
+}
+
+.summary-info small {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.summary-trend {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.nav-card-modern {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-card-modern:hover {
+    background: #f8f9fa;
+    border-color: #7CB342;
+    color: inherit;
+    text-decoration: none;
+    transform: translateX(4px);
+}
+
+.nav-card-icon-modern {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 1rem;
+}
+
+.nav-card-content h6 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+}
+
+.nav-card-content p {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.nav-card-arrow {
+    margin-left: auto;
+    color: #7CB342;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.nav-card-modern:hover .nav-card-arrow {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+.system-status {
+    margin-bottom: 1rem;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+}
+
+.status-info small {
+    display: block;
+    font-size: 0.75rem;
+}
+
+.quick-stats .stat-item {
+    margin-bottom: 0.5rem;
+}
+
+.activity-timeline {
+    position: relative;
+}
+
+.activity-item {
+    display: flex;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.activity-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: #7CB342;
+    font-size: 8px;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-description {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-card-modern {
+        padding: 0.75rem;
+    }
+    
+    .feedpro-header {
+        padding: 1.5rem;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<script>
+function navegarA(url) {
+    window.location.href = url;
+}
+
+function actualizarDatos() {
+    // Simular actualización de datos
+    const btn = event.target.closest('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Actualizando...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        
+        // Simular actualización de números
+        document.getElementById('ultima-actividad').textContent = 'Ahora mismo';
+        
+        // Mostrar notificación
+        mostrarNotificacion('Datos actualizados correctamente', 'success');
+    }, 1500);
+}
+
+function cargarActividades() {
+    const btn = event.target.closest('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Cargando...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        mostrarNotificacion('Actividades actualizadas', 'info');
+    }, 1000);
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    // Crear notificación toast
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto-remover después de 3 segundos
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 3000);
+}
+
+// Actualizar hora cada minuto
+setInterval(() => {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('es-ES', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    // Actualizar elementos de tiempo si existen
+}, 60000);
+</script>
 {% endblock %}

@@ -1,0 +1,88 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<!-- Header profesional -->
+<div class="feedpro-header fade-in-up">
+    <h2><i class="fas fa-tachometer-alt me-2"></i>Panel de Control - Nutrición Animal</h2>
+    <small>Bienvenido, {{ session.get('nombre', 'Usuario') }} FeedPro.</small>
+</div>
+
+<!-- Tarjetas de resumen -->
+<div class="summary-cards fade-in-up">
+    <div class="summary-card">
+        <h4><i class="fas fa-balance-scale me-2"></i>{{ total_formulaciones }}</h4>
+        <small>Formulaciones</small>
+    </div>
+    <div class="summary-card">
+        <h4><i class="fas fa-seedling me-2"></i>{{ total_ingredientes }}</h4>
+        <small>Ingredientes</small>
+    </div>
+    <div class="summary-card">
+        <h4><i class="fas fa-chart-line me-2"></i>{{ total_reportes }}</h4>
+        <small>Reportes</small>
+    </div>
+</div>
+
+<!-- Navegación principal -->
+<div class="row fade-in-up">
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('usuarios_bp.panelformulador') }}" class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-balance-scale"></i>
+            </div>
+            <h5>Formular Raciones</h5>
+            <p>Cree, modifique y gestione las formulaciones de raciones para diferentes especies.</p>
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('ingredientes_bp.ver_ingredientes') }}" class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h5>Ingredientes</h5>
+            <p>Administre los ingredientes disponibles y sus características nutricionales.</p>
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('mezclas_bp.ver_mezclas') }}" class="nav-card">
+            <div class="nav-card-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h5>Reportes</h5>
+            <p>Genere reportes detallados de sus formulaciones y resultados de producción.</p>
+        </a>
+    </div>
+</div>
+
+
+<!-- Historial de actividades -->
+<div class="info-section fade-in-up">
+    <h5 class="section-title"><i class="fas fa-history me-2"></i>Historial de Actividades</h5>
+    {% if actividades %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-tasks me-1"></i>Actividad</th>
+                        <th><i class="fas fa-calendar me-1"></i>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for actividad in actividades %}
+                    <tr>
+                        <td>{{ actividad.descripcion }}</td>
+                        <td><span class="badge bg-primary">{{ actividad.fecha }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>No hay actividades recientes.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
