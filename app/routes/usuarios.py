@@ -173,6 +173,11 @@ def panel():
     # Total de reportes — por ahora puedes dejarlo en cero si no tienes reportes implementados
     total_reportes = 0
 
+    # Total de nutrientes del usuario
+    cursor.execute("SELECT COUNT(*) as total FROM nutrientes WHERE usuario_id = %s", (session['user_id'],))
+    result_nutrientes: Any = cursor.fetchone()
+    total_nutrientes = result_nutrientes['total'] if result_nutrientes else 0
+
     # Obtener historial de actividades del usuario actual (últimas 10)
     # Manejar el caso donde la tabla actividades no existe aún
     actividades = []
@@ -206,6 +211,7 @@ def panel():
                            total_formulaciones=total_formulaciones,
                            total_ingredientes=total_ingredientes,
                            total_reportes=total_reportes,
+                           total_nutrientes=total_nutrientes,
                            actividades=actividades)
 
 @usuarios_bp.route('/panelformulador')
