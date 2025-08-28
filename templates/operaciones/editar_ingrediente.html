@@ -38,26 +38,81 @@
         <a href="{{ url_for('ingredientes_bp.ver_ingredientes') }}" class="btn btn-secondary">Cancelar</a>
     </form>
 
-    <h4 class="mt-5">Nutrientes</h4>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Unidad</th>
-                <th>Valor</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for nutriente in nutrientes %}
-            <tr>
-                <td>{{ nutriente.nombre }}</td>
-                <td>{{ nutriente.unidad }}</td>
-                <td>
-                    <input type="number" step="any" name="nutriente_{{ nutriente.id }}" value="{{ nutriente.valor or 0 }}" class="form-control" form="formulario-ingrediente" />
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Nutrientes Asociados -->
+    <div class="mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-flask me-2"></i>Nutrientes Asociados
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Asigna valores nutricionales a los nutrientes que deseas incluir en este ingrediente. 
+                    Los valores se guardarán como parte del perfil nutricional del ingrediente.
+                </p>
+
+                <form method="POST" action="{{ url_for('ingredientes_bp.guardar_nutrientes_ingrediente', ingrediente_id=ingrediente.id) }}">
+                    {% if nutrientes %}
+                    <div class="row">
+                      {% for nutriente in nutrientes %}
+                      <div class="col-lg-4 col-md-6 mb-3">
+                        <div class="card h-100 {% if nutriente.valor and nutriente.valor != 0 %}border-success{% else %}border-light{% endif %}">
+                          <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                              <h6 class="card-title mb-0">{{ nutriente.nombre }}</h6>
+                              {% if nutriente.valor and nutriente.valor != 0 %}
+                              <span class="badge bg-success">Configurado</span>
+                              {% endif %}
+                            </div>
+                            <p class="text-muted small mb-2">
+                              <strong>Unidad:</strong> {{ nutriente.unidad or 'No especificada' }} |
+                              <strong>Tipo:</strong> {{ nutriente.tipo or 'General' }}
+                            </p>
+                            <div class="input-group input-group-sm">
+                              <span class="input-group-text">Valor</span>
+                              <input type="number" 
+                                     step="any" 
+                                     class="form-control"
+                                     name="valor_{{ nutriente.id }}"
+                                     value="{{ nutriente.valor or '' }}"
+                                     placeholder="Ej: 18.5"
+                                     title="Valor nutricional para {{ nutriente.nombre }}">
+                              <span class="input-group-text">{{ nutriente.unidad or '' }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="text-muted">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                Deja en blanco los nutrientes que no aplican para este ingrediente.
+                            </small>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-2"></i>Actualizar Valores de Nutrientes
+                        </button>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle me-3 fs-4"></i>
+                        <div>
+                            <h6 class="alert-heading mb-1">No hay nutrientes disponibles</h6>
+                            <p class="mb-2">Primero debes crear nutrientes en la sección de nutrientes para poder asignarlos a este ingrediente.</p>
+                            <a href="{{ url_for('nutrientes_bp.nuevo_nutriente') }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus me-1"></i>Crear Nutriente
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        <!-- Fin Nutrientes Asociados -->
+    </div>
 </div>
 {% endblock %}

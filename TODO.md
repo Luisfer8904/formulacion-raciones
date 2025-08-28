@@ -1,70 +1,34 @@
-# TODO - Fixes for FeedPro Application
+# TODO - Nutrientes y Configuración Personal
 
-## Issues Fixed:
+## Tareas a completar:
 
-### 1. ✅ Fix "Aditivo y Otros" confusion in ingredient types (not nutrients)
-- **Problem**: The confusion was about ingredient types, not nutrient types
-- **Solution**: Added "Aditivo" and "Otros" to ingredient types dropdown in alphabetical order
-- **Files edited**: 
-  - `templates/operaciones/nuevo_ingrediente.html` ✅
-  - `templates/operaciones/editar_ingrediente.html` ✅
+### ✅ Análisis completado
+- [x] Analizar formato actual de "nutrientes asociados a ingredientes" 
+- [x] Analizar formato actual de "nutrientes asociado al requerimiento"
+- [x] Identificar problema de formato en "configuración personal"
 
-### 2. ✅ Fix alphabetical ordering for ingredients and nutrients
-- **Problem**: Lists were not showing in alphabetical order
-- **Solution**: Added `ORDER BY nombre ASC` to all ingredient and nutrient queries
-- **Files edited**: 
-  - `app/routes/ingredientes.py` ✅ (added ORDER BY to ver_ingredientes)
-  - `app/routes/optimizacion.py` ✅ (added ORDER BY to both ingredients and nutrients queries)
-  - `app/routes/nutrientes.py` ✅ (already had ORDER BY, cleaned up duplicate code)
+### ✅ Completado
+- [x] **Actualizar `editar_ingrediente.html`**:
+  - [x] Reemplazar tabla básica de nutrientes con layout de tarjetas
+  - [x] Implementar el mismo estilo que `editar_requerimiento.html`
+  - [x] Agregar botón único "Actualizar Valores de Nutrientes"
 
-### 3. ✅ Fix favicon inconsistency in login page
-- **Problem**: Login page used `favicon.ico` but should use `Favicon.png` like other pages
-- **Solution**: Changed favicon references to use `Favicon.png`
-- **Files edited**: 
-  - `templates/sitio/login.html` ✅
+- [x] **Actualizar `editar_requerimiento.html`**:
+  - [x] Cambiar texto del botón a "Actualizar Valores de Nutrientes" para consistencia
+  - [x] Mantener la funcionalidad existente
 
-### 4. ✅ Fix "Configuracion Personal" title styling
-- **Problem**: Title didn't match the rest of the application styling
-- **Solution**: Applied same styling as other section titles with icon and proper CSS classes
-- **Files edited**: 
-  - `templates/operaciones/opciones.html` ✅ (added formulador-header styling and CSS)
+- [x] **Actualizar `opciones.html`**:
+  - [x] Aplicar formato de título azul a "Configuración Personal"
+  - [x] Usar la clase `feedpro-header` consistente con otras páginas
 
-### 5. ⏳ Update GitHub after all changes
-- **Status**: Ready to commit and push changes
+### 🔄 En progreso
+- [ ] Actualizar en GitHub
+- [ ] Verificar consistencia de estilos
 
-## Summary of Changes Made:
+### 📋 Pendiente
+- [ ] Probar los cambios realizados (después del deploy)
 
-1. **Favicon Fix**: Updated login page to use consistent `Favicon.png` instead of `favicon.ico`
-2. **Ingredient Types**: Added "Aditivo" and "Otros" options in alphabetical order to both new and edit ingredient forms
-3. **Alphabetical Ordering**: Added `ORDER BY nombre ASC` to ingredient and nutrient queries in routes
-4. **Title Styling**: Applied consistent header styling to "Configuración Personal" section
-5. **Code Cleanup**: Removed duplicate code in nutrientes.py
-
-## Next Step:
-- Commit and push all changes to GitHub repository
-
-## Technical Details:
-
-### Ingredient Types Available (Alphabetical):
-1. Aditivo
-2. Aminoácido
-3. Energía
-4. Fibra
-5. Mineral
-6. Otros
-7. Proteína
-8. Vitamina
-
-### Database Changes:
-- No schema changes required
-- Ordering handled at query level with ORDER BY
-- New ingredient types validated at application level
-
-### Files Modified:
-- `templates/sitio/login.html` - Favicon consistency
-- `templates/operaciones/nuevo_ingrediente.html` - Added ingredient types
-- `templates/operaciones/editar_ingrediente.html` - Added ingredient types  
-- `templates/operaciones/opciones.html` - Header styling
-- `app/routes/ingredientes.py` - Alphabetical ordering
-- `app/routes/optimizacion.py` - Alphabetical ordering
-- `app/routes/nutrientes.py` - Code cleanup
+## Notas:
+- El formato de tarjetas es más moderno y consistente
+- Se mantendrá la funcionalidad existente
+- Se aplicará el estilo azul consistente en títulos
