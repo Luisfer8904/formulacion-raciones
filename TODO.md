@@ -1,57 +1,70 @@
-# TODO - Mejoras de Nutrientes y Estilos
+# TODO - Fixes for FeedPro Application
 
-## ✅ Completado
+## Issues Fixed:
 
-### 1. Tipos de Nutrientes
-- [x] Agregados tipos "Aditivos" y "Otros" en formularios
-- [x] Actualizada validación en backend para incluir nuevos tipos
-- [x] Modificados templates de nuevo_nutriente.html y editar_nutriente.html
-- [x] Organizados tipos alfabéticamente en formularios
+### 1. ✅ Fix "Aditivo y Otros" confusion in ingredient types (not nutrients)
+- **Problem**: The confusion was about ingredient types, not nutrient types
+- **Solution**: Added "Aditivo" and "Otros" to ingredient types dropdown in alphabetical order
+- **Files edited**: 
+  - `templates/operaciones/nuevo_ingrediente.html` ✅
+  - `templates/operaciones/editar_ingrediente.html` ✅
 
-### 2. Ordenamiento Alfabético
-- [x] Modificada consulta SQL en ver_nutrientes() para ordenar por nombre ASC
-- [x] Los nutrientes ahora se muestran ordenados alfabéticamente
+### 2. ✅ Fix alphabetical ordering for ingredients and nutrients
+- **Problem**: Lists were not showing in alphabetical order
+- **Solution**: Added `ORDER BY nombre ASC` to all ingredient and nutrient queries
+- **Files edited**: 
+  - `app/routes/ingredientes.py` ✅ (added ORDER BY to ver_ingredientes)
+  - `app/routes/optimizacion.py` ✅ (added ORDER BY to both ingredients and nutrients queries)
+  - `app/routes/nutrientes.py` ✅ (already had ORDER BY, cleaned up duplicate code)
 
-### 3. Estilos Consistentes de Títulos
-- [x] Unificado header en herramientas.html con estilo feedpro-header
-- [x] Unificado header en planificador.html con estilo feedpro-header  
-- [x] Unificado header en reportes.html con estilo feedpro-header
-- [x] Todos los títulos ahora usan el mismo estilo consistente
+### 3. ✅ Fix favicon inconsistency in login page
+- **Problem**: Login page used `favicon.ico` but should use `Favicon.png` like other pages
+- **Solution**: Changed favicon references to use `Favicon.png`
+- **Files edited**: 
+  - `templates/sitio/login.html` ✅
 
-### 4. Favicon en Login
-- [x] Agregadas referencias de favicon en templates/sitio/login.html
-- [x] Incluidos favicon.ico y Favicon.png para compatibilidad
+### 4. ✅ Fix "Configuracion Personal" title styling
+- **Problem**: Title didn't match the rest of the application styling
+- **Solution**: Applied same styling as other section titles with icon and proper CSS classes
+- **Files edited**: 
+  - `templates/operaciones/opciones.html` ✅ (added formulador-header styling and CSS)
 
-### 5. Archivos Modificados
-- [x] app/routes/nutrientes.py - Nuevos tipos y ordenamiento
-- [x] templates/operaciones/nuevo_nutriente.html - Tipos actualizados
-- [x] templates/operaciones/editar_nutriente.html - Tipos actualizados
-- [x] templates/sitio/login.html - Favicon agregado
-- [x] templates/operaciones/herramientas.html - Header unificado
-- [x] templates/operaciones/planificador.html - Header unificado
-- [x] templates/operaciones/reportes.html - Header unificado
+### 5. ⏳ Update GitHub after all changes
+- **Status**: Ready to commit and push changes
 
-## 🔄 Pendiente
+## Summary of Changes Made:
 
-### 6. Actualización en GitHub
-- [ ] Commit de todos los cambios
-- [ ] Push al repositorio remoto
+1. **Favicon Fix**: Updated login page to use consistent `Favicon.png` instead of `favicon.ico`
+2. **Ingredient Types**: Added "Aditivo" and "Otros" options in alphabetical order to both new and edit ingredient forms
+3. **Alphabetical Ordering**: Added `ORDER BY nombre ASC` to ingredient and nutrient queries in routes
+4. **Title Styling**: Applied consistent header styling to "Configuración Personal" section
+5. **Code Cleanup**: Removed duplicate code in nutrientes.py
 
-## 📝 Notas Técnicas
+## Next Step:
+- Commit and push all changes to GitHub repository
 
-### Tipos de Nutrientes Disponibles (Alfabético):
+## Technical Details:
+
+### Ingredient Types Available (Alphabetical):
 1. Aditivo
-2. Energético  
-3. Mineral
-4. Otros
-5. Proteico
+2. Aminoácido
+3. Energía
+4. Fibra
+5. Mineral
+6. Otros
+7. Proteína
+8. Vitamina
 
-### Cambios en Base de Datos:
-- No se requieren cambios en esquema de BD
-- Los nuevos tipos se validan a nivel de aplicación
-- Ordenamiento se maneja con ORDER BY en consultas
+### Database Changes:
+- No schema changes required
+- Ordering handled at query level with ORDER BY
+- New ingredient types validated at application level
 
-### Estilos Unificados:
-- Todos los headers usan clase `feedpro-header`
-- Estructura consistente: `<h2>` con icono + `<small>` para descripción
-- Animación `fade-in-up` aplicada uniformemente
+### Files Modified:
+- `templates/sitio/login.html` - Favicon consistency
+- `templates/operaciones/nuevo_ingrediente.html` - Added ingredient types
+- `templates/operaciones/editar_ingrediente.html` - Added ingredient types  
+- `templates/operaciones/opciones.html` - Header styling
+- `app/routes/ingredientes.py` - Alphabetical ordering
+- `app/routes/optimizacion.py` - Alphabetical ordering
+- `app/routes/nutrientes.py` - Code cleanup

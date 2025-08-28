@@ -2,7 +2,10 @@
 {% block titulo %}⚙️ Opciones{% endblock %}
 {% block contenido %}
 <div class="container mt-4">
-    <h3>Configuración Personal</h3>
+    <div class="formulador-header">
+        <h2><i class="fas fa-cog me-2"></i>Configuración Personal</h2>
+        <small>Personaliza tu experiencia en FeedPro</small>
+    </div>
     <form action="/guardar_opciones" method="POST">
         
         <div class="mb-3">
@@ -380,6 +383,26 @@ function confirmarCancelacion() {
 
 {% endblock %}
 <style>
+    .formulador-header {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .formulador-header h2 {
+        margin: 0;
+        font-weight: 700;
+    }
+    
+    .formulador-header small {
+        opacity: 0.8;
+        display: block;
+        margin-top: 5px;
+    }
+    
     .form-label {
         font-weight: 600;
     }

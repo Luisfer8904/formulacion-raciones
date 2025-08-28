@@ -54,11 +54,11 @@ def formulacion_minerales():
     tipo_moneda = config_usuario['tipo_moneda'] if config_usuario else '$'
 
     # Obtener todos los ingredientes
-    cursor.execute("SELECT id, nombre, comentario, ms, precio FROM ingredientes WHERE usuario_id = %s", (session['user_id'],))
+    cursor.execute("SELECT id, nombre, comentario, ms, precio FROM ingredientes WHERE usuario_id = %s ORDER BY nombre ASC", (session['user_id'],))
     ingredientes_raw = cursor.fetchall()
 
     # Obtener todos los nutrientes disponibles filtrados por usuario (incluyendo id y unidad)
-    cursor.execute("SELECT id, nombre, unidad FROM nutrientes WHERE usuario_id = %s", (session['user_id'],))
+    cursor.execute("SELECT id, nombre, unidad FROM nutrientes WHERE usuario_id = %s ORDER BY nombre ASC", (session['user_id'],))
     nutrientes_info = cursor.fetchall()
 
     ingredientes = []

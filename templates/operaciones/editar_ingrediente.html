@@ -12,11 +12,13 @@
             <label for="tipo" class="form-label">Tipo de Ingrediente</label>
             <select class="form-select" id="tipo" name="tipo" required>
                 <option value="">Seleccione...</option>
-                <option value="Energía" {% if ingrediente.tipo == "Energía" %}selected{% endif %}>Energía</option>
-                <option value="Proteína" {% if ingrediente.tipo == "Proteína" %}selected{% endif %}>Proteína</option>
-                <option value="Fibra" {% if ingrediente.tipo == "Fibra" %}selected{% endif %}>Fibra</option>
+                <option value="Aditivo" {% if ingrediente.tipo == "Aditivo" %}selected{% endif %}>Aditivo</option>
                 <option value="Aminoácido" {% if ingrediente.tipo == "Aminoácido" %}selected{% endif %}>Aminoácido</option>
+                <option value="Energía" {% if ingrediente.tipo == "Energía" %}selected{% endif %}>Energía</option>
+                <option value="Fibra" {% if ingrediente.tipo == "Fibra" %}selected{% endif %}>Fibra</option>
                 <option value="Mineral" {% if ingrediente.tipo == "Mineral" %}selected{% endif %}>Mineral</option>
+                <option value="Otros" {% if ingrediente.tipo == "Otros" %}selected{% endif %}>Otros</option>
+                <option value="Proteína" {% if ingrediente.tipo == "Proteína" %}selected{% endif %}>Proteína</option>
                 <option value="Vitamina" {% if ingrediente.tipo == "Vitamina" %}selected{% endif %}>Vitamina</option>
             </select>
         </div>

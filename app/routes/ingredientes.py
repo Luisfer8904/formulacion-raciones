@@ -14,7 +14,7 @@ def ver_ingredientes():
     cursor = conn.cursor(dictionary=True)
     
     # Obtener ingredientes del usuario
-    cursor.execute("SELECT id, nombre, comentario, tipo, precio, ms FROM ingredientes WHERE usuario_id = %s", (session['user_id'],))
+    cursor.execute("SELECT id, nombre, comentario, tipo, precio, ms FROM ingredientes WHERE usuario_id = %s ORDER BY nombre ASC", (session['user_id'],))
     ingredientes = cursor.fetchall()
     
     # Obtener configuración del usuario para mostrar la moneda correcta
