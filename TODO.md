@@ -21,12 +21,20 @@
   - [x] Aplicar formato de título azul a "Configuración Personal"
   - [x] Usar la clase `feedpro-header` consistente con otras páginas
 
+### ✅ Completado
+- [x] **Actualizar en GitHub**:
+  - [x] Crear branch `blackboxai/nutrientes-consistency-fix`
+  - [x] Commit de todos los cambios
+  - [x] Push del branch al repositorio remoto
+  - [x] Branch disponible para crear Pull Request
+
 ### 🔄 En progreso
-- [ ] Actualizar en GitHub
+- [ ] Crear Pull Request (requiere autenticación GitHub CLI)
 - [ ] Verificar consistencia de estilos
 
 ### 📋 Pendiente
 - [ ] Probar los cambios realizados (después del deploy)
+- [ ] Merge del Pull Request
 
 ## Notas:
 - El formato de tarjetas es más moderno y consistente
