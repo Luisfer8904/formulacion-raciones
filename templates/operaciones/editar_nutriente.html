@@ -11,10 +11,11 @@
         <div class="mb-3">
             <label for="tipo" class="form-label">Tipo de Nutriente</label>
             <select class="form-control" id="tipo" name="tipo">
-                <option value="Energético" {% if nutriente.tipo == "Energético" %}selected{% endif %}>Energético</option>
-                <option value="Proteico" {% if nutriente.tipo == "Proteico" %}selected{% endif %}>Proteico</option>
-                <option value="Mineral" {% if nutriente.tipo == "Mineral" %}selected{% endif %}>Mineral</option>
                 <option value="Aditivo" {% if nutriente.tipo == "Aditivo" %}selected{% endif %}>Aditivo</option>
+                <option value="Energético" {% if nutriente.tipo == "Energético" %}selected{% endif %}>Energético</option>
+                <option value="Mineral" {% if nutriente.tipo == "Mineral" %}selected{% endif %}>Mineral</option>
+                <option value="Otros" {% if nutriente.tipo == "Otros" %}selected{% endif %}>Otros</option>
+                <option value="Proteico" {% if nutriente.tipo == "Proteico" %}selected{% endif %}>Proteico</option>
             </select>
         </div>
         <div class="mb-3">
