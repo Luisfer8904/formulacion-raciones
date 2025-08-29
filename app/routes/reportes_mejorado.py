@@ -4,12 +4,20 @@ from datetime import datetime
 import json
 import os
 import io
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+
+# Importar ReportLab de forma condicional para evitar errores
+try:
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    from reportlab.lib import colors
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+    REPORTLAB_AVAILABLE = True
+except ImportError:
+    REPORTLAB_AVAILABLE = False
+    print("⚠️ ReportLab no disponible, usando generación de texto plano")
+
 from app.db import get_db_connection
 
 reportes_mejorado_bp = Blueprint('reportes_mejorado_bp', __name__)
@@ -311,204 +319,264 @@ def generar_analisis_comparativo(formula_a, formula_b):
     }
 
 def generar_pdf_basico(reporte):
-    """Genera PDF real usando ReportLab"""
-    try:
-        # Crear buffer en memoria
-        buffer = io.BytesIO()
-        
-        # Crear documento PDF
-        doc = SimpleDocTemplate(buffer, pagesize=A4, 
-                              rightMargin=72, leftMargin=72,
-                              topMargin=72, bottomMargin=18)
-        
-        # Obtener estilos
-        styles = getSampleStyleSheet()
-        
-        # Crear estilos personalizados
-        title_style = ParagraphStyle(
-            'CustomTitle',
-            parent=styles['Heading1'],
-            fontSize=18,
-            spaceAfter=30,
-            alignment=TA_CENTER,
-            textColor=colors.HexColor('#2c3e50')
-        )
-        
-        heading_style = ParagraphStyle(
-            'CustomHeading',
-            parent=styles['Heading2'],
-            fontSize=14,
-            spaceAfter=12,
-            textColor=colors.HexColor('#7CB342')
-        )
-        
-        normal_style = ParagraphStyle(
-            'CustomNormal',
-            parent=styles['Normal'],
-            fontSize=10,
-            spaceAfter=6
-        )
-        
-        # Contenido del PDF
-        story = []
-        
-        # Título
-        story.append(Paragraph("REPORTE COMPARATIVO DE FÓRMULAS", title_style))
-        story.append(Spacer(1, 12))
-        
-        # Información del reporte
-        info_data = [
-            ['ID del Reporte:', reporte['id']],
-            ['Fecha de Generación:', datetime.fromisoformat(reporte['fecha_generacion']).strftime('%d/%m/%Y %H:%M:%S')],
-            ['Cliente:', reporte.get('cliente', 'No especificado')],
-            ['Observaciones:', reporte.get('observaciones', 'Ninguna')]
-        ]
-        
-        info_table = Table(info_data, colWidths=[2*inch, 4*inch])
-        info_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f8f9fa')),
-            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-            ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ]))
-        
-        story.append(info_table)
-        story.append(Spacer(1, 20))
-        
-        # Comparación de fórmulas
-        story.append(Paragraph("COMPARACIÓN DE FÓRMULAS", heading_style))
-        
-        formula_data = [
-            ['Característica', 'Fórmula A', 'Fórmula B'],
-            ['Nombre', reporte['formula_a']['nombre'], reporte['formula_b']['nombre']],
-            ['Especie', reporte['formula_a']['especie'], reporte['formula_b']['especie']],
-            ['Costo/kg', f"${reporte['formula_a']['costo_kg']:.3f}", f"${reporte['formula_b']['costo_kg']:.3f}"]
-        ]
-        
-        formula_table = Table(formula_data, colWidths=[2*inch, 2*inch, 2*inch])
-        formula_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#7CB342')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ]))
-        
-        story.append(formula_table)
-        story.append(Spacer(1, 20))
-        
-        # Análisis de costos
-        story.append(Paragraph("ANÁLISIS DE COSTOS", heading_style))
-        
-        costo_data = [
-            ['Métrica', 'Valor'],
-            ['Diferencia Absoluta', f"${reporte['analisis']['costo']['diferencia_absoluta']:.3f}"],
-            ['Diferencia Porcentual', f"{reporte['analisis']['costo']['diferencia_porcentual']:.1f}%"]
-        ]
-        
-        costo_table = Table(costo_data, colWidths=[3*inch, 2*inch])
-        costo_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#17a2b8')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ]))
-        
-        story.append(costo_table)
-        story.append(Spacer(1, 20))
-        
-        # Análisis nutricional
-        if 'nutrientes' in reporte['analisis']:
-            story.append(Paragraph("ANÁLISIS NUTRICIONAL", heading_style))
+    """Genera PDF usando ReportLab si está disponible, sino texto plano"""
+    
+    if REPORTLAB_AVAILABLE:
+        try:
+            # Crear buffer en memoria
+            buffer = io.BytesIO()
             
-            nutriente_data = [['Nutriente', 'Fórmula A', 'Fórmula B', 'Diferencia', 'Porcentaje']]
+            # Crear documento PDF
+            doc = SimpleDocTemplate(buffer, pagesize=A4, 
+                                  rightMargin=72, leftMargin=72,
+                                  topMargin=72, bottomMargin=18)
             
-            for nutriente, valores in reporte['analisis']['nutrientes'].items():
-                nutriente_data.append([
-                    nutriente.capitalize(),
-                    f"{valores['formula_a']:.2f}",
-                    f"{valores['formula_b']:.2f}",
-                    f"{valores['diferencia']:.2f}",
-                    f"{valores['porcentaje']:.1f}%"
-                ])
+            # Obtener estilos
+            styles = getSampleStyleSheet()
             
-            nutriente_table = Table(nutriente_data, colWidths=[1.2*inch, 1*inch, 1*inch, 1*inch, 1*inch])
-            nutriente_table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#28a745')),
+            # Crear estilos personalizados
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontSize=18,
+                spaceAfter=30,
+                alignment=TA_CENTER,
+                textColor=colors.HexColor('#2c3e50')
+            )
+            
+            heading_style = ParagraphStyle(
+                'CustomHeading',
+                parent=styles['Heading2'],
+                fontSize=14,
+                spaceAfter=12,
+                textColor=colors.HexColor('#7CB342')
+            )
+            
+            normal_style = ParagraphStyle(
+                'CustomNormal',
+                parent=styles['Normal'],
+                fontSize=10,
+                spaceAfter=6
+            )
+            
+            # Contenido del PDF
+            story = []
+            
+            # Título
+            story.append(Paragraph("REPORTE COMPARATIVO DE FÓRMULAS", title_style))
+            story.append(Spacer(1, 12))
+            
+            # Información del reporte
+            info_data = [
+                ['ID del Reporte:', reporte['id']],
+                ['Fecha de Generación:', datetime.fromisoformat(reporte['fecha_generacion']).strftime('%d/%m/%Y %H:%M:%S')],
+                ['Cliente:', reporte.get('cliente', 'No especificado')],
+                ['Observaciones:', reporte.get('observaciones', 'Ninguna')]
+            ]
+            
+            info_table = Table(info_data, colWidths=[2*inch, 4*inch])
+            info_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f8f9fa')),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+                ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ]))
+            
+            story.append(info_table)
+            story.append(Spacer(1, 20))
+            
+            # Comparación de fórmulas
+            story.append(Paragraph("COMPARACIÓN DE FÓRMULAS", heading_style))
+            
+            formula_data = [
+                ['Característica', 'Fórmula A', 'Fórmula B'],
+                ['Nombre', reporte['formula_a']['nombre'], reporte['formula_b']['nombre']],
+                ['Especie', reporte['formula_a']['especie'], reporte['formula_b']['especie']],
+                ['Costo/kg', f"${reporte['formula_a']['costo_kg']:.3f}", f"${reporte['formula_b']['costo_kg']:.3f}"]
+            ]
+            
+            formula_table = Table(formula_data, colWidths=[2*inch, 2*inch, 2*inch])
+            formula_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#7CB342')),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
                 ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-                ('FONTSIZE', (0, 0), (-1, -1), 9),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ]))
+            
+            story.append(formula_table)
+            story.append(Spacer(1, 20))
+            
+            # Análisis de costos
+            story.append(Paragraph("ANÁLISIS DE COSTOS", heading_style))
+            
+            costo_data = [
+                ['Métrica', 'Valor'],
+                ['Diferencia Absoluta', f"${reporte['analisis']['costo']['diferencia_absoluta']:.3f}"],
+                ['Diferencia Porcentual', f"{reporte['analisis']['costo']['diferencia_porcentual']:.1f}%"]
+            ]
+            
+            costo_table = Table(costo_data, colWidths=[3*inch, 2*inch])
+            costo_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#17a2b8')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
                 ('GRID', (0, 0), (-1, -1), 1, colors.black),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
             
-            story.append(nutriente_table)
+            story.append(costo_table)
             story.append(Spacer(1, 20))
-        
-        # Conclusiones
-        story.append(Paragraph("CONCLUSIONES", heading_style))
-        
-        for i, conclusion in enumerate(reporte['analisis']['conclusiones'], 1):
-            story.append(Paragraph(f"{i}. {conclusion}", normal_style))
-        
-        story.append(Spacer(1, 12))
-        
-        # Recomendación
-        story.append(Paragraph("RECOMENDACIÓN", heading_style))
-        story.append(Paragraph(reporte['analisis']['recomendacion'], normal_style))
-        
-        # Pie de página
-        story.append(Spacer(1, 30))
-        footer_style = ParagraphStyle(
-            'Footer',
-            parent=styles['Normal'],
-            fontSize=8,
-            alignment=TA_CENTER,
-            textColor=colors.grey
-        )
-        story.append(Paragraph("Generado por FeedPro - Sistema de Formulación Nutricional", footer_style))
-        
-        # Construir PDF
-        doc.build(story)
-        
-        # Obtener contenido del buffer
-        pdf_content = buffer.getvalue()
-        buffer.close()
-        
-        return pdf_content
-        
-    except Exception as e:
-        print(f"❌ Error al generar PDF: {e}")
-        # Fallback a contenido de texto
-        return f"""
-        REPORTE COMPARATIVO DE FÓRMULAS
-        ================================
-        
-        ID: {reporte['id']}
-        Fecha: {reporte['fecha_generacion']}
-        Cliente: {reporte.get('cliente', 'N/A')}
-        
-        Error al generar PDF: {str(e)}
-        """
+            
+            # Análisis nutricional
+            if 'nutrientes' in reporte['analisis']:
+                story.append(Paragraph("ANÁLISIS NUTRICIONAL", heading_style))
+                
+                nutriente_data = [['Nutriente', 'Fórmula A', 'Fórmula B', 'Diferencia', 'Porcentaje']]
+                
+                for nutriente, valores in reporte['analisis']['nutrientes'].items():
+                    nutriente_data.append([
+                        nutriente.capitalize(),
+                        f"{valores['formula_a']:.2f}",
+                        f"{valores['formula_b']:.2f}",
+                        f"{valores['diferencia']:.2f}",
+                        f"{valores['porcentaje']:.1f}%"
+                    ])
+                
+                nutriente_table = Table(nutriente_data, colWidths=[1.2*inch, 1*inch, 1*inch, 1*inch, 1*inch])
+                nutriente_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#28a745')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                    ('FONTSIZE', (0, 0), (-1, -1), 9),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ]))
+                
+                story.append(nutriente_table)
+                story.append(Spacer(1, 20))
+            
+            # Conclusiones
+            story.append(Paragraph("CONCLUSIONES", heading_style))
+            
+            for i, conclusion in enumerate(reporte['analisis']['conclusiones'], 1):
+                story.append(Paragraph(f"{i}. {conclusion}", normal_style))
+            
+            story.append(Spacer(1, 12))
+            
+            # Recomendación
+            story.append(Paragraph("RECOMENDACIÓN", heading_style))
+            story.append(Paragraph(reporte['analisis']['recomendacion'], normal_style))
+            
+            # Pie de página
+            story.append(Spacer(1, 30))
+            footer_style = ParagraphStyle(
+                'Footer',
+                parent=styles['Normal'],
+                fontSize=8,
+                alignment=TA_CENTER,
+                textColor=colors.grey
+            )
+            story.append(Paragraph("Generado por FeedPro - Sistema de Formulación Nutricional", footer_style))
+            
+            # Construir PDF
+            doc.build(story)
+            
+            # Obtener contenido del buffer
+            pdf_content = buffer.getvalue()
+            buffer.close()
+            
+            return pdf_content
+            
+        except Exception as e:
+            print(f"❌ Error al generar PDF con ReportLab: {e}")
+            # Fallback a texto plano
+            pass
+    
+    # Generar reporte en texto plano como fallback
+    try:
+        fecha_formateada = datetime.fromisoformat(reporte['fecha_generacion']).strftime('%d/%m/%Y %H:%M:%S')
+    except:
+        fecha_formateada = reporte['fecha_generacion']
+    
+    contenido_texto = f"""
+REPORTE COMPARATIVO DE FÓRMULAS
+================================
+
+ID del Reporte: {reporte['id']}
+Fecha de Generación: {fecha_formateada}
+Cliente: {reporte.get('cliente', 'No especificado')}
+Observaciones: {reporte.get('observaciones', 'Ninguna')}
+
+COMPARACIÓN DE FÓRMULAS
+=======================
+
+Fórmula A: {reporte['formula_a']['nombre']}
+- Especie: {reporte['formula_a']['especie']}
+- Costo/kg: ${reporte['formula_a']['costo_kg']:.3f}
+
+Fórmula B: {reporte['formula_b']['nombre']}
+- Especie: {reporte['formula_b']['especie']}
+- Costo/kg: ${reporte['formula_b']['costo_kg']:.3f}
+
+ANÁLISIS DE COSTOS
+==================
+
+Diferencia Absoluta: ${reporte['analisis']['costo']['diferencia_absoluta']:.3f}
+Diferencia Porcentual: {reporte['analisis']['costo']['diferencia_porcentual']:.1f}%
+
+ANÁLISIS NUTRICIONAL
+====================
+"""
+    
+    if 'nutrientes' in reporte['analisis']:
+        for nutriente, valores in reporte['analisis']['nutrientes'].items():
+            contenido_texto += f"""
+{nutriente.capitalize()}:
+- Fórmula A: {valores['formula_a']:.2f}
+- Fórmula B: {valores['formula_b']:.2f}
+- Diferencia: {valores['diferencia']:.2f}
+- Porcentaje: {valores['porcentaje']:.1f}%
+"""
+    
+    contenido_texto += f"""
+
+CONCLUSIONES
+============
+"""
+    
+    for i, conclusion in enumerate(reporte['analisis']['conclusiones'], 1):
+        contenido_texto += f"{i}. {conclusion}\n"
+    
+    contenido_texto += f"""
+
+RECOMENDACIÓN
+=============
+{reporte['analisis']['recomendacion']}
+
+---
+Generado por FeedPro - Sistema de Formulación Nutricional
+"""
+    
+    return contenido_texto.encode('utf-8')
 
 @reportes_mejorado_bp.route('/api/descargar_reporte/<reporte_id>')
 @login_required
 def descargar_reporte(reporte_id):
-    """Descargar reporte en formato PDF"""
+    """Descargar reporte en formato PDF o texto"""
     try:
         # En una implementación completa, buscarías el reporte en la base de datos
         # Por ahora, generamos un reporte de ejemplo
@@ -557,13 +625,20 @@ def descargar_reporte(reporte_id):
             }
         }
         
-        # Generar PDF
-        pdf_content = generar_pdf_basico(reporte_ejemplo)
+        # Generar contenido del reporte
+        contenido_reporte = generar_pdf_basico(reporte_ejemplo)
         
-        # Crear respuesta
-        response = make_response(pdf_content)
-        response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = f'attachment; filename=reporte_comparativo_{reporte_id}.pdf'
+        # Crear respuesta según el tipo de contenido
+        response = make_response(contenido_reporte)
+        
+        if REPORTLAB_AVAILABLE and isinstance(contenido_reporte, bytes) and len(contenido_reporte) > 100:
+            # Es un PDF real
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = f'attachment; filename=reporte_comparativo_{reporte_id}.pdf'
+        else:
+            # Es texto plano
+            response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+            response.headers['Content-Disposition'] = f'attachment; filename=reporte_comparativo_{reporte_id}.txt'
         
         return response
         
