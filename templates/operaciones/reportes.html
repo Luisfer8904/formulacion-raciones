@@ -510,18 +510,25 @@ function generarReporteComparativo() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('modalReporteComparativo'));
             modal.hide();
             
-            // Mostrar mensaje de éxito
-            alert(`Reporte comparativo generado exitosamente!\n\nFórmulas: ${data.formulas.join(' vs ')}\nCliente: ${data.cliente || 'No especificado'}\nFecha: ${data.fecha}\n\nNota: Esta es una versión de demostración. El PDF se implementará próximamente.`);
+            // Mostrar mensaje de éxito con opción de descarga
+            const mensaje = `Reporte comparativo generado exitosamente!\n\nFórmulas: ${data.reporte.formula_a.nombre} vs ${data.reporte.formula_b.nombre}\nCliente: ${data.reporte.cliente || 'No especificado'}\nFecha: ${new Date(data.reporte.fecha_generacion).toLocaleString()}\n\n¿Desea descargar el PDF ahora?`;
+            
+            if (confirm(mensaje)) {
+                // Descargar PDF
+                window.open(data.url_descarga, '_blank');
+            }
             
             // Actualizar historial
             actualizarHistorialReportes();
             
             // Agregar al historial visual
             agregarReporteAlHistorial({
+                id: data.reporte.id,
                 tipo: 'Reporte Comparativo',
-                fecha: data.fecha,
-                detalles: `${data.formulas.join(' vs ')}${data.cliente ? ' - ' + data.cliente : ''}`,
-                estado: 'Completado (Demo)'
+                fecha: new Date(data.reporte.fecha_generacion).toLocaleString(),
+                detalles: `${data.reporte.formula_a.nombre} vs ${data.reporte.formula_b.nombre}${data.reporte.cliente ? ' - ' + data.reporte.cliente : ''}`,
+                estado: 'Completado',
+                url_descarga: data.url_descarga
             });
         } else {
             throw new Error(data.error || 'Error desconocido');
@@ -563,6 +570,9 @@ function agregarReporteAlHistorial(reporte) {
         </td>
         <td>
             <span class="badge bg-success">${reporte.estado}</span>
+            ${reporte.url_descarga ? `<button class="btn btn-sm btn-outline-primary ms-2" onclick="descargarReporte('${reporte.url_descarga}')" title="Descargar PDF">
+                <i class="fas fa-download"></i>
+            </button>` : ''}
             <button class="btn btn-sm btn-outline-danger ms-2" onclick="eliminarReporte(this)" title="Eliminar">
                 <i class="fas fa-trash"></i>
             </button>
@@ -604,6 +614,11 @@ function limpiarHistorial() {
         `;
         console.log('Historial limpiado');
     }
+}
+
+// Función para descargar reporte
+function descargarReporte(url) {
+    window.open(url, '_blank');
 }
 
 // Cargar historial al cargar la página

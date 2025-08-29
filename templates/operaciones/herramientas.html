@@ -516,15 +516,161 @@ function abrirCalculadora() {
 }
 
 function abrirConversor() {
-    mostrarNotificacion('Conversor de Unidades - Funcionalidad en desarrollo', 'info');
+    // Crear modal dinámico para conversor
+    const modalHtml = `
+        <div class="modal fade" id="conversorModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-exchange-alt me-2"></i>Conversor de Unidades</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Valor a Convertir</label>
+                            <input type="number" class="form-control" id="valorConversorModal" step="0.000001" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">De</label>
+                                <select class="form-select" id="unidadOrigenModal" required>
+                                    <option value="kg">Kilogramos (kg)</option>
+                                    <option value="g">Gramos (g)</option>
+                                    <option value="lb">Libras (lb)</option>
+                                    <option value="oz">Onzas (oz)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">A</label>
+                                <select class="form-select" id="unidadDestinoModal" required>
+                                    <option value="kg">Kilogramos (kg)</option>
+                                    <option value="g">Gramos (g)</option>
+                                    <option value="lb">Libras (lb)</option>
+                                    <option value="oz">Onzas (oz)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="resultadoConversorModal" class="alert d-none mt-3"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="convertirUnidadesModal()">Convertir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remover modal existente si existe
+    const existingModal = document.getElementById('conversorModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('conversorModal'));
+    modal.show();
 }
 
 function abrirAnalizadorCostos() {
-    mostrarNotificacion('Analizador de Costos - Funcionalidad en desarrollo', 'info');
+    // Crear modal dinámico para analizador de costos
+    const modalHtml = `
+        <div class="modal fade" id="analizadorCostosModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-dollar-sign me-2"></i>Analizador de Costos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-success btn-sm" onclick="agregarIngredienteCosto()">
+                                <i class="fas fa-plus me-1"></i>Agregar Ingrediente
+                            </button>
+                        </div>
+                        <div id="ingredientesCostoModal">
+                            <!-- Los ingredientes se agregarán dinámicamente -->
+                        </div>
+                        <div id="resultadoAnalisisCostosModal" class="mt-3 d-none"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="analizarCostosModal()">Analizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remover modal existente si existe
+    const existingModal = document.getElementById('analizadorCostosModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Agregar primer ingrediente
+    setTimeout(() => {
+        agregarIngredienteCosto();
+    }, 100);
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('analizadorCostosModal'));
+    modal.show();
 }
 
 function abrirValidador() {
-    mostrarNotificacion('Validador de Fórmulas - Funcionalidad en desarrollo', 'info');
+    // Crear modal dinámico para validador
+    const modalHtml = `
+        <div class="modal fade" id="validadorModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Validador de Fórmulas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-success btn-sm" onclick="agregarIngredienteValidacion()">
+                                <i class="fas fa-plus me-1"></i>Agregar Ingrediente
+                            </button>
+                        </div>
+                        <div id="ingredientesValidacionModal">
+                            <!-- Los ingredientes se agregarán dinámicamente -->
+                        </div>
+                        <div id="resultadoValidacionModal" class="mt-3 d-none"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="validarFormulaModal()">Validar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remover modal existente si existe
+    const existingModal = document.getElementById('validadorModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Agregar primer ingrediente
+    setTimeout(() => {
+        agregarIngredienteValidacion();
+    }, 100);
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('validadorModal'));
+    modal.show();
 }
 
 function abrirComparador() {
@@ -618,6 +764,288 @@ function mostrarNotificacion(mensaje, tipo) {
             toast.remove();
         }
     }, 3000);
+}
+
+// Funciones para conectar con APIs
+
+function convertirUnidadesModal() {
+    const valor = parseFloat(document.getElementById('valorConversorModal').value);
+    const origen = document.getElementById('unidadOrigenModal').value;
+    const destino = document.getElementById('unidadDestinoModal').value;
+    
+    if (isNaN(valor)) {
+        document.getElementById('resultadoConversorModal').className = 'alert alert-warning';
+        document.getElementById('resultadoConversorModal').innerHTML = 'Por favor ingrese un valor válido';
+        document.getElementById('resultadoConversorModal').classList.remove('d-none');
+        return;
+    }
+    
+    const datos = {
+        valor: valor,
+        origen: origen,
+        destino: destino
+    };
+    
+    fetch('/api/convertir_unidades', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datos)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultado = document.getElementById('resultadoConversorModal');
+        if (data.success) {
+            resultado.className = 'alert alert-success';
+            resultado.innerHTML = `<strong>Resultado:</strong><br>${data.mensaje}`;
+        } else {
+            resultado.className = 'alert alert-danger';
+            resultado.innerHTML = `<strong>Error:</strong> ${data.error}`;
+        }
+        resultado.classList.remove('d-none');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const resultado = document.getElementById('resultadoConversorModal');
+        resultado.className = 'alert alert-danger';
+        resultado.innerHTML = `<strong>Error:</strong> ${error.message}`;
+        resultado.classList.remove('d-none');
+    });
+}
+
+function agregarIngredienteCosto() {
+    const container = document.getElementById('ingredientesCostoModal');
+    
+    const ingredienteDiv = document.createElement('div');
+    ingredienteDiv.className = 'row mb-3 ingrediente-costo';
+    ingredienteDiv.innerHTML = `
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Nombre del ingrediente" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" class="form-control" placeholder="Cantidad (kg)" step="0.01" min="0" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" class="form-control" placeholder="Precio/kg" step="0.01" min="0" required>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarIngredienteCosto(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    
+    container.appendChild(ingredienteDiv);
+}
+
+function eliminarIngredienteCosto(btn) {
+    btn.closest('.ingrediente-costo').remove();
+}
+
+function analizarCostosModal() {
+    const ingredientesDiv = document.querySelectorAll('.ingrediente-costo');
+    const ingredientes = [];
+    
+    ingredientesDiv.forEach(div => {
+        const inputs = div.querySelectorAll('input');
+        const nombre = inputs[0].value;
+        const cantidad = parseFloat(inputs[1].value);
+        const precio = parseFloat(inputs[2].value);
+        
+        if (nombre && !isNaN(cantidad) && !isNaN(precio)) {
+            ingredientes.push({
+                nombre: nombre,
+                cantidad: cantidad,
+                precio_kg: precio
+            });
+        }
+    });
+    
+    if (ingredientes.length === 0) {
+        const resultado = document.getElementById('resultadoAnalisisCostosModal');
+        resultado.className = 'alert alert-warning';
+        resultado.innerHTML = 'Por favor agregue al menos un ingrediente válido';
+        resultado.classList.remove('d-none');
+        return;
+    }
+    
+    fetch('/api/analizar_costos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredientes: ingredientes })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultado = document.getElementById('resultadoAnalisisCostosModal');
+        if (data.success) {
+            let html = `
+                <div class="alert alert-success">
+                    <h6><strong>Análisis de Costos</strong></h6>
+                    <p><strong>Costo Total:</strong> $${data.costo_total}</p>
+                    <p><strong>Ingrediente más caro:</strong> ${data.ingrediente_mas_caro.nombre} ($${data.ingrediente_mas_caro.costo_total})</p>
+                    
+                    <h6 class="mt-3">Desglose por Ingrediente:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Ingrediente</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio/kg</th>
+                                    <th>Costo Total</th>
+                                    <th>% del Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            data.analisis.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td>${item.cantidad} kg</td>
+                        <td>$${item.precio_kg}</td>
+                        <td>$${item.costo_total}</td>
+                        <td>${item.porcentaje}%</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            resultado.innerHTML = html;
+        } else {
+            resultado.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${data.error}</div>`;
+        }
+        resultado.classList.remove('d-none');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const resultado = document.getElementById('resultadoAnalisisCostosModal');
+        resultado.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${error.message}</div>`;
+        resultado.classList.remove('d-none');
+    });
+}
+
+function agregarIngredienteValidacion() {
+    const container = document.getElementById('ingredientesValidacionModal');
+    
+    const ingredienteDiv = document.createElement('div');
+    ingredienteDiv.className = 'row mb-3 ingrediente-validacion';
+    ingredienteDiv.innerHTML = `
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Nombre del ingrediente" required>
+        </div>
+        <div class="col-md-4">
+            <input type="number" class="form-control" placeholder="Porcentaje (%)" step="0.01" min="0" max="100" required>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarIngredienteValidacion(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    
+    container.appendChild(ingredienteDiv);
+}
+
+function eliminarIngredienteValidacion(btn) {
+    btn.closest('.ingrediente-validacion').remove();
+}
+
+function validarFormulaModal() {
+    const ingredientesDiv = document.querySelectorAll('.ingrediente-validacion');
+    const ingredientes = [];
+    
+    ingredientesDiv.forEach(div => {
+        const inputs = div.querySelectorAll('input');
+        const nombre = inputs[0].value;
+        const porcentaje = parseFloat(inputs[1].value);
+        
+        if (nombre && !isNaN(porcentaje)) {
+            ingredientes.push({
+                nombre: nombre,
+                porcentaje: porcentaje
+            });
+        }
+    });
+    
+    if (ingredientes.length === 0) {
+        const resultado = document.getElementById('resultadoValidacionModal');
+        resultado.className = 'alert alert-warning';
+        resultado.innerHTML = 'Por favor agregue al menos un ingrediente válido';
+        resultado.classList.remove('d-none');
+        return;
+    }
+    
+    fetch('/api/validar_formula', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredientes: ingredientes })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultado = document.getElementById('resultadoValidacionModal');
+        if (data.success) {
+            let alertClass = 'alert-success';
+            if (data.estado === 'error') alertClass = 'alert-danger';
+            else if (data.estado === 'advertencia') alertClass = 'alert-warning';
+            
+            let html = `
+                <div class="alert ${alertClass}">
+                    <h6><strong>Resultado de Validación</strong></h6>
+                    <p><strong>Estado:</strong> ${data.estado.toUpperCase()}</p>
+                    <p><strong>Total de ingredientes:</strong> ${data.total_ingredientes}</p>
+                    <p><strong>Suma de porcentajes:</strong> ${data.total_porcentaje}%</p>
+            `;
+            
+            if (data.validaciones.length > 0) {
+                html += '<h6 class="mt-3">Validaciones:</h6><ul>';
+                data.validaciones.forEach(validacion => {
+                    html += `<li>${validacion}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            if (data.errores.length > 0) {
+                html += '<h6 class="mt-3 text-danger">Errores:</h6><ul>';
+                data.errores.forEach(error => {
+                    html += `<li class="text-danger">${error}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            if (data.advertencias.length > 0) {
+                html += '<h6 class="mt-3 text-warning">Advertencias:</h6><ul>';
+                data.advertencias.forEach(advertencia => {
+                    html += `<li class="text-warning">${advertencia}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            html += '</div>';
+            resultado.innerHTML = html;
+        } else {
+            resultado.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${data.error}</div>`;
+        }
+        resultado.classList.remove('d-none');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const resultado = document.getElementById('resultadoValidacionModal');
+        resultado.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${error.message}</div>`;
+        resultado.classList.remove('d-none');
+    });
 }
 </script>
 {% endblock %}
