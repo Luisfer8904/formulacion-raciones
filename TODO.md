@@ -22,6 +22,18 @@
 - templates/operaciones/layout.html (1 reference fixed)
 - templates/operaciones/panel.html (3 references fixed)
 
+### ✅ Temporary Changes for Presentation
+- [x] Hide "Planificador de Producción" from navigation menu
+- [x] Hide "Generador de Reportes" from navigation menu
+- [x] Hide reportes summary card from panel
+- [x] Hide reportes quick action from dropdown
+- [x] Hide reportes and planificador nav cards from main panel
+
+### 📋 Files with Temporary Changes
+- templates/operaciones/layout.html (navigation menu items commented out)
+- templates/operaciones/panel.html (summary cards and nav cards commented out)
+
 ## Expected Result
 - Flask application loads without BuildError
-- Reportes page accessible from navigation menu
+- Only functional features visible for presentation
+- Non-functional features temporarily hidden with comments for easy restoration
