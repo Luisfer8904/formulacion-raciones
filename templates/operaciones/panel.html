@@ -23,7 +23,7 @@
                     <li><a class="dropdown-item" href="{{ url_for('ingredientes_bp.nuevo_ingrediente') }}">
                         <i class="fas fa-seedling me-2"></i>Nuevo Ingrediente
                     </a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('reportes_bp.reportes') }}">
+                    <li><a class="dropdown-item" href="{{ url_for('reportes_mejorado_bp.reportes') }}">
                         <i class="fas fa-chart-line me-2"></i>Generar Reporte
                     </a></li>
                 </ul>
@@ -66,7 +66,7 @@
         </div>
     </div>
     
-    <div class="summary-card" onclick="navegarA('{{ url_for('reportes_bp.reportes') }}')">
+    <div class="summary-card" onclick="navegarA('{{ url_for('reportes_mejorado_bp.reportes') }}')">
         <div class="summary-card-content">
             <div class="summary-icon">
                 <i class="fas fa-chart-line"></i>
@@ -135,7 +135,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <a href="{{ url_for('reportes_bp.reportes') }}" class="nav-card-modern">
+                        <a href="{{ url_for('reportes_mejorado_bp.reportes') }}" class="nav-card-modern">
                             <div class="nav-card-icon-modern bg-warning">
                                 <i class="fas fa-chart-line"></i>
                             </div>
