@@ -95,7 +95,7 @@ def obtener_valores_nutricionales():
         cursor.execute("""
             SELECT vn.valor, n.nombre as nutriente_nombre, n.unidad,
                    i.nombre as ingrediente_nombre
-            FROM ingredientes_nutrientes vn
+            FROM valores_nutricionales vn
             JOIN nutrientes n ON vn.nutriente_id = n.id
             JOIN ingredientes i ON vn.ingrediente_id = i.id
             WHERE vn.ingrediente_id = %s AND vn.nutriente_id = %s
@@ -190,7 +190,7 @@ def calcular_aportes_nutricionales():
                 # Obtener valor nutricional
                 cursor.execute("""
                     SELECT vn.valor, i.nombre as ingrediente_nombre
-                    FROM ingredientes_nutrientes vn
+                    FROM valores_nutricionales vn
                     JOIN ingredientes i ON vn.ingrediente_id = i.id
                     WHERE vn.ingrediente_id = %s AND vn.nutriente_id = %s
                 """, (ingrediente_id, nutriente_id))
