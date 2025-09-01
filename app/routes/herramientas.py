@@ -216,8 +216,9 @@ def obtener_ingredientes():
         cursor.execute("""
             SELECT id, nombre, precio_kg, materia_seca
             FROM ingredientes 
+            WHERE usuario_id = %s
             ORDER BY nombre
-        """)
+        """, (session['user_id'],))
         
         ingredientes = cursor.fetchall()
         cursor.close()
@@ -245,8 +246,9 @@ def obtener_nutrientes():
         cursor.execute("""
             SELECT id, nombre, unidad
             FROM nutrientes 
+            WHERE usuario_id = %s
             ORDER BY nombre
-        """)
+        """, (session['user_id'],))
         
         nutrientes = cursor.fetchall()
         cursor.close()

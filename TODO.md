@@ -36,7 +36,9 @@
 - [x] Manejo de errores
 - [x] **NUEVA**: Cargar fórmulas existentes desde el sistema
 - [x] **NUEVA**: APIs para obtener mezclas y detalles de mezclas
-- [x] **NUEVA**: Modal selector de fórmulas con interfaz intuitiva
+- [x] **MEJORADA**: Lista desplegable para selección de fórmulas (reemplaza modal)
+- [x] **MEJORADA**: Filtrado de ingredientes y nutrientes por usuario
+- [x] **MEJORADA**: Carga automática de ingredientes al seleccionar fórmula
 
 ## Próximos Pasos
 1. ✅ Implementar backend APIs

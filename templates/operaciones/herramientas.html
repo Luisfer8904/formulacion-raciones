@@ -1086,13 +1086,15 @@ function abrirCalculadoraAportes() {
                             <div class="col-md-6">
                                 <h6>Información de la Fórmula</h6>
                                 <div class="mb-3">
+                                    <label class="form-label">Cargar Fórmula Existente (Opcional)</label>
+                                    <select class="form-select" id="formulaExistente" onchange="cargarFormulaSeleccionada()">
+                                        <option value="">-- Seleccionar fórmula existente --</option>
+                                    </select>
+                                    <small class="form-text text-muted">O crear una nueva fórmula abajo</small>
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Nombre de la Fórmula</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="nombreFormula" placeholder="Ej: Alimento para Bovinos">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="abrirSelectorFormulas()">
-                                            <i class="fas fa-folder-open me-1"></i>Cargar Fórmula
-                                        </button>
-                                    </div>
+                                    <input type="text" class="form-control" id="nombreFormula" placeholder="Ej: Alimento para Bovinos">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Consumo por Animal (kg/día)</label>
@@ -1184,6 +1186,27 @@ function cargarDatosIniciales() {
             }
         })
         .catch(error => console.error('Error cargando nutrientes:', error));
+    
+    // Cargar fórmulas disponibles
+    cargarFormulasEnDropdown();
+}
+
+function cargarFormulasEnDropdown() {
+    fetch('/api/obtener_mezclas')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('formulaExistente');
+            
+            if (data.success && data.mezclas.length > 0) {
+                data.mezclas.forEach(mezcla => {
+                    const option = document.createElement('option');
+                    option.value = mezcla.id;
+                    option.textContent = `${mezcla.nombre} ${mezcla.tipo_animales ? `(${mezcla.tipo_animales})` : ''}`;
+                    select.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error('Error cargando fórmulas:', error));
 }
 
 function mostrarNutrientesDisponibles() {
@@ -1433,134 +1456,17 @@ function imprimirAportes() {
     window.open(url, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
 }
 
-function abrirSelectorFormulas() {
-    // Crear modal dinámico para seleccionar fórmulas
-    const modalHtml = `
-        <div class="modal fade" id="selectorFormulasModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title"><i class="fas fa-folder-open me-2"></i>Cargar Fórmula Existente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Seleccione una fórmula para cargar:</label>
-                            <div id="listaFormulasDisponibles">
-                                <div class="text-center">
-                                    <div class="spinner-border spinner-border-sm" role="status">
-                                        <span class="visually-hidden">Cargando...</span>
-                                    </div>
-                                    <p class="mt-2">Cargando fórmulas...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="btnCargarFormula" onclick="cargarFormulaSeleccionada()" disabled>
-                            <i class="fas fa-download me-1"></i>Cargar Fórmula
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Remover modal existente si existe
-    const existingModal = document.getElementById('selectorFormulasModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Agregar modal al DOM
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
-    // Cargar fórmulas disponibles
-    cargarFormulasDisponibles();
-    
-    // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('selectorFormulasModal'));
-    modal.show();
-}
-
-function cargarFormulasDisponibles() {
-    fetch('/api/obtener_mezclas')
-        .then(response => response.json())
-        .then(data => {
-            const container = document.getElementById('listaFormulasDisponibles');
-            
-            if (data.success && data.mezclas.length > 0) {
-                let html = '<div class="list-group">';
-                
-                data.mezclas.forEach(mezcla => {
-                    const fechaFormateada = new Date(mezcla.fecha_creacion).toLocaleDateString('es-ES');
-                    html += `
-                        <div class="list-group-item list-group-item-action formula-item" data-mezcla-id="${mezcla.id}">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">${mezcla.nombre}</h6>
-                                <small>${fechaFormateada}</small>
-                            </div>
-                            <p class="mb-1">
-                                <small class="text-muted">
-                                    ${mezcla.tipo_animales ? `Tipo: ${mezcla.tipo_animales}` : ''}
-                                    ${mezcla.etapa_produccion ? ` | Etapa: ${mezcla.etapa_produccion}` : ''}
-                                </small>
-                            </p>
-                        </div>
-                    `;
-                });
-                
-                html += '</div>';
-                container.innerHTML = html;
-                
-                // Agregar event listeners para selección
-                document.querySelectorAll('.formula-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        // Remover selección anterior
-                        document.querySelectorAll('.formula-item').forEach(i => i.classList.remove('active'));
-                        // Agregar selección actual
-                        this.classList.add('active');
-                        // Habilitar botón de cargar
-                        document.getElementById('btnCargarFormula').disabled = false;
-                    });
-                });
-                
-            } else {
-                container.innerHTML = `
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        No tienes fórmulas guardadas aún. Crea una fórmula primero en el formulador principal.
-                    </div>
-                `;
-            }
-        })
-        .catch(error => {
-            console.error('Error cargando fórmulas:', error);
-            document.getElementById('listaFormulasDisponibles').innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    Error al cargar las fórmulas: ${error.message}
-                </div>
-            `;
-        });
-}
 
 function cargarFormulaSeleccionada() {
-    const formulaSeleccionada = document.querySelector('.formula-item.active');
+    const select = document.getElementById('formulaExistente');
+    const mezclaId = select.value;
     
-    if (!formulaSeleccionada) {
-        mostrarNotificacion('Por favor selecciona una fórmula', 'warning');
+    if (!mezclaId) {
+        // Si no hay selección, limpiar el formulario
+        document.getElementById('nombreFormula').value = '';
+        document.getElementById('ingredientesAporteModal').innerHTML = '';
         return;
     }
-    
-    const mezclaId = formulaSeleccionada.getAttribute('data-mezcla-id');
-    
-    // Mostrar loading
-    const btnCargar = document.getElementById('btnCargarFormula');
-    const originalText = btnCargar.innerHTML;
-    btnCargar.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Cargando...';
-    btnCargar.disabled = true;
     
     fetch(`/api/obtener_detalle_mezcla/${mezclaId}`)
         .then(response => response.json())
@@ -1588,10 +1494,6 @@ function cargarFormulaSeleccionada() {
                     input.value = ingrediente.porcentaje;
                 });
                 
-                // Cerrar modal selector
-                const modal = bootstrap.Modal.getInstance(document.getElementById('selectorFormulasModal'));
-                modal.hide();
-                
                 mostrarNotificacion(`Fórmula "${data.mezcla.nombre}" cargada exitosamente`, 'success');
                 
             } else {
@@ -1601,10 +1503,6 @@ function cargarFormulaSeleccionada() {
         .catch(error => {
             console.error('Error:', error);
             mostrarNotificacion(`Error al cargar la fórmula: ${error.message}`, 'danger');
-        })
-        .finally(() => {
-            btnCargar.innerHTML = originalText;
-            btnCargar.disabled = false;
         });
 }
 </script>
