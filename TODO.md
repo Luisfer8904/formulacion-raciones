@@ -45,7 +45,8 @@
 2. ✅ Agregar interfaz frontend  
 3. ✅ Crear sistema de impresión
 4. ✅ **NUEVO**: Implementar carga de fórmulas existentes
-5. 🔄 Testing completo (pendiente)
+5. ✅ **NUEVO**: Refactorizar y separar herramientas en módulos
+6. 🔄 Testing completo (pendiente)
 
 ## Resumen
 La "Calculadora de Aportes Nutricionales" ha sido implementada exitosamente como una nueva herramienta en el sistema. Permite a los usuarios:

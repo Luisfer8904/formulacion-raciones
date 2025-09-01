@@ -1166,12 +1166,13 @@ function abrirCalculadoraAportes() {
 }
 
 function cargarDatosIniciales() {
-    // Cargar ingredientes
+    // Cargar ingredientes primero
     fetch('/api/obtener_ingredientes')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 ingredientesDisponibles = data.ingredientes;
+                console.log('Ingredientes cargados:', ingredientesDisponibles);
             }
         })
         .catch(error => console.error('Error cargando ingredientes:', error));
@@ -1228,6 +1229,13 @@ function mostrarNutrientesDisponibles() {
 }
 
 function agregarIngredienteAporte() {
+    // Verificar que los ingredientes estén cargados
+    if (ingredientesDisponibles.length === 0) {
+        mostrarNotificacion('Cargando ingredientes, por favor espere...', 'info');
+        setTimeout(() => agregarIngredienteAporte(), 1000);
+        return;
+    }
+    
     const container = document.getElementById('ingredientesAporteModal');
     
     const ingredienteDiv = document.createElement('div');
@@ -1468,10 +1476,19 @@ function cargarFormulaSeleccionada() {
         return;
     }
     
+    // Verificar que los ingredientes estén cargados
+    if (ingredientesDisponibles.length === 0) {
+        mostrarNotificacion('Cargando ingredientes, por favor espere...', 'info');
+        setTimeout(() => cargarFormulaSeleccionada(), 1000);
+        return;
+    }
+    
     fetch(`/api/obtener_detalle_mezcla/${mezclaId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                console.log('Datos de la mezcla:', data);
+                
                 // Cargar datos en el formulario principal
                 document.getElementById('nombreFormula').value = data.mezcla.nombre;
                 
@@ -1479,22 +1496,40 @@ function cargarFormulaSeleccionada() {
                 document.getElementById('ingredientesAporteModal').innerHTML = '';
                 
                 // Cargar ingredientes de la fórmula
-                data.ingredientes.forEach(ingrediente => {
-                    agregarIngredienteAporte();
+                data.ingredientes.forEach((ingrediente, index) => {
+                    console.log(`Cargando ingrediente ${index + 1}:`, ingrediente);
                     
-                    // Obtener el último ingrediente agregado
-                    const ingredientesDiv = document.querySelectorAll('.ingrediente-aporte');
-                    const ultimoIngrediente = ingredientesDiv[ingredientesDiv.length - 1];
+                    // Crear el div del ingrediente
+                    const container = document.getElementById('ingredientesAporteModal');
+                    const ingredienteDiv = document.createElement('div');
+                    ingredienteDiv.className = 'row mb-3 ingrediente-aporte';
                     
-                    // Establecer valores
-                    const select = ultimoIngrediente.querySelector('select');
-                    const input = ultimoIngrediente.querySelector('input');
+                    let opcionesIngredientes = '<option value="">Seleccione un ingrediente</option>';
+                    ingredientesDisponibles.forEach(ing => {
+                        const selected = ing.id == ingrediente.ingrediente_id ? 'selected' : '';
+                        opcionesIngredientes += `<option value="${ing.id}" ${selected}>${ing.nombre}</option>`;
+                    });
                     
-                    select.value = ingrediente.ingrediente_id;
-                    input.value = ingrediente.porcentaje;
+                    ingredienteDiv.innerHTML = `
+                        <div class="col-md-6">
+                            <select class="form-control" required>
+                                ${opcionesIngredientes}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" class="form-control" placeholder="Porcentaje (%)" step="0.01" min="0" max="100" value="${ingrediente.porcentaje}" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarIngredienteAporte(this)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    container.appendChild(ingredienteDiv);
                 });
                 
-                mostrarNotificacion(`Fórmula "${data.mezcla.nombre}" cargada exitosamente`, 'success');
+                mostrarNotificacion(`Fórmula "${data.mezcla.nombre}" cargada exitosamente con ${data.ingredientes.length} ingredientes`, 'success');
                 
             } else {
                 mostrarNotificacion(`Error: ${data.error}`, 'danger');
