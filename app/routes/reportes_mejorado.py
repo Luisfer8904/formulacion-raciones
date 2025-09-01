@@ -249,6 +249,7 @@ def generar_reporte_comparativo():
             'mensaje': 'Reporte generado exitosamente',
             'reporte': reporte,
             'pdf_disponible': True,
+            'url_vista_previa': f'/api/ver_reporte/{reporte["id"]}',
             'url_descarga': f'/api/descargar_reporte/{reporte["id"]}'
         })
         
@@ -573,14 +574,84 @@ Generado por FeedPro - Sistema de Formulación Nutricional
     
     return contenido_texto.encode('utf-8')
 
+@reportes_mejorado_bp.route('/api/ver_reporte/<reporte_id>')
+@login_required
+def ver_reporte(reporte_id):
+    """Ver reporte en el navegador (vista previa)"""
+    try:
+        # Crear reporte de ejemplo para vista previa
+        reporte_ejemplo = {
+            'id': reporte_id,
+            'fecha_generacion': datetime.now().isoformat(),
+            'cliente': 'Cliente de Ejemplo',
+            'observaciones': 'Reporte generado para vista previa',
+            'formula_a': {
+                'nombre': 'Fórmula A - Ejemplo',
+                'especie': 'Pollo',
+                'costo_kg': 1.25
+            },
+            'formula_b': {
+                'nombre': 'Fórmula B - Ejemplo',
+                'especie': 'Cerdo',
+                'costo_kg': 1.45
+            },
+            'analisis': {
+                'costo': {
+                    'diferencia_absoluta': 0.20,
+                    'diferencia_porcentual': 16.0
+                },
+                'nutrientes': {
+                    'proteina': {
+                        'formula_a': 22.5,
+                        'formula_b': 18.5,
+                        'diferencia': -4.0,
+                        'porcentaje': -17.8
+                    },
+                    'energia': {
+                        'formula_a': 3100,
+                        'formula_b': 3250,
+                        'diferencia': 150,
+                        'porcentaje': 4.8
+                    }
+                },
+                'conclusiones': [
+                    'La Fórmula B es 16.0% más costosa que la Fórmula A',
+                    'La Fórmula A tiene significativamente más proteína',
+                    'La Fórmula B proporciona mayor energía'
+                ],
+                'recomendacion': 'Se recomienda evaluar si el costo adicional de la Fórmula B justifica sus beneficios'
+            }
+        }
+        
+        # Generar contenido del reporte
+        contenido_reporte = generar_pdf_basico(reporte_ejemplo)
+        
+        # Crear respuesta para vista previa en navegador
+        response = make_response(contenido_reporte)
+        
+        if REPORTLAB_AVAILABLE and isinstance(contenido_reporte, bytes) and len(contenido_reporte) > 100:
+            # Es un PDF real - mostrar en navegador
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = f'inline; filename=reporte_comparativo_{reporte_id}.pdf'
+        else:
+            # Es texto plano - mostrar en navegador
+            response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+            response.headers['Content-Disposition'] = f'inline; filename=reporte_comparativo_{reporte_id}.txt'
+        
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error al mostrar reporte: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @reportes_mejorado_bp.route('/api/descargar_reporte/<reporte_id>')
 @login_required
 def descargar_reporte(reporte_id):
     """Descargar reporte en formato PDF o texto"""
     try:
-        # En una implementación completa, buscarías el reporte en la base de datos
-        # Por ahora, generamos un reporte de ejemplo
-        
         # Crear reporte de ejemplo para descarga
         reporte_ejemplo = {
             'id': reporte_id,
@@ -628,15 +699,15 @@ def descargar_reporte(reporte_id):
         # Generar contenido del reporte
         contenido_reporte = generar_pdf_basico(reporte_ejemplo)
         
-        # Crear respuesta según el tipo de contenido
+        # Crear respuesta para descarga forzada
         response = make_response(contenido_reporte)
         
         if REPORTLAB_AVAILABLE and isinstance(contenido_reporte, bytes) and len(contenido_reporte) > 100:
-            # Es un PDF real
+            # Es un PDF real - forzar descarga
             response.headers['Content-Type'] = 'application/pdf'
             response.headers['Content-Disposition'] = f'attachment; filename=reporte_comparativo_{reporte_id}.pdf'
         else:
-            # Es texto plano
+            # Es texto plano - forzar descarga
             response.headers['Content-Type'] = 'text/plain; charset=utf-8'
             response.headers['Content-Disposition'] = f'attachment; filename=reporte_comparativo_{reporte_id}.txt'
         

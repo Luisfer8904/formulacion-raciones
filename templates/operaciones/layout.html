@@ -226,30 +226,46 @@
                         <div class="nav-section">
                             <div class="nav-section-title">Gestión</div>
                             <ul class="nav flex-column">
+                                <!-- Herramientas - Disponible para todos los planes -->
+                                {% set user_plan = session.get('tipo_plan', 'profesional') %}
+                                {% set user_rol = session.get('rol', 'user') %}
+                                
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('herramientas_bp.herramientas') }}">
                                         <i class="fas fa-wrench"></i> Herramientas
                                     </a>
                                 </li>
-                                <!-- Temporalmente oculto para presentación -->
-                                <!--
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('planificador_bp.planificador') }}">
-                                        <i class="fas fa-calendar-check"></i> Planificador de Producción
-                                    </a>
-                                </li>
+                                
+                                <!-- Reportes - Disponible para personal, profesional y admin -->
+                                {% if user_plan in ['personal', 'profesional'] or user_rol == 'admin' %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('reportes_mejorado_bp.reportes') }}">
                                         <i class="fas fa-chart-line"></i> Generador de Reportes
                                     </a>
                                 </li>
-                                -->
+                                {% endif %}
+                                
+                                <!-- Planificador de Producción - Para profesional y admin -->
+                                {% if user_plan == 'profesional' or user_rol == 'admin' %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('planificador_bp.planificador') }}">
+                                        <i class="fas fa-calendar-check"></i> Planificador de Producción
+                                    </a>
+                                </li>
+                                {% endif %}
                             </ul>
                         </div>
 
                         <div class="nav-section">
                             <div class="nav-section-title">Sistema</div>
                             <ul class="nav flex-column">
+                                {% if session.get('rol') == 'admin' %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('usuarios_bp.administrador') }}">
+                                        <i class="fas fa-users-cog"></i> Administrador
+                                    </a>
+                                </li>
+                                {% endif %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('usuarios_bp.opciones') }}">
                                         <i class="fas fa-sliders-h"></i> Opciones

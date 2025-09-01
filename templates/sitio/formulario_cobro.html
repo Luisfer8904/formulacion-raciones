@@ -106,7 +106,21 @@
                             <div id="planes-suscripcion" class="mb-4" style="display: none;">
                                 <label class="form-label fw-bold">Plan de Suscripción</label>
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
+                                        <div class="card border-2" id="card-basico">
+                                            <div class="card-body text-center p-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="plan" id="plan_basico" value="basico">
+                                                    <label class="form-check-label w-100" for="plan_basico">
+                                                        <h6 class="fw-bold" style="color: #8A72C7;">Básico</h6>
+                                                        <p class="h5 fw-bold mb-1">$12<small class="text-muted">/mes</small></p>
+                                                        <p class="text-muted small mb-0">Herramientas básicas</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="card border-2" id="card-personal">
                                             <div class="card-body text-center p-3">
                                                 <div class="form-check">
@@ -114,21 +128,39 @@
                                                     <label class="form-check-label w-100" for="plan_personal">
                                                         <h6 class="fw-bold text-primary">Personal</h6>
                                                         <p class="h5 fw-bold mb-1">$24<small class="text-muted">/mes</small></p>
-                                                        <p class="text-muted small mb-0">Hasta 50 formulaciones</p>
+                                                        <p class="text-muted small mb-0">Herramientas + Reportes</p>
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="card border-2" id="card-profesional">
                                             <div class="card-body text-center p-3">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="plan" id="plan_profesional" value="profesional">
                                                     <label class="form-check-label w-100" for="plan_profesional">
                                                         <h6 class="fw-bold text-warning">Profesional</h6>
-                                                        <p class="h5 fw-bold mb-1">$76<small class="text-muted">/mes</small></p>
-                                                        <p class="text-muted small mb-0">Formulaciones ilimitadas</p>
+                                                        <p class="h5 fw-bold mb-1">$56<small class="text-muted">/mes</small></p>
+                                                        <p class="text-muted small mb-0">Todo + Gestión Producción</p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Fila adicional para plan institucional -->
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-6 mx-auto">
+                                        <div class="card border-2" id="card-institucional">
+                                            <div class="card-body text-center p-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="plan" id="plan_institucional" value="institucional">
+                                                    <label class="form-check-label w-100" for="plan_institucional">
+                                                        <h6 class="fw-bold text-success">Institucional</h6>
+                                                        <p class="h6 fw-bold mb-1">Precio<br>personalizado</p>
+                                                        <p class="text-muted small mb-0">Usuarios ilimitados</p>
                                                     </label>
                                                 </div>
                                             </div>
@@ -302,11 +334,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if (cardSuscripcion) makeCardClickable(cardSuscripcion, 'suscripcion');
     
     // Aplicar click handlers a las tarjetas de planes
+    const cardBasico = document.getElementById('card-basico');
     const cardPersonal = document.getElementById('card-personal');
     const cardProfesional = document.getElementById('card-profesional');
+    const cardInstitucional = document.getElementById('card-institucional');
     
+    if (cardBasico) makeCardClickable(cardBasico, 'plan_basico');
     if (cardPersonal) makeCardClickable(cardPersonal, 'plan_personal');
     if (cardProfesional) makeCardClickable(cardProfesional, 'plan_profesional');
+    if (cardInstitucional) makeCardClickable(cardInstitucional, 'plan_institucional');
     
     // Manejar envío del formulario
     document.getElementById('formularioCobro').addEventListener('submit', function(e) {
@@ -318,14 +354,35 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('Enviando formulario:', { tipoSolicitud, plan });
         
-        // Si es suscripción, redirigir a pasarela de pagos
+        // Si es suscripción, redirigir a pasarela de pagos o procesar solicitud especial
         if (tipoSolicitud === 'suscripcion') {
             let paymentUrl = '';
             
-            if (plan === 'personal') {
+            if (plan === 'basico') {
+                paymentUrl = 'https://pay.n1co.shop/pl/ZqV92FvYR';
+            } else if (plan === 'personal') {
                 paymentUrl = 'https://pay.n1co.shop/pl/qrkDBfKLE';
             } else if (plan === 'profesional') {
                 paymentUrl = 'https://pay.n1co.shop/pl/kDzVKfPjN';
+            } else if (plan === 'institucional') {
+                // Para plan institucional, solo enviar solicitud sin abrir pasarela de pagos
+                fetch('/procesar_solicitud', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        alert('¡Solicitud de plan institucional enviada! Nuestro equipo de ventas se contactará contigo pronto para discutir los detalles y precios personalizados.');
+                        this.reset();
+                        planesSuscripcion.style.display = 'none';
+                        updateCardStyles();
+                    } else {
+                        alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.');
+                });
+                return;
             }
             
             if (paymentUrl) {
@@ -366,6 +423,26 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Error al enviar la solicitud. Por favor, inténtalo de nuevo.');
         });
     });
+    
+    // Pre-seleccionar plan si viene en la URL
+    const planSeleccionado = '{{ plan_seleccionado }}';
+    if (planSeleccionado) {
+        console.log('Plan pre-seleccionado:', planSeleccionado);
+        
+        // Si hay un plan pre-seleccionado, seleccionar suscripción automáticamente
+        const suscripcionRadio = document.getElementById('suscripcion');
+        if (suscripcionRadio) {
+            suscripcionRadio.checked = true;
+            togglePlanes();
+            
+            // Seleccionar el plan específico
+            const planRadio = document.getElementById('plan_' + planSeleccionado);
+            if (planRadio) {
+                planRadio.checked = true;
+                updateCardStyles();
+            }
+        }
+    }
     
     // Inicializar estilos
     updateCardStyles();

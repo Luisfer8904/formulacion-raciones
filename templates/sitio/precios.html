@@ -10,8 +10,53 @@
         </div>
 
         <div class="row g-4 justify-content-center">
+            <!-- Plan Básico -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <h3 class="card-title fw-bold">Básico</h3>
+                            <p class="text-muted">Ideal para empezar</p>
+                            <div class="price-display mb-3">
+                                <span class="display-4 fw-bold" style="color: #8A72C7;">$12</span>
+                                <span class="text-muted">/mes</span>
+                            </div>
+                        </div>
+
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Hasta 20 formulaciones/mes
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Herramientas básicas
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Base de datos de ingredientes
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Soporte por email
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                1 usuario
+                            </li>
+                        </ul>
+
+                        <div class="text-center">
+                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='basico') }}" class="btn btn-lg w-100" style="background: #8A72C7; color: white; border: none; border-radius: 50px; font-weight: 600; text-decoration: none;">
+                                Empezar prueba gratis (14 días)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Plan Personal -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-3 col-md-6">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
@@ -30,7 +75,11 @@
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Base de datos básica de ingredientes
+                                Herramientas + Reportes
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Base de datos completa de ingredientes
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
@@ -42,16 +91,12 @@
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Soporte técnico de nutrición básico
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
                                 1 usuario
                             </li>
                         </ul>
 
                         <div class="text-center">
-                            <a href="{{ url_for('usuarios_bp.formulario_cobro') }}" class="btn btn-outline-primary btn-lg w-100" style="border-radius: 50px; font-weight: 600; text-decoration: none;">
+                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='personal') }}" class="btn btn-outline-primary btn-lg w-100" style="border-radius: 50px; font-weight: 600; text-decoration: none;">
                                 Empezar prueba gratis (14 días)
                             </a>
                         </div>
@@ -60,7 +105,7 @@
             </div>
 
             <!-- Plan Profesional -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-3 col-md-6">
                 <div class="card h-100 border-0 shadow-lg position-relative" style="border: 2px solid #FF9800 !important;">
                     <div class="position-absolute top-0 start-50 translate-middle">
                         <span class="badge px-3 py-2" style="background: #FF9800; color: white; border-radius: 20px; font-size: 0.8rem;">
@@ -73,7 +118,7 @@
                             <h3 class="card-title fw-bold">Profesional</h3>
                             <p class="text-muted">Para empresas medianas</p>
                             <div class="price-display mb-3">
-                                <span class="display-4 fw-bold" style="color: #FF9800;">$76</span>
+                                <span class="display-4 fw-bold" style="color: #FF9800;">$56</span>
                                 <span class="text-muted">/mes</span>
                             </div>
                         </div>
@@ -82,6 +127,10 @@
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
                                 Formulaciones ilimitadas
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Herramientas + Reportes + Gestión de Producción
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
@@ -101,20 +150,12 @@
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Soporte técnico de nutrición avanzado
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
                                 Hasta 5 usuarios
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
-                                Integración con sistemas
                             </li>
                         </ul>
 
                         <div class="text-center">
-                            <a href="{{ url_for('usuarios_bp.formulario_cobro') }}" class="btn btn-lg w-100" style="background: linear-gradient(45deg, #FF9800, #FFB74D); color: white; border: none; border-radius: 50px; font-weight: 600; text-decoration: none;">
+                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='profesional') }}" class="btn btn-lg w-100" style="background: linear-gradient(45deg, #FF9800, #FFB74D); color: white; border: none; border-radius: 50px; font-weight: 600; text-decoration: none;">
                                 Empezar prueba gratis (14 días)
                             </a>
                         </div>
@@ -123,7 +164,7 @@
             </div>
 
             <!-- Plan Institucional -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-3 col-md-6">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
@@ -170,9 +211,9 @@
                         </ul>
 
                         <div class="text-center">
-                            <button class="btn btn-outline-success btn-lg w-100" style="border-radius: 50px; font-weight: 600;">
+                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='institucional') }}" class="btn btn-outline-success btn-lg w-100" style="border-radius: 50px; font-weight: 600; text-decoration: none;">
                                 Contactar ventas
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>

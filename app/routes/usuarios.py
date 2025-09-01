@@ -63,7 +63,9 @@ def precios():
 
 @usuarios_bp.route('/formulario_cobro')
 def formulario_cobro():
-    return render_template('sitio/formulario_cobro.html')
+    # Obtener el plan desde los parámetros de la URL
+    plan_seleccionado = request.args.get('plan', '')
+    return render_template('sitio/formulario_cobro.html', plan_seleccionado=plan_seleccionado)
 
 @usuarios_bp.route('/procesar_solicitud', methods=['POST'])
 def procesar_solicitud():
@@ -108,8 +110,26 @@ def procesar_solicitud():
         """
         
         if tipo_solicitud == 'suscripcion' and plan:
-            precio_plan = '$24/mes' if plan == 'personal' else '$76/mes'
+            # Mapear precios de planes
+            precios_planes = {
+                'basico': '$12/mes',
+                'personal': '$24/mes', 
+                'profesional': '$56/mes',
+                'institucional': 'Precio personalizado'
+            }
+            precio_plan = precios_planes.get(plan, 'No especificado')
             mensaje += f"\nPLAN SELECCIONADO: {plan.title()} ({precio_plan})"
+            
+            # Información adicional para plan institucional
+            if plan == 'institucional':
+                mensaje += f"\n\n⚠️ PLAN INSTITUCIONAL - REQUIERE ATENCIÓN ESPECIAL:"
+                mensaje += f"\nEste cliente está interesado en el plan institucional con precio personalizado."
+                mensaje += f"\nSe recomienda contactar lo antes posible para discutir:"
+                mensaje += f"\n- Número de usuarios requeridos"
+                mensaje += f"\n- Funcionalidades específicas necesarias"
+                mensaje += f"\n- Volumen de operación"
+                mensaje += f"\n- Presupuesto disponible"
+                mensaje += f"\n- Cronograma de implementación"
         
         if comentarios:
             if tipo_solicitud == 'demo':
@@ -143,7 +163,10 @@ def procesar_solicitud():
             return redirect(url_for('usuarios_bp.formulario_cobro'))
         else:
             plan_nombre = plan.title() if plan else ''
-            flash(f'¡Solicitud de suscripción {plan_nombre} enviada exitosamente! Te contactaremos pronto para procesar tu suscripción.', 'success')
+            if plan == 'institucional':
+                flash(f'¡Solicitud de plan {plan_nombre} enviada exitosamente! Nuestro equipo de ventas se contactará contigo pronto para discutir los detalles y precios personalizados.', 'success')
+            else:
+                flash(f'¡Solicitud de suscripción {plan_nombre} enviada exitosamente! Te contactaremos pronto para procesar tu suscripción.', 'success')
             return redirect(url_for('usuarios_bp.formulario_cobro'))
         
     except Exception as e:
@@ -726,3 +749,279 @@ Este mensaje fue enviado automáticamente desde el sistema de FeedPro.
     except Exception as e:
         print(f"❌ Error al cancelar plan: {e}")
         return jsonify({'error': 'Error al cancelar el plan'}), 500
+
+# ==========================================
+# RUTAS DE ADMINISTRADOR
+# ==========================================
+
+def admin_required(f):
+    """Decorador para requerir permisos de administrador"""
+    from functools import wraps
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Debes iniciar sesión para acceder.', 'error')
+            return redirect(url_for('auth_bp.login'))
+        if session.get('rol') != 'admin':
+            flash('No tienes permisos para acceder a esta sección.', 'error')
+            return redirect(url_for('usuarios_bp.panel'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@usuarios_bp.route('/administrador')
+@admin_required
+def administrador():
+    """Panel de administración de usuarios"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Obtener todos los usuarios
+        cursor.execute("""
+            SELECT id, nombre, email, rol, tipo_plan, pais, 
+                   DATE_FORMAT(fecha_creacion, '%d/%m/%Y') as fecha_creacion_formateada,
+                   fecha_creacion
+            FROM usuarios 
+            ORDER BY fecha_creacion DESC
+        """)
+        usuarios = cursor.fetchall()
+        
+        # Estadísticas generales
+        cursor.execute("SELECT COUNT(*) as total FROM usuarios")
+        result_total: Any = cursor.fetchone()
+        total_usuarios = result_total['total'] if result_total else 0
+        
+        cursor.execute("SELECT COUNT(*) as total FROM usuarios WHERE rol = 'admin'")
+        result_admins: Any = cursor.fetchone()
+        total_admins = result_admins['total'] if result_admins else 0
+        
+        cursor.execute("SELECT COUNT(*) as total FROM usuarios WHERE rol = 'user'")
+        result_users: Any = cursor.fetchone()
+        total_users = result_users['total'] if result_users else 0
+        
+        cursor.close()
+        conn.close()
+        
+        return render_template('operaciones/administrador.html',
+                             usuarios=usuarios,
+                             total_usuarios=total_usuarios,
+                             total_admins=total_admins,
+                             total_users=total_users)
+                             
+    except Exception as e:
+        print(f"❌ Error en administrador: {e}")
+        flash('Error al cargar el panel de administración.', 'error')
+        return redirect(url_for('usuarios_bp.panel'))
+
+@usuarios_bp.route('/admin/crear_usuario', methods=['POST'])
+@admin_required
+def crear_usuario():
+    """Crear un nuevo usuario"""
+    try:
+        # Obtener datos del formulario
+        nombre = request.form.get('nombre', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        rol = request.form.get('rol', 'user').strip()
+        tipo_plan = request.form.get('tipo_plan', 'basico').strip()
+        pais = request.form.get('pais', '').strip()
+        
+        # Validaciones
+        if not nombre or not email or not password:
+            flash('Todos los campos obligatorios deben ser completados.', 'error')
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        if rol not in ['admin', 'user']:
+            flash('Rol inválido.', 'error')
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Verificar si el email ya existe
+        cursor.execute("SELECT id FROM usuarios WHERE email = %s", (email,))
+        if cursor.fetchone():
+            flash('Ya existe un usuario con ese correo electrónico.', 'error')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        # Crear el usuario
+        cursor.execute("""
+            INSERT INTO usuarios (nombre, email, password, rol, tipo_plan, pais, fecha_creacion)
+            VALUES (%s, %s, %s, %s, %s, %s, NOW())
+        """, (nombre, email, password, rol, tipo_plan, pais))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Creó el usuario: {nombre} ({email})', 'admin')
+        
+        flash(f'Usuario {nombre} creado exitosamente.', 'success')
+        return redirect(url_for('usuarios_bp.administrador'))
+        
+    except Exception as e:
+        print(f"❌ Error al crear usuario: {e}")
+        flash('Error al crear el usuario.', 'error')
+        return redirect(url_for('usuarios_bp.administrador'))
+
+@usuarios_bp.route('/admin/editar_usuario/<int:usuario_id>', methods=['POST'])
+@admin_required
+def editar_usuario(usuario_id):
+    """Editar un usuario existente"""
+    try:
+        # Obtener datos del formulario
+        nombre = request.form.get('nombre', '').strip()
+        email = request.form.get('email', '').strip()
+        rol = request.form.get('rol', 'user').strip()
+        tipo_plan = request.form.get('tipo_plan', 'basico').strip()
+        pais = request.form.get('pais', '').strip()
+        password = request.form.get('password', '').strip()
+        
+        # Validaciones
+        if not nombre or not email:
+            flash('Nombre y email son obligatorios.', 'error')
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        if rol not in ['admin', 'user']:
+            flash('Rol inválido.', 'error')
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Verificar que el usuario existe
+        cursor.execute("SELECT nombre FROM usuarios WHERE id = %s", (usuario_id,))
+        usuario_actual = cursor.fetchone()
+        if not usuario_actual:
+            flash('Usuario no encontrado.', 'error')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        # Verificar si el email ya existe en otro usuario
+        cursor.execute("SELECT id FROM usuarios WHERE email = %s AND id != %s", (email, usuario_id))
+        if cursor.fetchone():
+            flash('Ya existe otro usuario con ese correo electrónico.', 'error')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        # Actualizar el usuario
+        if password:
+            # Si se proporciona nueva contraseña, actualizarla también
+            cursor.execute("""
+                UPDATE usuarios 
+                SET nombre = %s, email = %s, rol = %s, tipo_plan = %s, pais = %s, password = %s
+                WHERE id = %s
+            """, (nombre, email, rol, tipo_plan, pais, password, usuario_id))
+        else:
+            # Si no se proporciona contraseña, no actualizarla
+            cursor.execute("""
+                UPDATE usuarios 
+                SET nombre = %s, email = %s, rol = %s, tipo_plan = %s, pais = %s
+                WHERE id = %s
+            """, (nombre, email, rol, tipo_plan, pais, usuario_id))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        # Registrar actividad
+        registrar_actividad(session['user_id'], f'Editó el usuario: {nombre} ({email})', 'admin')
+        
+        flash(f'Usuario {nombre} actualizado exitosamente.', 'success')
+        return redirect(url_for('usuarios_bp.administrador'))
+        
+    except Exception as e:
+        print(f"❌ Error al editar usuario: {e}")
+        flash('Error al editar el usuario.', 'error')
+        return redirect(url_for('usuarios_bp.administrador'))
+
+@usuarios_bp.route('/admin/eliminar_usuario/<int:usuario_id>', methods=['POST'])
+@admin_required
+def eliminar_usuario(usuario_id):
+    """Eliminar un usuario"""
+    try:
+        # No permitir que el admin se elimine a sí mismo
+        if usuario_id == session['user_id']:
+            flash('No puedes eliminar tu propia cuenta.', 'error')
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Obtener información del usuario antes de eliminarlo
+        cursor.execute("SELECT nombre, email FROM usuarios WHERE id = %s", (usuario_id,))
+        usuario: Any = cursor.fetchone()
+        
+        if not usuario:
+            flash('Usuario no encontrado.', 'error')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('usuarios_bp.administrador'))
+        
+        # Eliminar el usuario
+        cursor.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
+        
+        if cursor.rowcount == 0:
+            flash('No se pudo eliminar el usuario.', 'error')
+        else:
+            # Registrar actividad
+            registrar_actividad(session['user_id'], f'Eliminó el usuario: {usuario["nombre"]} ({usuario["email"]})', 'admin')
+            flash(f'Usuario {usuario["nombre"]} eliminado exitosamente.', 'success')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return redirect(url_for('usuarios_bp.administrador'))
+        
+    except Exception as e:
+        print(f"❌ Error al eliminar usuario: {e}")
+        flash('Error al eliminar el usuario.', 'error')
+        return redirect(url_for('usuarios_bp.administrador'))
+
+@usuarios_bp.route('/admin/api/usuarios')
+@admin_required
+def api_usuarios():
+    """API para obtener lista de usuarios (para búsqueda/filtrado)"""
+    try:
+        search = request.args.get('search', '').strip()
+        rol_filter = request.args.get('rol', '').strip()
+        
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Construir query con filtros
+        query = """
+            SELECT id, nombre, email, rol, tipo_plan, pais,
+                   DATE_FORMAT(fecha_creacion, '%d/%m/%Y') as fecha_creacion_formateada
+            FROM usuarios 
+            WHERE 1=1
+        """
+        params = []
+        
+        if search:
+            query += " AND (nombre LIKE %s OR email LIKE %s)"
+            params.extend([f'%{search}%', f'%{search}%'])
+        
+        if rol_filter and rol_filter in ['admin', 'user']:
+            query += " AND rol = %s"
+            params.append(rol_filter)
+        
+        query += " ORDER BY fecha_creacion DESC"
+        
+        cursor.execute(query, params)
+        usuarios = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({'usuarios': usuarios})
+        
+    except Exception as e:
+        print(f"❌ Error en API usuarios: {e}")
+        return jsonify({'error': 'Error al obtener usuarios'}), 500
