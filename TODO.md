@@ -34,18 +34,31 @@
 - [x] Sistema de impresión
 - [x] Validaciones de entrada
 - [x] Manejo de errores
+- [x] **NUEVA**: Cargar fórmulas existentes desde el sistema
+- [x] **NUEVA**: APIs para obtener mezclas y detalles de mezclas
+- [x] **NUEVA**: Modal selector de fórmulas con interfaz intuitiva
 
 ## Próximos Pasos
 1. ✅ Implementar backend APIs
 2. ✅ Agregar interfaz frontend  
 3. ✅ Crear sistema de impresión
-4. 🔄 Testing completo (pendiente)
+4. ✅ **NUEVO**: Implementar carga de fórmulas existentes
+5. 🔄 Testing completo (pendiente)
 
 ## Resumen
 La "Calculadora de Aportes Nutricionales" ha sido implementada exitosamente como una nueva herramienta en el sistema. Permite a los usuarios:
 - Crear fórmulas personalizadas con ingredientes y porcentajes
+- **NUEVO**: Cargar fórmulas ya creadas desde el sistema principal
 - Seleccionar nutrientes específicos para analizar
 - Calcular aportes nutricionales y consumo diario por animal
 - Visualizar resultados detallados en tablas
 - Imprimir reportes profesionales
 - No guarda registros (solo cálculos temporales)
+
+## Funcionalidad de Carga de Fórmulas
+- Botón "Cargar Fórmula" junto al campo de nombre
+- Modal con lista de fórmulas existentes del usuario
+- Información detallada: nombre, tipo de animales, etapa, fecha
+- Carga automática de ingredientes y porcentajes
+- Interfaz intuitiva con selección visual
+- Manejo de errores y estados de carga

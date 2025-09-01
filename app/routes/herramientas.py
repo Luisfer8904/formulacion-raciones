@@ -457,3 +457,81 @@ def imprimir_aportes():
                          total_nutrientes=total_nutrientes,
                          resultados=resultados,
                          fecha_actual=datetime.now().strftime('%d/%m/%Y %H:%M'))
+
+@herramientas_bp.route('/api/obtener_mezclas', methods=['GET'])
+@login_required
+def obtener_mezclas():
+    """API para obtener lista de mezclas/fórmulas del usuario"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT id, nombre, tipo_animales, etapa_produccion, fecha_creacion
+            FROM mezclas 
+            WHERE usuario_id = %s
+            ORDER BY fecha_creacion DESC
+        """, (session['user_id'],))
+        
+        mezclas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'mezclas': mezclas
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@herramientas_bp.route('/api/obtener_detalle_mezcla/<int:mezcla_id>', methods=['GET'])
+@login_required
+def obtener_detalle_mezcla(mezcla_id):
+    """API para obtener detalles de una mezcla específica"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Obtener información de la mezcla
+        cursor.execute("""
+            SELECT id, nombre, tipo_animales, etapa_produccion, observaciones
+            FROM mezclas 
+            WHERE id = %s AND usuario_id = %s
+        """, (mezcla_id, session['user_id']))
+        
+        mezcla = cursor.fetchone()
+        
+        if not mezcla:
+            return jsonify({
+                'success': False,
+                'error': 'Mezcla no encontrada'
+            }), 404
+        
+        # Obtener ingredientes de la mezcla
+        cursor.execute("""
+            SELECT mi.ingrediente_id, mi.inclusion as porcentaje, i.nombre
+            FROM mezcla_ingredientes mi
+            JOIN ingredientes i ON mi.ingrediente_id = i.id
+            WHERE mi.mezcla_id = %s
+        """, (mezcla_id,))
+        
+        ingredientes = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'mezcla': mezcla,
+            'ingredientes': ingredientes
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
