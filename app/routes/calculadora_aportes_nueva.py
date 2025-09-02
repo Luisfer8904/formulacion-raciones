@@ -209,24 +209,24 @@ def calcular_aportes_completo():
                 porcentaje_en_formula = float(ingrediente['porcentaje'])
                 ingrediente_nombre = ingrediente['nombre']
                 
-                # Obtener valor nutricional BS del ingrediente para este nutriente
+                # Obtener valor nutricional del ingrediente para este nutriente
                 cursor.execute("""
-                    SELECT valor_bs as valor
+                    SELECT valor
                     FROM ingredientes_nutrientes
                     WHERE ingrediente_id = %s AND nutriente_id = %s
                 """, (ingrediente_id, nutriente_id))
                 
                 valor_resultado = cursor.fetchone()
-                valor_nutricional_bs = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
+                valor_nutricional = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
                 
                 # Calcular cantidad del nutriente en la dieta (por ingrediente)
-                cantidad_ingrediente_dieta = (porcentaje_en_formula / 100) * valor_nutricional_bs
+                cantidad_ingrediente_dieta = (porcentaje_en_formula / 100) * valor_nutricional
                 cantidad_total_dieta += cantidad_ingrediente_dieta
                 
                 detalle_ingredientes.append({
                     'nombre': ingrediente_nombre,
                     'porcentaje_en_formula': porcentaje_en_formula,
-                    'valor_nutricional_bs': valor_nutricional_bs,
+                    'valor_nutricional': valor_nutricional,
                     'cantidad_en_dieta': round(cantidad_ingrediente_dieta, 4)
                 })
             
@@ -338,24 +338,24 @@ def imprimir_aportes_mejorado():
             detalle_ingredientes = []
             
             for ingrediente in ingredientes_mezcla:
-                # Obtener valor BS del nutriente para este ingrediente
+                # Obtener valor del nutriente para este ingrediente
                 cursor.execute("""
-                    SELECT valor_bs as valor
+                    SELECT valor
                     FROM ingredientes_nutrientes
                     WHERE ingrediente_id = %s AND nutriente_id = %s
                 """, (ingrediente['ingrediente_id'], nutriente['id']))
                 
                 valor_resultado = cursor.fetchone()
-                valor_bs = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
+                valor_nutricional = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
                 
-                if valor_bs > 0:  # Solo incluir si tiene valor
-                    cantidad_ingrediente = (float(ingrediente['porcentaje']) / 100) * valor_bs
+                if valor_nutricional > 0:  # Solo incluir si tiene valor
+                    cantidad_ingrediente = (float(ingrediente['porcentaje']) / 100) * valor_nutricional
                     cantidad_total_dieta += cantidad_ingrediente
                     
                     detalle_ingredientes.append({
                         'nombre': ingrediente['nombre'],
                         'porcentaje': float(ingrediente['porcentaje']),
-                        'valor_bs': valor_bs,
+                        'valor_nutricional': valor_nutricional,
                         'cantidad_en_dieta': round(cantidad_ingrediente, 4)
                     })
             
