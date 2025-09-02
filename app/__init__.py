@@ -12,6 +12,9 @@ from .routes.reportes_mejorado import reportes_mejorado_bp
 from .routes.herramientas import herramientas_bp
 from .routes.herramientas_basicas import herramientas_basicas_bp
 from .routes.calculadora_aportes import calculadora_aportes_bp
+from .routes.calculadora_nutricional import calculadora_nutricional_bp
+from .routes.conversor_unidades import conversor_unidades_bp
+from .routes.calculadora_aportes_nueva import calculadora_aportes_nueva_bp
 from .routes.planificador import planificador_bp
 
 def create_app():
@@ -97,6 +100,9 @@ def create_app():
     app.register_blueprint(herramientas_bp)
     app.register_blueprint(herramientas_basicas_bp)
     app.register_blueprint(calculadora_aportes_bp)
+    app.register_blueprint(calculadora_nutricional_bp)
+    app.register_blueprint(conversor_unidades_bp)
+    app.register_blueprint(calculadora_aportes_nueva_bp)
     app.register_blueprint(planificador_bp)
 
     return app

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, session, redirect, url_for
 from functools import wraps
 
-herramientas_basicas_bp = Blueprint('herramientas_basicas_bp', __name__)
+conversor_unidades_bp = Blueprint('conversor_unidades_bp', __name__)
 
 def login_required(f):
     @wraps(f)
@@ -11,7 +11,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@herramientas_basicas_bp.route('/api/convertir_unidades', methods=['POST'])
+@conversor_unidades_bp.route('/api/convertir_unidades', methods=['POST'])
 @login_required
 def convertir_unidades():
     """API para conversión de unidades"""
@@ -33,50 +33,47 @@ def convertir_unidades():
             resultado = valor * conversiones[origen][destino]
             return jsonify({
                 'success': True,
+                'valor_original': valor,
+                'unidad_origen': origen,
+                'unidad_destino': destino,
                 'resultado': round(resultado, 6),
-                'mensaje': f'{valor} {origen} = {round(resultado, 6)} {destino}'
+                'mensaje': f'{valor} {origen} = {round(resultado, 6)} {destino}',
+                'factor_conversion': conversiones[origen][destino]
             })
         else:
             return jsonify({
                 'success': False,
-                'error': 'Conversión no soportada'
+                'error': f'Conversión no soportada de {origen} a {destino}'
             }), 400
             
+    except ValueError:
+        return jsonify({
+            'success': False,
+            'error': 'Valor numérico inválido'
+        }), 400
     except Exception as e:
         return jsonify({
             'success': False,
             'error': str(e)
         }), 500
 
-@herramientas_basicas_bp.route('/api/calcular_nutriente', methods=['POST'])
+@conversor_unidades_bp.route('/api/unidades_disponibles', methods=['GET'])
 @login_required
-def calcular_nutriente():
-    """API para cálculos nutricionales"""
+def unidades_disponibles():
+    """API para obtener las unidades disponibles"""
     try:
-        data = request.get_json()
-        porcentaje = float(data.get('porcentaje', 0))
-        cantidad = float(data.get('cantidad', 0))
-        nutriente = data.get('nutriente', 'Nutriente')
-        
-        if porcentaje < 0 or porcentaje > 100:
-            return jsonify({
-                'success': False,
-                'error': 'El porcentaje debe estar entre 0 y 100'
-            }), 400
-            
-        if cantidad <= 0:
-            return jsonify({
-                'success': False,
-                'error': 'La cantidad debe ser mayor a 0'
-            }), 400
-        
-        total_nutriente = (porcentaje / 100) * cantidad
+        unidades = {
+            'peso': [
+                {'codigo': 'kg', 'nombre': 'Kilogramos', 'simbolo': 'kg'},
+                {'codigo': 'g', 'nombre': 'Gramos', 'simbolo': 'g'},
+                {'codigo': 'lb', 'nombre': 'Libras', 'simbolo': 'lb'},
+                {'codigo': 'oz', 'nombre': 'Onzas', 'simbolo': 'oz'}
+            ]
+        }
         
         return jsonify({
             'success': True,
-            'resultado': round(total_nutriente, 4),
-            'mensaje': f'{nutriente} total: {round(total_nutriente, 4)} kg',
-            'detalle': f'En {cantidad} kg de alimento con {porcentaje}% de {nutriente.lower()}'
+            'unidades': unidades
         })
         
     except Exception as e:
@@ -84,4 +81,3 @@ def calcular_nutriente():
             'success': False,
             'error': str(e)
         }), 500
-

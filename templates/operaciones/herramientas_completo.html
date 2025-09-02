@@ -67,9 +67,65 @@
     </div>
 </div>
 
-<!-- Estado de Herramientas -->
+<!-- Herramientas de Análisis -->
 <div class="row fade-in-up mt-4">
-    <div class="col-lg-12">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Herramientas de Análisis</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="analysis-tool" onclick="abrirAnalisisNutricional()">
+                            <div class="analysis-icon">
+                                <i class="fas fa-microscope"></i>
+                            </div>
+                            <div class="analysis-content">
+                                <h6>Análisis Nutricional Detallado</h6>
+                                <p class="mb-0">Análisis profundo de perfiles nutricionales</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="analysis-tool" onclick="abrirAnalisisEconomico()">
+                            <div class="analysis-icon">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="analysis-content">
+                                <h6>Análisis Económico</h6>
+                                <p class="mb-0">Evaluación de costos y rentabilidad</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="analysis-tool" onclick="abrirAnalisisTendencias()">
+                            <div class="analysis-icon">
+                                <i class="fas fa-trending-up"></i>
+                            </div>
+                            <div class="analysis-content">
+                                <h6>Análisis de Tendencias</h6>
+                                <p class="mb-0">Tendencias de precios y disponibilidad</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="analysis-tool" onclick="abrirAnalisisCalidad()">
+                            <div class="analysis-icon">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="analysis-content">
+                                <h6>Análisis de Calidad</h6>
+                                <p class="mb-0">Evaluación de calidad de ingredientes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
         <div class="card shadow-sm">
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Estado de Herramientas</h5>
@@ -86,7 +142,7 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-number text-info">4</div>
-                        <div class="stat-label">APIs Removidas</div>
+                        <div class="stat-label">Análisis Disponibles</div>
                     </div>
                 </div>
                 
@@ -112,6 +168,7 @@
     </div>
 </div>
 
+<!-- Modales para Herramientas -->
 <!-- Modal Calculadora -->
 <div class="modal fade" id="calculadoraModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -153,19 +210,8 @@
                         <div class="col-md-6">
                             <h6>Cálculos Nutricionales con Materia Seca</h6>
                             <div class="mb-3">
-                                <label class="form-label">Seleccionar Nutriente</label>
-                                <select class="form-select" id="tipoNutriente">
-                                    <option value="proteina">Proteína Cruda (%)</option>
-                                    <option value="grasa">Grasa Cruda (%)</option>
-                                    <option value="fibra">Fibra Cruda (%)</option>
-                                    <option value="cenizas">Cenizas (%)</option>
-                                    <option value="carbohidratos">Carbohidratos (%)</option>
-                                    <option value="energia">Energía Metabolizable (Mcal/kg)</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Porcentaje del Nutriente (%)</label>
-                                <input type="number" class="form-control" id="porcentajeNutriente" placeholder="% Nutriente" value="22">
+                                <label class="form-label">Proteína Cruda (%)</label>
+                                <input type="number" class="form-control" id="proteina" placeholder="% Proteína">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Materia Seca (%)</label>
@@ -173,9 +219,9 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Cantidad Total (kg)</label>
-                                <input type="number" class="form-control" id="cantidad" placeholder="Cantidad en kg" value="3">
+                                <input type="number" class="form-control" id="cantidad" placeholder="Cantidad en kg">
                             </div>
-                            <button class="btn btn-success" onclick="calcularNutrienteConMS()">Calcular Nutriente Total</button>
+                            <button class="btn btn-success" onclick="calcularProteinaConMS()">Calcular Proteína Total</button>
                             <div id="resultadoProteina" class="mt-2"></div>
                         </div>
                     </div>
@@ -186,6 +232,30 @@
 </div>
 
 <style>
+.herramientas-header {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    padding: 2.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    color: white;
+    box-shadow: 0 8px 32px rgba(108, 117, 125, 0.2);
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0 0;
+    color: rgba(255,255,255,0.9);
+    font-weight: 400;
+}
+
 .tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -268,6 +338,48 @@
     color: #155724;
 }
 
+.status-development {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.analysis-tool {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.analysis-tool:hover {
+    background: #e9ecef;
+    transform: translateX(4px);
+}
+
+.analysis-icon {
+    width: 40px;
+    height: 40px;
+    background: #6c757d;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 1rem;
+}
+
+.analysis-content h6 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+}
+
+.analysis-content p {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
 .tools-stats {
     display: flex;
     justify-content: space-around;
@@ -315,15 +427,43 @@
         transform: translateY(0);
     }
 }
+
+@media (max-width: 768px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .herramientas-header {
+        padding: 1.5rem;
+    }
+}
 </style>
 
 <script>
+function actualizarHerramientas() {
+    const btn = event.target.closest('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Actualizando...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        mostrarNotificacion('Herramientas actualizadas', 'success');
+    }, 1500);
+}
+
 function abrirCalculadora() {
     const modal = new bootstrap.Modal(document.getElementById('calculadoraModal'));
     modal.show();
 }
 
 function abrirConversor() {
+    // Crear modal dinámico para conversor
     const modalHtml = `
         <div class="modal fade" id="conversorModal" tabindex="-1">
             <div class="modal-dialog">
@@ -357,235 +497,3 @@ function abrirConversor() {
                                 </select>
                             </div>
                         </div>
-                        <div id="resultadoConversorModal" class="alert d-none mt-3"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" onclick="convertirUnidadesModal()">Convertir</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    const existingModal = document.getElementById('conversorModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    const modal = new bootstrap.Modal(document.getElementById('conversorModal'));
-    modal.show();
-}
-
-function abrirCalculadoraAportes() {
-    // Usar la nueva calculadora mejorada
-    abrirCalculadoraAportesMejorada();
-}
-
-function calcularEjemplo() {
-    // Obtener valores del modal de aportes (con IDs únicos)
-    const consumoInput = document.getElementById('consumoAnimalAportes');
-    const materiaSecaInput = document.getElementById('materiaSecaDietaAportes');
-    
-    const consumo = consumoInput ? parseFloat(consumoInput.value) || 3 : 3;
-    const materiaSeca = materiaSecaInput ? parseFloat(materiaSecaInput.value) || 88 : 88;
-    const proteina = 22; // Ejemplo fijo
-    
-    console.log('Calculando con valores:', { consumo, materiaSeca, proteina });
-    
-    // Cálculo paso a paso
-    const consumoMS = consumo * (materiaSeca / 100);
-    const proteinaTotal = consumoMS * (proteina / 100);
-    
-    const resultadoHtml = `
-        <div class="alert alert-success">
-            <h6><strong>Resultado del Cálculo</strong></h6>
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Datos de Entrada:</strong><br>
-                    • Consumo: ${consumo} kg/día<br>
-                    • Materia Seca: ${materiaSeca}%<br>
-                    • Proteína en dieta: ${proteina}%
-                </div>
-                <div class="col-md-6">
-                    <strong>Cálculo:</strong><br>
-                    1. MS: ${consumo} kg × ${materiaSeca}% = ${consumoMS.toFixed(4)} kg<br>
-                    2. Proteína: ${consumoMS.toFixed(4)} kg × ${proteina}% = <strong>${proteinaTotal.toFixed(4)} kg</strong>
-                </div>
-            </div>
-            <hr>
-            <div class="text-center">
-                <h5 class="text-success">Aporte de Proteína: <strong>${proteinaTotal.toFixed(4)} kg/día</strong></h5>
-                <small class="text-muted">Este es el aporte diario de proteína que recibirá el animal</small>
-            </div>
-        </div>
-        
-        <div class="alert alert-info">
-            <strong>Fórmula Utilizada:</strong><br>
-            Aporte Nutriente = Consumo × (% Materia Seca / 100) × (% Nutriente / 100)<br>
-            <small>Esta es la misma fórmula utilizada en el formulador principal</small>
-        </div>
-        
-        <div class="alert alert-warning">
-            <strong>Verificación del Ejemplo Solicitado:</strong><br>
-            Con los valores: 3kg × 88% × 22% = <strong>0.5808 kg</strong> ✅<br>
-            <small>Este resultado coincide exactamente con el ejemplo solicitado</small>
-        </div>
-    `;
-    
-    const resultadoDiv = document.getElementById('resultadoCalculoAportes');
-    if (resultadoDiv) {
-        resultadoDiv.innerHTML = resultadoHtml;
-        console.log('Resultado mostrado correctamente');
-    } else {
-        console.error('No se encontró el elemento resultadoCalculoAportes');
-        alert('Error: No se pudo mostrar el resultado');
-    }
-}
-
-function convertirUnidades() {
-    const valor = parseFloat(document.getElementById('valorConvertir').value);
-    const origen = document.getElementById('unidadOrigen').value;
-    const destino = document.getElementById('unidadDestino').value;
-    
-    if (!valor) {
-        document.getElementById('resultadoConversion').innerHTML = 
-            '<div class="alert alert-warning">Por favor ingrese un valor válido</div>';
-        return;
-    }
-    
-    const conversiones = {
-        'kg': { 'g': 1000, 'lb': 2.20462, 'oz': 35.274 },
-        'g': { 'kg': 0.001, 'lb': 0.00220462, 'oz': 0.035274 },
-        'lb': { 'kg': 0.453592, 'g': 453.592, 'oz': 16 },
-        'oz': { 'kg': 0.0283495, 'g': 28.3495, 'lb': 0.0625 }
-    };
-    
-    let resultado;
-    if (origen === destino) {
-        resultado = valor;
-    } else {
-        resultado = valor * conversiones[origen][destino];
-    }
-    
-    document.getElementById('resultadoConversion').innerHTML = 
-        `<div class="alert alert-success">
-            <strong>Resultado:</strong> ${valor} ${origen} = ${resultado.toFixed(4)} ${destino}
-        </div>`;
-}
-
-function calcularNutrienteConMS() {
-    const tipoNutriente = document.getElementById('tipoNutriente').value;
-    const porcentajeNutriente = parseFloat(document.getElementById('porcentajeNutriente').value);
-    const materiaSeca = parseFloat(document.getElementById('materiaSeca').value);
-    const cantidad = parseFloat(document.getElementById('cantidad').value);
-    
-    if (!porcentajeNutriente || !materiaSeca || !cantidad) {
-        document.getElementById('resultadoProteina').innerHTML = 
-            '<div class="alert alert-warning">Por favor complete todos los campos</div>';
-        return;
-    }
-    
-    // Obtener nombre del nutriente
-    const nombresNutrientes = {
-        'proteina': 'Proteína Cruda',
-        'grasa': 'Grasa Cruda',
-        'fibra': 'Fibra Cruda',
-        'cenizas': 'Cenizas',
-        'carbohidratos': 'Carbohidratos',
-        'energia': 'Energía Metabolizable'
-    };
-    
-    const nombreNutriente = nombresNutrientes[tipoNutriente];
-    const unidad = tipoNutriente === 'energia' ? 'Mcal' : 'kg';
-    
-    // Cálculo como en el formulador: Cantidad * %MS * %Nutriente
-    const cantidadMS = cantidad * (materiaSeca / 100);
-    const nutrienteTotal = tipoNutriente === 'energia' 
-        ? cantidadMS * porcentajeNutriente  // Para energía no se divide por 100
-        : cantidadMS * (porcentajeNutriente / 100);
-    
-    document.getElementById('resultadoProteina').innerHTML = 
-        `<div class="alert alert-success">
-            <strong>Cálculo paso a paso:</strong><br>
-            1. Materia Seca: ${cantidad} kg × ${materiaSeca}% = ${cantidadMS.toFixed(4)} kg<br>
-            2. ${nombreNutriente}: ${cantidadMS.toFixed(4)} kg × ${porcentajeNutriente}${tipoNutriente === 'energia' ? ' Mcal/kg' : '%'} = <strong>${nutrienteTotal.toFixed(4)} ${unidad}</strong><br>
-            <small class="text-muted">Ejemplo: ${cantidad} kg de alimento con ${materiaSeca}% MS y ${porcentajeNutriente}${tipoNutriente === 'energia' ? ' Mcal/kg' : '%'} de ${nombreNutriente.toLowerCase()}</small>
-        </div>`;
-}
-
-// Mantener la función original para compatibilidad
-function calcularProteinaConMS() {
-    calcularNutrienteConMS();
-}
-
-function convertirUnidadesModal() {
-    const valor = parseFloat(document.getElementById('valorConversorModal').value);
-    const origen = document.getElementById('unidadOrigenModal').value;
-    const destino = document.getElementById('unidadDestinoModal').value;
-    
-    if (isNaN(valor)) {
-        document.getElementById('resultadoConversorModal').className = 'alert alert-warning';
-        document.getElementById('resultadoConversorModal').innerHTML = 'Por favor ingrese un valor válido';
-        document.getElementById('resultadoConversorModal').classList.remove('d-none');
-        return;
-    }
-    
-    const datos = {
-        valor: valor,
-        origen: origen,
-        destino: destino
-    };
-    
-    fetch('/api/convertir_unidades', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(datos)
-    })
-    .then(response => response.json())
-    .then(data => {
-        const resultado = document.getElementById('resultadoConversorModal');
-        if (data.success) {
-            resultado.className = 'alert alert-success';
-            resultado.innerHTML = `<strong>Resultado:</strong><br>${data.mensaje}`;
-        } else {
-            resultado.className = 'alert alert-danger';
-            resultado.innerHTML = `<strong>Error:</strong> ${data.error}`;
-        }
-        resultado.classList.remove('d-none');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        const resultado = document.getElementById('resultadoConversorModal');
-        resultado.className = 'alert alert-danger';
-        resultado.innerHTML = `<strong>Error:</strong> ${error.message}`;
-        resultado.classList.remove('d-none');
-    });
-}
-
-function mostrarNotificacion(mensaje, tipo) {
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
-    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-    toast.innerHTML = `
-        ${mensaje}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.remove();
-        }
-    }, 3000);
-}
-</script>
-
-<!-- Script para calculadora de aportes mejorada -->
-<script src="{{ url_for('static', filename='js/calculadora-aportes-mejorada.js') }}"></script>
-
-{% endblock %}

@@ -22,7 +22,7 @@ def obtener_ingredientes():
         cursor = conn.cursor(dictionary=True)
         
         cursor.execute("""
-            SELECT id, nombre, precio_kg, materia_seca
+            SELECT id, nombre, precio, ms
             FROM ingredientes 
             WHERE usuario_id = %s
             ORDER BY nombre
@@ -95,7 +95,7 @@ def obtener_valores_nutricionales():
         cursor.execute("""
             SELECT vn.valor, n.nombre as nutriente_nombre, n.unidad,
                    i.nombre as ingrediente_nombre
-            FROM valores_nutricionales vn
+            FROM ingredientes_nutrientes vn
             JOIN nutrientes n ON vn.nutriente_id = n.id
             JOIN ingredientes i ON vn.ingrediente_id = i.id
             WHERE vn.ingrediente_id = %s AND vn.nutriente_id = %s
@@ -129,11 +129,12 @@ def obtener_valores_nutricionales():
 @calculadora_aportes_bp.route('/api/calcular_aportes_nutricionales', methods=['POST'])
 @login_required
 def calcular_aportes_nutricionales():
-    """API para calcular aportes nutricionales de una fórmula"""
+    """API para calcular aportes nutricionales de una fórmula con materia seca"""
     try:
         data = request.get_json()
         nombre_formula = data.get('nombre_formula', 'Fórmula sin nombre')
         consumo_animal = float(data.get('consumo_animal', 0))
+        materia_seca_dieta = float(data.get('materia_seca_dieta', 88))  # Nuevo campo
         ingredientes = data.get('ingredientes', [])
         nutrientes_seleccionados = data.get('nutrientes_seleccionados', [])
         
@@ -168,6 +169,9 @@ def calcular_aportes_nutricionales():
         
         resultados = []
         
+        # Calcular consumo en materia seca: Consumo * %MS
+        consumo_materia_seca = consumo_animal * (materia_seca_dieta / 100)
+        
         # Para cada nutriente seleccionado, calcular el aporte total
         for nutriente_id in nutrientes_seleccionados:
             # Obtener información del nutriente
@@ -190,7 +194,7 @@ def calcular_aportes_nutricionales():
                 # Obtener valor nutricional
                 cursor.execute("""
                     SELECT vn.valor, i.nombre as ingrediente_nombre
-                    FROM valores_nutricionales vn
+                    FROM ingredientes_nutrientes vn
                     JOIN ingredientes i ON vn.ingrediente_id = i.id
                     WHERE vn.ingrediente_id = %s AND vn.nutriente_id = %s
                 """, (ingrediente_id, nutriente_id))
@@ -203,8 +207,9 @@ def calcular_aportes_nutricionales():
                 aporte_ingrediente = (porcentaje / 100) * valor_nutricional
                 aporte_total += aporte_ingrediente
                 
-                # Calcular consumo diario del nutriente por este ingrediente
-                consumo_diario_ingrediente = (consumo_animal * porcentaje / 100) * (valor_nutricional / 100)
+                # Calcular consumo diario del nutriente por este ingrediente con materia seca
+                # Fórmula: Consumo_MS * %Ingrediente * %Nutriente
+                consumo_diario_ingrediente = consumo_materia_seca * (porcentaje / 100) * (valor_nutricional / 100)
                 
                 detalle_ingredientes.append({
                     'nombre': ingrediente_nombre,
@@ -214,8 +219,8 @@ def calcular_aportes_nutricionales():
                     'consumo_diario': round(consumo_diario_ingrediente, 4)
                 })
             
-            # Calcular consumo diario total del nutriente
-            consumo_diario_total = (consumo_animal * aporte_total / 100)
+            # Calcular consumo diario total del nutriente con materia seca
+            consumo_diario_total = consumo_materia_seca * (aporte_total / 100)
             
             resultados.append({
                 'nutriente_id': nutriente_id,
@@ -233,6 +238,8 @@ def calcular_aportes_nutricionales():
             'success': True,
             'nombre_formula': nombre_formula,
             'consumo_animal': consumo_animal,
+            'materia_seca_dieta': materia_seca_dieta,
+            'consumo_materia_seca': round(consumo_materia_seca, 4),
             'total_ingredientes': len(ingredientes),
             'total_nutrientes': len(nutrientes_seleccionados),
             'resultados': resultados

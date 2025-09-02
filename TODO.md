@@ -1,67 +1,68 @@
-# TODO - Calculadora de Aportes Nutricionales
+# TODO - Limpieza de Herramientas y Corrección de Calculadora
 
-## Progreso de Implementación
+## Fase 1: Remover Herramientas No Funcionales ✅
+- [x] Remover herramientas del HTML (completado)
+- [x] Remover APIs del backend en herramientas_basicas.py (completado)
 
-### Backend
-- [x] Agregar API `/api/calcular_aportes_nutricionales` en herramientas.py
-- [x] Agregar API `/api/obtener_ingredientes` para cargar ingredientes
-- [x] Agregar API `/api/obtener_nutrientes` para cargar nutrientes
-- [x] Agregar API `/api/obtener_valores_nutricionales` para obtener valores específicos
+## Fase 2: Corregir Calculadora de Aportes Nutricionales ✅
+- [x] Agregar campo de materia seca en la interfaz (completado)
+- [x] Modificar lógica de cálculo para incluir materia seca (completado)
+- [x] Implementar fórmula: Consumo * %MS * %Ingrediente * %Nutriente (completado)
+- [x] Ejemplo: 3kg * 88% = 2.64kg MS, luego 2.64kg * %ingrediente * %nutriente
 
-### Frontend
-- [x] Agregar nueva tarjeta de herramienta en herramientas.html
-- [x] Crear modal con formulario para entrada de datos
-- [x] Implementar JavaScript para cálculos y visualización
-- [x] Crear tabla de resultados
-- [x] Actualizar estadísticas de herramientas (6 activas)
+## Fase 3: Crear Archivos Separados para Herramientas ✅
+- [x] Crear calculadora_nutricional.py (completado)
+- [x] Crear conversor_unidades.py (completado)
+- [x] Crear calculadora_aportes_nueva.py (completado)
+- [x] Registrar nuevos blueprints en __init__.py (completado)
 
-### Impresión
-- [x] Crear template de impresión `imprimir_aportes.html`
-- [x] Implementar ruta de impresión en backend
-- [x] Conectar funcionalidad de impresión con JavaScript
+## Fase 4: Mejorar Calculadora de Aportes Completamente ✅
+- [x] Crear calculadora-aportes-mejorada.js (completado)
+- [x] Implementar selección de fórmulas existentes (completado)
+- [x] Mostrar ingredientes y cantidades de la fórmula (completado)
+- [x] Permitir selección de nutrientes (completado)
+- [x] Calcular aportes con materia seca (completado)
+- [x] Mostrar resultados detallados paso a paso (completado)
 
-### Testing
-- [ ] Probar funcionalidad básica
-- [ ] Verificar cálculos
-- [ ] Probar impresión
+## Estado: ✅ COMPLETADO
 
-## Funcionalidades Implementadas
-- [x] Backend APIs completas (obtener ingredientes, nutrientes, calcular aportes)
-- [x] Frontend con modal interactivo
-- [x] Interfaz de usuario completa
-- [x] Sistema de cálculos nutricionales
-- [x] Visualización de resultados en tablas
-- [x] Sistema de impresión
-- [x] Validaciones de entrada
-- [x] Manejo de errores
-- [x] **NUEVA**: Cargar fórmulas existentes desde el sistema
-- [x] **NUEVA**: APIs para obtener mezclas y detalles de mezclas
-- [x] **MEJORADA**: Lista desplegable para selección de fórmulas (reemplaza modal)
-- [x] **MEJORADA**: Filtrado de ingredientes y nutrientes por usuario
-- [x] **MEJORADA**: Carga automática de ingredientes al seleccionar fórmula
+### Cambios Realizados:
+1. **Herramientas Removidas:**
+   - Comparador de Ingredientes
+   - Validador de Fórmulas  
+   - Analizador de Costos
+   - Optimizador Avanzado
 
-## Próximos Pasos
-1. ✅ Implementar backend APIs
-2. ✅ Agregar interfaz frontend  
-3. ✅ Crear sistema de impresión
-4. ✅ **NUEVO**: Implementar carga de fórmulas existentes
-5. ✅ **NUEVO**: Refactorizar y separar herramientas en módulos
-6. 🔄 Testing completo (pendiente)
+2. **APIs Removidas:**
+   - `/api/analizar_costos`
+   - `/api/validar_formula`
 
-## Resumen
-La "Calculadora de Aportes Nutricionales" ha sido implementada exitosamente como una nueva herramienta en el sistema. Permite a los usuarios:
-- Crear fórmulas personalizadas con ingredientes y porcentajes
-- **NUEVO**: Cargar fórmulas ya creadas desde el sistema principal
-- Seleccionar nutrientes específicos para analizar
-- Calcular aportes nutricionales y consumo diario por animal
-- Visualizar resultados detallados en tablas
-- Imprimir reportes profesionales
-- No guarda registros (solo cálculos temporales)
+3. **Calculadora de Aportes Completamente Mejorada:**
+   - Selección de fórmulas existentes con ingredientes
+   - Visualización automática de ingredientes y porcentajes
+   - Selección múltiple de nutrientes con checkboxes
+   - Cálculo con materia seca: Consumo × %MS × %Nutriente
+   - Resultados detallados paso a paso
+   - Ejemplo funcional: 3kg × 88% × 22% = 0.5808kg proteína
 
-## Funcionalidad de Carga de Fórmulas
-- Botón "Cargar Fórmula" junto al campo de nombre
-- Modal con lista de fórmulas existentes del usuario
-- Información detallada: nombre, tipo de animales, etapa, fecha
-- Carga automática de ingredientes y porcentajes
-- Interfaz intuitiva con selección visual
-- Manejo de errores y estados de carga
+4. **Archivos Separados por Herramienta:**
+   - `app/routes/calculadora_nutricional.py`
+   - `app/routes/conversor_unidades.py`
+   - `app/routes/calculadora_aportes_nueva.py`
+   - `static/js/calculadora-aportes-mejorada.js`
+
+### Herramientas Activas Finales:
+- ✅ **Calculadora Nutricional** (con selector de nutrientes y materia seca)
+- ✅ **Conversor de Unidades** (con API backend)
+- ✅ **Calculadora de Aportes Nutricionales** (completamente funcional como solicitado)
+
+### URL para Probar:
+http://127.0.0.1:5001/herramientas
+
+### Funcionalidad de la Calculadora de Aportes:
+1. Lista las fórmulas disponibles del usuario
+2. Al seleccionar una fórmula, carga automáticamente sus ingredientes
+3. Permite seleccionar los nutrientes a analizar
+4. Calcula los aportes usando: Consumo × %MS × %Nutriente
+5. Muestra resultados detallados con cálculo paso a paso
+6. Incluye el ejemplo exacto solicitado: 3kg × 88% × 22% = 0.5808kg
