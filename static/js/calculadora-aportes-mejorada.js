@@ -469,10 +469,22 @@ function imprimirAportesMejorado() {
         return;
     }
     
-    // Construir URL con parámetros para la nueva ruta mejorada
+    // Obtener nutrientes seleccionados (solo los que tienen check)
+    const nutrientesSeleccionados = [];
+    document.querySelectorAll('#nutrientesSeleccionContainer input[type="checkbox"]:checked').forEach(checkbox => {
+        nutrientesSeleccionados.push(parseInt(checkbox.value));
+    });
+    
+    if (nutrientesSeleccionados.length === 0) {
+        mostrarNotificacion('Debe seleccionar al menos un nutriente para imprimir', 'warning');
+        return;
+    }
+    
+    // Construir URL con parámetros incluyendo nutrientes seleccionados
     const params = new URLSearchParams({
         mezcla_id: mezclaId,
-        consumo_animal: consumoAnimal
+        consumo_animal: consumoAnimal,
+        nutrientes_seleccionados: nutrientesSeleccionados.join(',')
     });
     
     // Abrir nueva ventana para impresión con la ruta mejorada

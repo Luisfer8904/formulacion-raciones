@@ -297,9 +297,18 @@ def imprimir_aportes_mejorado():
         # Obtener parámetros de la URL
         mezcla_id = request.args.get('mezcla_id')
         consumo_animal = float(request.args.get('consumo_animal', 0))
+        nutrientes_seleccionados_str = request.args.get('nutrientes_seleccionados', '')
         
         if not mezcla_id or consumo_animal <= 0:
             return "Error: Parámetros inválidos", 400
+        
+        # Procesar nutrientes seleccionados
+        nutrientes_seleccionados = []
+        if nutrientes_seleccionados_str:
+            try:
+                nutrientes_seleccionados = [int(x.strip()) for x in nutrientes_seleccionados_str.split(',') if x.strip()]
+            except ValueError:
+                return "Error: Formato de nutrientes inválido", 400
         
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -326,15 +335,26 @@ def imprimir_aportes_mejorado():
         
         ingredientes_mezcla = cursor.fetchall()
         
-        # Obtener todos los nutrientes del usuario para mostrar en el reporte
-        cursor.execute("""
-            SELECT DISTINCT n.id, n.nombre, n.unidad
-            FROM nutrientes n
-            JOIN ingredientes_nutrientes vn ON n.id = vn.nutriente_id
-            JOIN mezcla_ingredientes mi ON vn.ingrediente_id = mi.ingrediente_id
-            WHERE n.usuario_id = %s AND mi.mezcla_id = %s
-            ORDER BY n.nombre
-        """, (session['user_id'], mezcla_id))
+        # Obtener nutrientes para mostrar en el reporte (solo los seleccionados si se especifican)
+        if nutrientes_seleccionados:
+            # Solo mostrar los nutrientes seleccionados
+            placeholders = ','.join(['%s'] * len(nutrientes_seleccionados))
+            cursor.execute(f"""
+                SELECT DISTINCT n.id, n.nombre, n.unidad
+                FROM nutrientes n
+                WHERE n.usuario_id = %s AND n.id IN ({placeholders})
+                ORDER BY n.nombre
+            """, [session['user_id']] + nutrientes_seleccionados)
+        else:
+            # Mostrar todos los nutrientes disponibles (comportamiento original)
+            cursor.execute("""
+                SELECT DISTINCT n.id, n.nombre, n.unidad
+                FROM nutrientes n
+                JOIN ingredientes_nutrientes vn ON n.id = vn.nutriente_id
+                JOIN mezcla_ingredientes mi ON vn.ingrediente_id = mi.ingrediente_id
+                WHERE n.usuario_id = %s AND mi.mezcla_id = %s
+                ORDER BY n.nombre
+            """, (session['user_id'], mezcla_id))
         
         nutrientes_disponibles = cursor.fetchall()
         
