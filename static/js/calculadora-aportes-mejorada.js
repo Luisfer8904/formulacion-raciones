@@ -32,8 +32,8 @@ function abrirCalculadoraAportesMejorada() {
                                     <input type="number" class="form-control" id="consumoAnimalAportes" step="0.1" min="0.1" value="3.0">
                                 </div>
                                 <div class="alert alert-info">
-                                    <h6><i class="fas fa-info-circle"></i> Materia Seca</h6>
-                                    <p class="mb-0">La materia seca se calcula automáticamente como promedio ponderado de la MS de cada ingrediente según su inclusión en la fórmula.</p>
+                                    <h6><i class="fas fa-info-circle"></i> Valores Base Seca (BS)</h6>
+                                    <p class="mb-0">Los cálculos utilizan valores nutricionales en Base Seca (BS) para mayor precisión, eliminando la necesidad de ajustes por materia seca.</p>
                                 </div>
                                 
                                 <h6>3. Ingredientes de la Fórmula</h6>
@@ -237,19 +237,16 @@ function mostrarIngredientesMezcla(nombreMezcla, ingredientes) {
                     <tr>
                         <th>Ingrediente</th>
                         <th>Inclusión (%)</th>
-                        <th>MS (%)</th>
                     </tr>
                 </thead>
                 <tbody>
     `;
     
     ingredientes.forEach(ingrediente => {
-        const ms = ingrediente.materia_seca_ingrediente || 88;
         html += `
             <tr>
                 <td>${ingrediente.nombre}</td>
                 <td class="text-end">${ingrediente.porcentaje}%</td>
-                <td class="text-end">${ms}%</td>
             </tr>
         `;
     });
@@ -355,16 +352,13 @@ function mostrarResultadosAportes(data) {
     let html = `
         <div class="alert alert-success">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <strong>Fórmula:</strong><br>${data.mezcla.nombre}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <strong>Consumo:</strong><br>${data.consumo_animal} kg/día
                 </div>
-                <div class="col-md-3">
-                    <strong>MS Calculada:</strong><br>${data.resultados[0]?.materia_seca_dieta_calculada || 'N/A'}%
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <strong>Nutrientes:</strong><br>${data.total_nutrientes} analizados
                 </div>
             </div>
@@ -375,9 +369,8 @@ function mostrarResultadosAportes(data) {
                 <thead class="table-dark">
                     <tr>
                         <th>Nutriente</th>
-                        <th>Unidad</th>
-                        <th>% en Dieta</th>
-                        <th>Consumo MS Dieta</th>
+                        <th>Unidad Original</th>
+                        <th>Cantidad en la Dieta</th>
                         <th>Aporte Total</th>
                         <th>Cálculo</th>
                         <th>Detalle</th>
@@ -390,19 +383,16 @@ function mostrarResultadosAportes(data) {
         html += `
             <tr>
                 <td><strong>${resultado.nutriente_nombre}</strong></td>
-                <td>${resultado.unidad}</td>
+                <td>${resultado.unidad_original}</td>
                 <td class="text-center">
-                    <span class="badge bg-primary">${resultado.aporte_total_porcentaje}%</span>
+                    <span class="badge bg-primary">${resultado.cantidad_total_dieta}</span>
                 </td>
                 <td class="text-center">
-                    <span class="badge bg-info">${resultado.consumo_ms_dieta} kg</span>
-                </td>
-                <td class="text-center">
-                    <span class="badge bg-success">${resultado.consumo_nutriente_total} ${resultado.unidad}</span>
+                    <span class="badge bg-success">${resultado.aporte_total_final} ${resultado.unidad_final}</span>
                 </td>
                 <td>
                     <small>
-                        ${resultado.calculo_paso_a_paso.join('<br>')}
+                        ${resultado.calculo_explicacion}
                     </small>
                 </td>
                 <td>
@@ -412,7 +402,7 @@ function mostrarResultadosAportes(data) {
                 </td>
             </tr>
             <tr class="collapse" id="detalle_${index}">
-                <td colspan="7">
+                <td colspan="6">
                     <div class="p-3 bg-light">
                         <h6>Detalle por Ingrediente - ${resultado.nutriente_nombre}</h6>
                         <div class="table-responsive">
@@ -421,11 +411,8 @@ function mostrarResultadosAportes(data) {
                                     <tr>
                                         <th>Ingrediente</th>
                                         <th>% en Fórmula</th>
-                                        <th>MS Ingrediente</th>
-                                        <th>Valor Nutricional</th>
-                                        <th>Consumo Ingrediente</th>
-                                        <th>Consumo MS</th>
-                                        <th>Aporte Nutriente</th>
+                                        <th>Valor BS</th>
+                                        <th>Cantidad en Dieta</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -436,11 +423,8 @@ function mostrarResultadosAportes(data) {
                 <tr>
                     <td>${detalle.nombre}</td>
                     <td>${detalle.porcentaje_en_formula}%</td>
-                    <td>${detalle.ms_ingrediente}%</td>
-                    <td>${detalle.valor_nutricional}%</td>
-                    <td>${detalle.consumo_ingrediente} kg</td>
-                    <td>${detalle.consumo_ms_ingrediente} kg</td>
-                    <td><strong>${detalle.consumo_nutriente_ingrediente} ${resultado.unidad}</strong></td>
+                    <td>${detalle.valor_nutricional_bs} ${resultado.unidad_original}</td>
+                    <td><strong>${detalle.cantidad_en_dieta} ${resultado.unidad_original}</strong></td>
                 </tr>
             `;
         });
@@ -461,11 +445,12 @@ function mostrarResultadosAportes(data) {
         </div>
         
         <div class="alert alert-info mt-3">
-            <h6><i class="fas fa-info-circle"></i> Fórmula Utilizada:</h6>
+            <h6><i class="fas fa-info-circle"></i> Conversiones de Unidades:</h6>
             <p class="mb-0">
-                <strong>Por Ingrediente:</strong> Consumo × (% Ingrediente / 100) × (% MS Ingrediente / 100) × (% Nutriente / 100)<br>
-                <strong>MS Dieta:</strong> Suma ponderada de MS de cada ingrediente según su inclusión<br>
-                <small>Ejemplo: 3 kg × 30% × 88% × 22% = 0.1742 kg de proteína del ingrediente</small>
+                <strong>ppm:</strong> ppm × kg = mg<br>
+                <strong>%:</strong> % × kg ÷ 100 = kg<br>
+                <strong>Kcal/kg:</strong> Kcal/kg × kg = Kcal<br>
+                <small>Los valores utilizados son en Base Seca (BS) para mayor precisión</small>
             </p>
         </div>
     `;
@@ -479,15 +464,19 @@ function imprimirAportesMejorado() {
     const mezclaId = document.getElementById('selectMezclaAportes').value;
     const consumoAnimal = document.getElementById('consumoAnimalAportes').value;
     
-    // Construir URL con parámetros
+    if (!mezclaId || !consumoAnimal) {
+        mostrarNotificacion('Seleccione una fórmula y configure el consumo', 'warning');
+        return;
+    }
+    
+    // Construir URL con parámetros para la nueva ruta mejorada
     const params = new URLSearchParams({
         mezcla_id: mezclaId,
-        consumo_animal: consumoAnimal,
-        tipo: 'aportes_mejorado'
+        consumo_animal: consumoAnimal
     });
     
-    // Abrir nueva ventana para impresión
-    const url = `/imprimir_aportes?${params.toString()}`;
+    // Abrir nueva ventana para impresión con la ruta mejorada
+    const url = `/imprimir_aportes_mejorado?${params.toString()}`;
     window.open(url, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
 }
 

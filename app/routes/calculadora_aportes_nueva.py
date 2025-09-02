@@ -68,9 +68,9 @@ def obtener_ingredientes_de_mezcla(mezcla_id):
                 'error': 'Mezcla no encontrada'
             }), 404
         
-        # Obtener ingredientes de la mezcla con materia seca
+        # Obtener ingredientes de la mezcla
         cursor.execute("""
-            SELECT mi.ingrediente_id, mi.inclusion as porcentaje, i.nombre, i.ms as materia_seca_ingrediente
+            SELECT mi.ingrediente_id, mi.inclusion as porcentaje, i.nombre
             FROM mezcla_ingredientes mi
             JOIN ingredientes i ON mi.ingrediente_id = i.id
             WHERE mi.mezcla_id = %s
@@ -168,9 +168,9 @@ def calcular_aportes_completo():
                 'error': 'Fórmula no encontrada'
             }), 404
         
-        # Obtener ingredientes de la mezcla con su materia seca
+        # Obtener ingredientes de la mezcla (sin necesidad de materia seca para BS)
         cursor.execute("""
-            SELECT mi.ingrediente_id, mi.inclusion as porcentaje, i.nombre, i.ms as materia_seca_ingrediente
+            SELECT mi.ingrediente_id, mi.inclusion as porcentaje, i.nombre
             FROM mezcla_ingredientes mi
             JOIN ingredientes i ON mi.ingrediente_id = i.id
             WHERE mi.mezcla_id = %s
@@ -183,13 +183,6 @@ def calcular_aportes_completo():
                 'success': False,
                 'error': 'La fórmula no tiene ingredientes'
             }), 400
-        
-        # Primero calcular la materia seca promedio ponderada de la dieta
-        materia_seca_dieta_calculada = 0
-        for ingrediente in ingredientes_mezcla:
-            porcentaje_en_formula = float(ingrediente['porcentaje'])
-            ms_ingrediente = float(ingrediente['materia_seca_ingrediente']) if ingrediente['materia_seca_ingrediente'] else 88.0
-            materia_seca_dieta_calculada += (porcentaje_en_formula / 100) * ms_ingrediente
         
         resultados = []
         
@@ -205,65 +198,69 @@ def calcular_aportes_completo():
             if not nutriente_info:
                 continue
             
-            aporte_total_porcentaje = 0
+            cantidad_total_dieta = 0
             detalle_ingredientes = []
-            consumo_nutriente_total = 0
+            aporte_total_final = 0
+            unidad_final = nutriente_info['unidad']
             
-            # Para cada ingrediente, obtener su aporte del nutriente
+            # Para cada ingrediente, obtener su aporte del nutriente (usando valores BS)
             for ingrediente in ingredientes_mezcla:
                 ingrediente_id = ingrediente['ingrediente_id']
                 porcentaje_en_formula = float(ingrediente['porcentaje'])
                 ingrediente_nombre = ingrediente['nombre']
-                ms_ingrediente = float(ingrediente['materia_seca_ingrediente']) if ingrediente['materia_seca_ingrediente'] else 88.0
                 
-                # Obtener valor nutricional del ingrediente para este nutriente
+                # Obtener valor nutricional BS del ingrediente para este nutriente
                 cursor.execute("""
-                    SELECT valor
+                    SELECT valor_bs as valor
                     FROM ingredientes_nutrientes
                     WHERE ingrediente_id = %s AND nutriente_id = %s
                 """, (ingrediente_id, nutriente_id))
                 
                 valor_resultado = cursor.fetchone()
-                valor_nutricional = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
+                valor_nutricional_bs = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
                 
-                # Calcular aporte del ingrediente al nutriente total de la dieta
-                aporte_ingrediente = (porcentaje_en_formula / 100) * valor_nutricional
-                aporte_total_porcentaje += aporte_ingrediente
-                
-                # Calcular consumo de nutriente por ingrediente: Consumo × %Ingrediente × %MS_ingrediente × %Nutriente
-                consumo_ingrediente = consumo_animal * (porcentaje_en_formula / 100)
-                consumo_ms_ingrediente = consumo_ingrediente * (ms_ingrediente / 100)
-                consumo_nutriente_ingrediente = consumo_ms_ingrediente * (valor_nutricional / 100)
-                consumo_nutriente_total += consumo_nutriente_ingrediente
+                # Calcular cantidad del nutriente en la dieta (por ingrediente)
+                cantidad_ingrediente_dieta = (porcentaje_en_formula / 100) * valor_nutricional_bs
+                cantidad_total_dieta += cantidad_ingrediente_dieta
                 
                 detalle_ingredientes.append({
                     'nombre': ingrediente_nombre,
                     'porcentaje_en_formula': porcentaje_en_formula,
-                    'ms_ingrediente': ms_ingrediente,
-                    'valor_nutricional': valor_nutricional,
-                    'aporte_al_nutriente': round(aporte_ingrediente, 4),
-                    'consumo_ingrediente': round(consumo_ingrediente, 4),
-                    'consumo_ms_ingrediente': round(consumo_ms_ingrediente, 4),
-                    'consumo_nutriente_ingrediente': round(consumo_nutriente_ingrediente, 4)
+                    'valor_nutricional_bs': valor_nutricional_bs,
+                    'cantidad_en_dieta': round(cantidad_ingrediente_dieta, 4)
                 })
             
-            # Cálculo con materia seca calculada de la dieta
-            consumo_ms_dieta = consumo_animal * (materia_seca_dieta_calculada / 100)
+            # Calcular aporte total según la unidad
+            if nutriente_info['unidad'] == 'ppm':
+                # ppm: multiplicar cantidad en dieta (ppm) × consumo (kg) = resultado en mg
+                aporte_total_final = cantidad_total_dieta * consumo_animal
+                unidad_final = 'mg'
+                calculo_explicacion = f'{round(cantidad_total_dieta, 4)} ppm × {consumo_animal} kg = {round(aporte_total_final, 4)} mg'
+            elif nutriente_info['unidad'] == '%':
+                # %: multiplicar cantidad en dieta (%) × consumo (kg) ÷ 100 = resultado en kg
+                aporte_total_final = (cantidad_total_dieta / 100) * consumo_animal
+                unidad_final = 'kg'
+                calculo_explicacion = f'{round(cantidad_total_dieta, 4)}% × {consumo_animal} kg ÷ 100 = {round(aporte_total_final, 4)} kg'
+            elif nutriente_info['unidad'] == 'Kcal/kg':
+                # Kcal/kg: multiplicar cantidad en dieta (Kcal/kg) × consumo (kg) = resultado en Kcal
+                aporte_total_final = cantidad_total_dieta * consumo_animal
+                unidad_final = 'Kcal'
+                calculo_explicacion = f'{round(cantidad_total_dieta, 4)} Kcal/kg × {consumo_animal} kg = {round(aporte_total_final, 4)} Kcal'
+            else:
+                # Para otras unidades, mantener el cálculo original
+                aporte_total_final = (cantidad_total_dieta / 100) * consumo_animal
+                unidad_final = nutriente_info['unidad']
+                calculo_explicacion = f'{round(cantidad_total_dieta, 4)} × {consumo_animal} kg = {round(aporte_total_final, 4)} {unidad_final}'
             
             resultados.append({
                 'nutriente_id': nutriente_id,
                 'nutriente_nombre': nutriente_info['nombre'],
-                'unidad': nutriente_info['unidad'],
-                'aporte_total_porcentaje': round(aporte_total_porcentaje, 4),
-                'materia_seca_dieta_calculada': round(materia_seca_dieta_calculada, 2),
-                'consumo_ms_dieta': round(consumo_ms_dieta, 4),
-                'consumo_nutriente_total': round(consumo_nutriente_total, 4),
+                'unidad_original': nutriente_info['unidad'],
+                'unidad_final': unidad_final,
+                'cantidad_total_dieta': round(cantidad_total_dieta, 4),
+                'aporte_total_final': round(aporte_total_final, 4),
                 'detalle_ingredientes': detalle_ingredientes,
-                'calculo_paso_a_paso': [
-                    f'1. MS Dieta (ponderada): {round(materia_seca_dieta_calculada, 2)}%',
-                    f'2. Consumo MS Dieta: {consumo_animal} kg × {round(materia_seca_dieta_calculada, 2)}% = {round(consumo_ms_dieta, 4)} kg',
-                    f'3. {nutriente_info["nombre"]} Total: {round(consumo_nutriente_total, 4)} {nutriente_info["unidad"]} (suma por ingrediente)'
-                ]
+                'calculo_explicacion': calculo_explicacion
             })
         
         cursor.close()
@@ -273,7 +270,6 @@ def calcular_aportes_completo():
             'success': True,
             'mezcla': mezcla,
             'consumo_animal': consumo_animal,
-            'materia_seca_dieta_calculada': materia_seca_dieta_calculada,
             'total_ingredientes': len(ingredientes_mezcla),
             'total_nutrientes': len(nutrientes_seleccionados),
             'resultados': resultados
@@ -284,3 +280,119 @@ def calcular_aportes_completo():
             'success': False,
             'error': str(e)
         }), 500
+
+@calculadora_aportes_nueva_bp.route('/imprimir_aportes_mejorado')
+@login_required
+def imprimir_aportes_mejorado():
+    """Página de impresión para aportes nutricionales mejorados"""
+    try:
+        # Obtener parámetros de la URL
+        mezcla_id = request.args.get('mezcla_id')
+        consumo_animal = float(request.args.get('consumo_animal', 0))
+        
+        if not mezcla_id or consumo_animal <= 0:
+            return "Error: Parámetros inválidos", 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Obtener información de la mezcla
+        cursor.execute("""
+            SELECT nombre, tipo_animales, etapa_produccion
+            FROM mezclas 
+            WHERE id = %s AND usuario_id = %s
+        """, (mezcla_id, session['user_id']))
+        
+        mezcla = cursor.fetchone()
+        if not mezcla:
+            return "Error: Fórmula no encontrada", 404
+        
+        # Obtener ingredientes de la mezcla
+        cursor.execute("""
+            SELECT mi.ingrediente_id, mi.inclusion as porcentaje, i.nombre
+            FROM mezcla_ingredientes mi
+            JOIN ingredientes i ON mi.ingrediente_id = i.id
+            WHERE mi.mezcla_id = %s
+            ORDER BY mi.inclusion DESC
+        """, (mezcla_id,))
+        
+        ingredientes_mezcla = cursor.fetchall()
+        
+        # Obtener todos los nutrientes del usuario para mostrar en el reporte
+        cursor.execute("""
+            SELECT DISTINCT n.id, n.nombre, n.unidad
+            FROM nutrientes n
+            JOIN ingredientes_nutrientes vn ON n.id = vn.nutriente_id
+            JOIN mezcla_ingredientes mi ON vn.ingrediente_id = mi.ingrediente_id
+            WHERE n.usuario_id = %s AND mi.mezcla_id = %s
+            ORDER BY n.nombre
+        """, (session['user_id'], mezcla_id))
+        
+        nutrientes_disponibles = cursor.fetchall()
+        
+        resultados = []
+        
+        # Calcular para cada nutriente disponible
+        for nutriente in nutrientes_disponibles:
+            cantidad_total_dieta = 0
+            detalle_ingredientes = []
+            
+            for ingrediente in ingredientes_mezcla:
+                # Obtener valor BS del nutriente para este ingrediente
+                cursor.execute("""
+                    SELECT valor_bs as valor
+                    FROM ingredientes_nutrientes
+                    WHERE ingrediente_id = %s AND nutriente_id = %s
+                """, (ingrediente['ingrediente_id'], nutriente['id']))
+                
+                valor_resultado = cursor.fetchone()
+                valor_bs = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
+                
+                if valor_bs > 0:  # Solo incluir si tiene valor
+                    cantidad_ingrediente = (float(ingrediente['porcentaje']) / 100) * valor_bs
+                    cantidad_total_dieta += cantidad_ingrediente
+                    
+                    detalle_ingredientes.append({
+                        'nombre': ingrediente['nombre'],
+                        'porcentaje': float(ingrediente['porcentaje']),
+                        'valor_bs': valor_bs,
+                        'cantidad_en_dieta': round(cantidad_ingrediente, 4)
+                    })
+            
+            if cantidad_total_dieta > 0:  # Solo incluir nutrientes con valores
+                # Calcular aporte final según unidad
+                if nutriente['unidad'] == 'ppm':
+                    aporte_final = cantidad_total_dieta * consumo_animal
+                    unidad_final = 'mg'
+                elif nutriente['unidad'] == '%':
+                    aporte_final = (cantidad_total_dieta / 100) * consumo_animal
+                    unidad_final = 'kg'
+                elif nutriente['unidad'] == 'Kcal/kg':
+                    aporte_final = cantidad_total_dieta * consumo_animal
+                    unidad_final = 'Kcal'
+                else:
+                    aporte_final = cantidad_total_dieta * consumo_animal
+                    unidad_final = nutriente['unidad']
+                
+                resultados.append({
+                    'nutriente_nombre': nutriente['nombre'],
+                    'unidad_original': nutriente['unidad'],
+                    'unidad_final': unidad_final,
+                    'cantidad_total_dieta': round(cantidad_total_dieta, 4),
+                    'aporte_final': round(aporte_final, 4),
+                    'detalle_ingredientes': detalle_ingredientes
+                })
+        
+        cursor.close()
+        conn.close()
+        
+        return render_template('operaciones/imprimir_aportes_mejorado.html',
+                             mezcla=mezcla,
+                             consumo_animal=consumo_animal,
+                             total_ingredientes=len(ingredientes_mezcla),
+                             total_nutrientes=len(resultados),
+                             resultados=resultados,
+                             fecha_actual=datetime.now().strftime('%d/%m/%Y %H:%M'))
+        
+    except Exception as e:
+        return f"Error: {str(e)}", 500
