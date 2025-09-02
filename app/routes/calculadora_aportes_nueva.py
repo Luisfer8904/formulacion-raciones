@@ -168,9 +168,9 @@ def calcular_aportes_completo():
                 'error': 'Fórmula no encontrada'
             }), 404
         
-        # Obtener ingredientes de la mezcla (sin necesidad de materia seca para BS)
+        # Obtener ingredientes de la mezcla con materia seca para calcular valores BS
         cursor.execute("""
-            SELECT mi.ingrediente_id, mi.inclusion as porcentaje, i.nombre
+            SELECT mi.ingrediente_id, mi.inclusion as porcentaje, i.nombre, i.ms
             FROM mezcla_ingredientes mi
             JOIN ingredientes i ON mi.ingrediente_id = i.id
             WHERE mi.mezcla_id = %s
@@ -209,7 +209,7 @@ def calcular_aportes_completo():
                 porcentaje_en_formula = float(ingrediente['porcentaje'])
                 ingrediente_nombre = ingrediente['nombre']
                 
-                # Obtener valor nutricional del ingrediente para este nutriente
+                # Obtener valor nutricional TC del ingrediente para este nutriente
                 cursor.execute("""
                     SELECT valor
                     FROM ingredientes_nutrientes
@@ -217,16 +217,24 @@ def calcular_aportes_completo():
                 """, (ingrediente_id, nutriente_id))
                 
                 valor_resultado = cursor.fetchone()
-                valor_nutricional = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
+                valor_tc = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
                 
-                # Calcular cantidad del nutriente en la dieta (por ingrediente)
-                cantidad_ingrediente_dieta = (porcentaje_en_formula / 100) * valor_nutricional
+                # Obtener materia seca del ingrediente
+                ms_ingrediente = float(ingrediente.get('ms', 100))
+                
+                # Calcular valor BS: valor_tc * (ms / 100)
+                valor_bs = valor_tc * (ms_ingrediente / 100)
+                
+                # Calcular cantidad del nutriente en la dieta usando valor BS
+                cantidad_ingrediente_dieta = (porcentaje_en_formula / 100) * valor_bs
                 cantidad_total_dieta += cantidad_ingrediente_dieta
                 
                 detalle_ingredientes.append({
                     'nombre': ingrediente_nombre,
                     'porcentaje_en_formula': porcentaje_en_formula,
-                    'valor_nutricional': valor_nutricional,
+                    'valor_tc': valor_tc,
+                    'valor_bs': valor_bs,
+                    'ms_ingrediente': ms_ingrediente,
                     'cantidad_en_dieta': round(cantidad_ingrediente_dieta, 4)
                 })
             
@@ -338,7 +346,7 @@ def imprimir_aportes_mejorado():
             detalle_ingredientes = []
             
             for ingrediente in ingredientes_mezcla:
-                # Obtener valor del nutriente para este ingrediente
+                # Obtener valor TC del nutriente para este ingrediente
                 cursor.execute("""
                     SELECT valor
                     FROM ingredientes_nutrientes
@@ -346,16 +354,24 @@ def imprimir_aportes_mejorado():
                 """, (ingrediente['ingrediente_id'], nutriente['id']))
                 
                 valor_resultado = cursor.fetchone()
-                valor_nutricional = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
+                valor_tc = float(valor_resultado['valor']) if valor_resultado and valor_resultado['valor'] else 0
                 
-                if valor_nutricional > 0:  # Solo incluir si tiene valor
-                    cantidad_ingrediente = (float(ingrediente['porcentaje']) / 100) * valor_nutricional
+                # Obtener materia seca del ingrediente
+                ms_ingrediente = float(ingrediente.get('ms', 100))
+                
+                # Calcular valor BS: valor_tc * (ms / 100)
+                valor_bs = valor_tc * (ms_ingrediente / 100)
+                
+                if valor_bs > 0:  # Solo incluir si tiene valor BS
+                    cantidad_ingrediente = (float(ingrediente['porcentaje']) / 100) * valor_bs
                     cantidad_total_dieta += cantidad_ingrediente
                     
                     detalle_ingredientes.append({
                         'nombre': ingrediente['nombre'],
                         'porcentaje': float(ingrediente['porcentaje']),
-                        'valor_nutricional': valor_nutricional,
+                        'valor_tc': valor_tc,
+                        'valor_bs': valor_bs,
+                        'ms_ingrediente': ms_ingrediente,
                         'cantidad_en_dieta': round(cantidad_ingrediente, 4)
                     })
             
