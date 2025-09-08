@@ -479,6 +479,34 @@ def api_lista_mezclas():
 
     return jsonify(mezclas)
 
+@mezclas_bp.route('/api/mezclas_usuario')
+def api_mezclas_usuario():
+    """API para obtener las mezclas del usuario actual"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'No autorizado'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        cursor.execute("""
+            SELECT id, nombre, tipo_animales, etapa_produccion, 
+                   DATE_FORMAT(fecha_creacion, '%d/%m/%Y') as fecha_creacion
+            FROM mezclas 
+            WHERE usuario_id = %s 
+            ORDER BY fecha_creacion DESC
+        """, (session['user_id'],))
+        
+        mezclas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        return jsonify(mezclas)
+        
+    except Exception as e:
+        print(f"❌ Error al obtener mezclas: {e}")
+        return jsonify({'error': 'Error al cargar las mezclas'}), 500
+
 @mezclas_bp.route('/api/mezcla_detalle/<int:mezcla_id>')
 def api_mezcla_detalle(mezcla_id):
     """API para obtener los detalles completos de una mezcla específica"""
