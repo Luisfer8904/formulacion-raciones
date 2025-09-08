@@ -227,7 +227,7 @@
                             <div class="nav-section-title">Gestión</div>
                             <ul class="nav flex-column">
                                 <!-- Herramientas - Disponible para todos los planes -->
-                                {% set user_plan = session.get('tipo_plan', 'profesional') %}
+                                {% set user_plan = session.get('tipo_plan', 'basico') %}
                                 {% set user_rol = session.get('rol', 'user') %}
                                 
                                 <li class="nav-item">
@@ -236,22 +236,11 @@
                                     </a>
                                 </li>
                                 
-                                <!-- Reportes - Disponible para personal, profesional y admin -->
-                                {% if user_plan in ['personal', 'profesional'] or user_rol == 'admin' %}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('reportes_mejorado_bp.reportes') }}">
-                                        <i class="fas fa-chart-line"></i> Generador de Reportes
-                                    </a>
-                                </li>
-                                {% endif %}
+                                <!-- Generador de Reportes removido: función comparativa se movió a Herramientas -->
                                 
-                                <!-- Planificador de Producción - Para profesional y admin -->
+                                <!-- Planificador de Producción - Solo para profesional y admin (temporalmente oculto) -->
                                 {% if user_plan == 'profesional' or user_rol == 'admin' %}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('planificador_bp.planificador') }}">
-                                        <i class="fas fa-calendar-check"></i> Planificador de Producción
-                                    </a>
-                                </li>
+                                <!-- Planificador temporalmente deshabilitado -->
                                 {% endif %}
                             </ul>
                         </div>

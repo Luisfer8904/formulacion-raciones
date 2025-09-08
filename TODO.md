@@ -1,68 +1,49 @@
-# TODO - Limpieza de Herramientas y Corrección de Calculadora
+# TODO: Pricing Plans and Module Changes
 
-## Fase 1: Remover Herramientas No Funcionales ✅
-- [x] Remover herramientas del HTML (completado)
-- [x] Remover APIs del backend en herramientas_basicas.py (completado)
+## ✅ Completed Tasks
+- [x] Analysis of current implementation
+- [x] Plan creation and approval
+- [x] Update `templates/sitio/precios.html` - Show only 3 plans (Básico, Avanzado, Institucional)
+- [x] Update `templates/sitio/formulario_cobro.html` - Update plan selection options
+- [x] Rename "Personal" to "Avanzado" throughout the system
+- [x] Update `app/routes/auth.py` - Modify test users and plan assignments
+- [x] Update `app/routes/usuarios.py` - Update plan management logic
+- [x] Update `templates/operaciones/administrador.html` - Update admin interface
+- [x] Update `templates/operaciones/panel.html` - Remove reports module access
+- [x] Update `templates/operaciones/layout.html` - Remove reports from navigation
+- [x] Update `templates/operaciones/opciones.html` - Update plan descriptions
 
-## Fase 2: Corregir Calculadora de Aportes Nutricionales ✅
-- [x] Agregar campo de materia seca en la interfaz (completado)
-- [x] Modificar lógica de cálculo para incluir materia seca (completado)
-- [x] Implementar fórmula: Consumo * %MS * %Ingrediente * %Nutriente (completado)
-- [x] Ejemplo: 3kg * 88% = 2.64kg MS, luego 2.64kg * %ingrediente * %nutriente
+## 🔄 In Progress Tasks
 
-## Fase 3: Crear Archivos Separados para Herramientas ✅
-- [x] Crear calculadora_nutricional.py (completado)
-- [x] Crear conversor_unidades.py (completado)
-- [x] Crear calculadora_aportes_nueva.py (completado)
-- [x] Registrar nuevos blueprints en __init__.py (completado)
+## 📋 Pending Tasks
 
-## Fase 4: Mejorar Calculadora de Aportes Completamente ✅
-- [x] Crear calculadora-aportes-mejorada.js (completado)
-- [x] Implementar selección de fórmulas existentes (completado)
-- [x] Mostrar ingredientes y cantidades de la fórmula (completado)
-- [x] Permitir selección de nutrientes (completado)
-- [x] Calcular aportes con materia seca (completado)
-- [x] Mostrar resultados detallados paso a paso (completado)
+### 4. Update Plan Access Controls
+- [x] Verify Herramientas module has comparative reports functionality
+- [x] Update plan-based access controls in templates
+- [ ] Test new plan structure
 
-## Estado: ✅ COMPLETADO
+### 5. Testing and Verification
+- [ ] Test pricing page displays correctly
+- [ ] Test plan selection in forms
+- [ ] Test user authentication with new plans
+- [ ] Test admin interface with new plan structure
+- [ ] Verify comparative reports work in Herramientas
 
-### Cambios Realizados:
-1. **Herramientas Removidas:**
-   - Comparador de Ingredientes
-   - Validador de Fórmulas  
-   - Analizador de Costos
-   - Optimizador Avanzado
+## 📝 Notes
+- Básico: 30 formulas limit, 50 ingredients limit
+- Avanzado (previously Personal): unlimited formulas and ingredients, personalized advisory, access to all tools
+- Institucional: remains the same
+- Profesional: hidden temporarily
+- Reporte Comparativo: moved to Herramientas (already implemented)
+- Generador de Reportes: access removed from panels
 
-2. **APIs Removidas:**
-   - `/api/analizar_costos`
-   - `/api/validar_formula`
-
-3. **Calculadora de Aportes Completamente Mejorada:**
-   - Selección de fórmulas existentes con ingredientes
-   - Visualización automática de ingredientes y porcentajes
-   - Selección múltiple de nutrientes con checkboxes
-   - Cálculo con materia seca: Consumo × %MS × %Nutriente
-   - Resultados detallados paso a paso
-   - Ejemplo funcional: 3kg × 88% × 22% = 0.5808kg proteína
-
-4. **Archivos Separados por Herramienta:**
-   - `app/routes/calculadora_nutricional.py`
-   - `app/routes/conversor_unidades.py`
-   - `app/routes/calculadora_aportes_nueva.py`
-   - `static/js/calculadora-aportes-mejorada.js`
-
-### Herramientas Activas Finales:
-- ✅ **Calculadora Nutricional** (con selector de nutrientes y materia seca)
-- ✅ **Conversor de Unidades** (con API backend)
-- ✅ **Calculadora de Aportes Nutricionales** (completamente funcional como solicitado)
-
-### URL para Probar:
-http://127.0.0.1:5001/herramientas
-
-### Funcionalidad de la Calculadora de Aportes:
-1. Lista las fórmulas disponibles del usuario
-2. Al seleccionar una fórmula, carga automáticamente sus ingredientes
-3. Permite seleccionar los nutrientes a analizar
-4. Calcula los aportes usando: Consumo × %MS × %Nutriente
-5. Muestra resultados detallados con cálculo paso a paso
-6. Incluye el ejemplo exacto solicitado: 3kg × 88% × 22% = 0.5808kg
+## 🎯 Summary of Changes Made
+1. **Pricing Structure**: Updated to show only 3 plans (Básico, Avanzado, Institucional)
+2. **Plan Renaming**: Changed "Personal" to "Avanzado" throughout the system
+3. **Professional Plan**: Hidden temporarily from all interfaces
+4. **Reports Module**: Removed "Generador de Reportes" access from panels
+5. **Comparative Reports**: Functionality remains available in Herramientas module
+6. **Authentication**: Updated test users to reflect new plan structure
+7. **Admin Interface**: Updated plan options and descriptions
+8. **Navigation**: Cleaned up menus to remove reports module access
+9. **User Options**: Updated plan descriptions and badges

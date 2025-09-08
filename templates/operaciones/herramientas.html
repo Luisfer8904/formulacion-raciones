@@ -65,6 +65,25 @@
             <span class="status-badge status-active">Activo</span>
         </div>
     </div>
+
+    <!-- Reporte Comparativo -->
+    <div class="tool-card" onclick="abrirReporteComparativo()">
+        <div class="tool-icon bg-warning">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Reporte Comparativo</h5>
+            <p>Compare dos fórmulas y obtenga un resumen claro</p>
+            <div class="tool-features">
+                <span class="feature-tag">Comparación</span>
+                <span class="feature-tag">Costos</span>
+                <span class="feature-tag">Nutrientes</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
 </div>
 
 <!-- Estado de Herramientas -->
@@ -180,6 +199,33 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Reporte Comparativo -->
+<div class="modal fade" id="reporteComparativoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-chart-line me-2"></i>Reporte Comparativo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Fórmula A</label>
+                    <select class="form-select" id="selectFormulaA"></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Fórmula B</label>
+                    <select class="form-select" id="selectFormulaB"></select>
+                </div>
+                <div id="resultadoComparativo" class="mt-3" style="display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button class="btn btn-warning" onclick="generarReporteComparativo()">Generar</button>
             </div>
         </div>
     </div>
@@ -582,6 +628,82 @@ function mostrarNotificacion(mensaje, tipo) {
             toast.remove();
         }
     }, 3000);
+}
+
+// ==== Reporte Comparativo ====
+function abrirReporteComparativo() {
+    const modalEl = document.getElementById('reporteComparativoModal');
+    const modal = new bootstrap.Modal(modalEl);
+    const selA = document.getElementById('selectFormulaA');
+    const selB = document.getElementById('selectFormulaB');
+    const out = document.getElementById('resultadoComparativo');
+    selA.innerHTML = '<option value="">Cargando...</option>';
+    selB.innerHTML = '<option value="">Cargando...</option>';
+    out.style.display = 'none';
+    out.innerHTML = '';
+
+    fetch('/api/mezclas_usuario')
+      .then(r => r.json())
+      .then(data => {
+        if (!Array.isArray(data) && data.success && Array.isArray(data.mezclas)) {
+            data = data.mezclas;
+        }
+        const options = ['<option value="">-- Seleccionar --</option>']
+          .concat((data || []).map(m => `<option value="${m.id}">${m.nombre}</option>`));
+        selA.innerHTML = options.join('');
+        selB.innerHTML = options.join('');
+      })
+      .catch(() => {
+        selA.innerHTML = '<option value="">Error al cargar</option>';
+        selB.innerHTML = '<option value="">Error al cargar</option>';
+      });
+
+    modal.show();
+}
+
+function generarReporteComparativo() {
+    const a = document.getElementById('selectFormulaA').value;
+    const b = document.getElementById('selectFormulaB').value;
+    const out = document.getElementById('resultadoComparativo');
+    if (!a || !b || a === b) {
+        alert('Selecciona dos fórmulas distintas.');
+        return;
+    }
+
+    fetch('/api/generar_reporte_comparativo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ formula_a: a, formula_b: b, incluir_graficos: true })
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.success) {
+            const ra = data.reporte?.formula_a?.nombre || 'A';
+            const rb = data.reporte?.formula_b?.nombre || 'B';
+            const costo = data.reporte?.analisis?.costo?.diferencia_porcentual;
+            out.style.display = 'block';
+            out.innerHTML = `<div class="alert alert-success">
+                ✅ Reporte generado: <strong>${ra}</strong> vs <strong>${rb}</strong>.
+                ${typeof costo !== 'undefined' ? ` Diferencia de costo: <strong>${costo}%</strong>.` : ''}
+            </div>`;
+            return;
+        }
+        return fetch('/api/generar_reporte_comparativo', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ formula_a_id: a, formula_b_id: b })
+        }).then(r => r.json()).then(d2 => {
+            if (d2 && (d2.success || d2.mensaje)) {
+                out.style.display = 'block';
+                out.innerHTML = `<div class="alert alert-success">${d2.mensaje || 'Reporte generado exitosamente.'}</div>`;
+            } else {
+                throw new Error(d2?.error || 'Error al generar reporte');
+            }
+        });
+      })
+      .catch(err => {
+        out.style.display = 'block';
+        out.innerHTML = `<div class="alert alert-danger">❌ ${err?.message || 'No se pudo generar el reporte.'}</div>`;
+      });
 }
 </script>
 

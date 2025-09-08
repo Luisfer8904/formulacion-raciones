@@ -27,21 +27,19 @@
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <h6 class="card-title mb-1">Plan Actual: 
-                                <span class="badge {% if usuario.get('tipo_plan') == 'personal' %}bg-success{% elif usuario.get('tipo_plan') == 'profesional' %}bg-warning{% elif usuario.get('tipo_plan') == 'premium' %}bg-info{% elif usuario.get('tipo_plan') == 'enterprise' %}bg-dark{% else %}bg-primary{% endif %}">
+                                <span class="badge {% if usuario.get('tipo_plan') == 'avanzado' %}bg-success{% elif usuario.get('tipo_plan') == 'profesional' %}bg-warning{% elif usuario.get('tipo_plan') == 'institucional' %}bg-info{% else %}bg-primary{% endif %}">
                                     {{ usuario.get('tipo_plan', 'basico').title() }}
                                 </span>
                             </h6>
                             <p class="card-text text-muted mb-0">
-                                {% if usuario.get('tipo_plan') == 'personal' %}
-                                    Acceso completo con funciones avanzadas - $24/mes
+                                {% if usuario.get('tipo_plan') == 'avanzado' %}
+                                    Fórmulas ilimitadas, ingredientes ilimitados, asesoría personalizada - $24/mes
                                 {% elif usuario.get('tipo_plan') == 'profesional' %}
-                                    Acceso profesional con todas las funciones - $76/mes
-                                {% elif usuario.get('tipo_plan') == 'premium' %}
-                                    Plan premium con funciones exclusivas
-                                {% elif usuario.get('tipo_plan') == 'enterprise' %}
-                                    Plan empresarial con soporte dedicado
+                                    Plan profesional (temporalmente oculto) - $56/mes
+                                {% elif usuario.get('tipo_plan') == 'institucional' %}
+                                    Plan institucional con precio personalizado
                                 {% else %}
-                                    Acceso básico a las funcionalidades de formulación
+                                    30 fórmulas, 50 ingredientes, herramientas básicas - $12/mes
                                 {% endif %}
                             </p>
                         </div>
