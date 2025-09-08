@@ -478,3 +478,53 @@ def api_lista_mezclas():
     conn.close()
 
     return jsonify(mezclas)
+
+@mezclas_bp.route('/api/mezcla_detalle/<int:mezcla_id>')
+def api_mezcla_detalle(mezcla_id):
+    """API para obtener los detalles completos de una mezcla específica"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'No autorizado'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Obtener información de la mezcla
+        cursor.execute("""
+            SELECT id, nombre, tipo_animales, etapa_produccion, 
+                   DATE_FORMAT(fecha_creacion, '%d/%m/%Y') as fecha_creacion
+            FROM mezclas 
+            WHERE id = %s AND usuario_id = %s
+        """, (mezcla_id, session['user_id']))
+        
+        mezcla = cursor.fetchone()
+        
+        if not mezcla:
+            return jsonify({'error': 'Mezcla no encontrada'}), 404
+        
+        # Obtener ingredientes de la mezcla con información nutricional
+        cursor.execute("""
+            SELECT mi.inclusion as porcentaje, 
+                   i.id, i.nombre, i.precio, i.ms,
+                   i.proteina_bruta, i.energia_metabolizable, i.fibra_bruta, 
+                   i.grasa_bruta, i.cenizas, i.calcio, i.fosforo, 
+                   i.lisina, i.metionina
+            FROM mezcla_ingredientes mi
+            JOIN ingredientes i ON mi.ingrediente_id = i.id
+            WHERE mi.mezcla_id = %s
+            ORDER BY mi.inclusion DESC
+        """, (mezcla_id,))
+        
+        ingredientes = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'mezcla': mezcla,
+            'ingredientes': ingredientes
+        })
+        
+    except Exception as e:
+        print(f"❌ Error al obtener detalles de mezcla: {e}")
+        return jsonify({'error': 'Error al cargar los detalles de la mezcla'}), 500
