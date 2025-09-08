@@ -530,20 +530,66 @@ def api_mezcla_detalle(mezcla_id):
         if not mezcla:
             return jsonify({'error': 'Mezcla no encontrada'}), 404
         
-        # Obtener ingredientes de la mezcla con información nutricional
+        # Obtener ingredientes de la mezcla
         cursor.execute("""
             SELECT mi.inclusion as porcentaje, 
-                   i.id, i.nombre, i.precio, i.ms,
-                   i.proteina_bruta, i.energia_metabolizable, i.fibra_bruta, 
-                   i.grasa_bruta, i.cenizas, i.calcio, i.fosforo, 
-                   i.lisina, i.metionina
+                   i.id, i.nombre, i.precio, i.ms
             FROM mezcla_ingredientes mi
             JOIN ingredientes i ON mi.ingrediente_id = i.id
             WHERE mi.mezcla_id = %s
             ORDER BY mi.inclusion DESC
         """, (mezcla_id,))
         
-        ingredientes = cursor.fetchall()
+        ingredientes_raw = cursor.fetchall()
+        
+        # Para cada ingrediente, obtener sus valores nutricionales
+        ingredientes = []
+        for ing in ingredientes_raw:
+            ing_typed: Any = ing
+            ingrediente = {
+                'id': safe_int(ing_typed.get('id', 0)),
+                'nombre': safe_str(ing_typed.get('nombre', '')),
+                'precio': safe_float(ing_typed.get('precio', 0.0)),
+                'ms': safe_float(ing_typed.get('ms', 100.0)),
+                'porcentaje': safe_float(ing_typed.get('porcentaje', 0.0)),
+                'proteina_bruta': 0.0,
+                'energia_metabolizable': 0.0,
+                'fibra_bruta': 0.0,
+                'grasa_bruta': 0.0,
+                'cenizas': 0.0,
+                'calcio': 0.0,
+                'fosforo': 0.0,
+                'lisina': 0.0,
+                'metionina': 0.0
+            }
+            
+            # Obtener valores nutricionales específicos
+            nutrientes_map = {
+                'Proteína Bruta': 'proteina_bruta',
+                'Energía Metabolizable': 'energia_metabolizable',
+                'Fibra Bruta': 'fibra_bruta',
+                'Grasa Bruta': 'grasa_bruta',
+                'Cenizas': 'cenizas',
+                'Calcio': 'calcio',
+                'Fósforo': 'fosforo',
+                'Lisina': 'lisina',
+                'Metionina': 'metionina'
+            }
+            
+            for nutriente_nombre, campo in nutrientes_map.items():
+                cursor.execute("""
+                    SELECT inut.valor
+                    FROM ingredientes_nutrientes inut
+                    JOIN nutrientes n ON inut.nutriente_id = n.id
+                    WHERE inut.ingrediente_id = %s AND n.nombre = %s AND n.usuario_id = %s
+                """, (safe_int(ing_typed.get('id', 0)), safe_str(nutriente_nombre), safe_int(session['user_id'])))
+                
+                result: Any = cursor.fetchone()
+                if result and result.get('valor') is not None:
+                    ingrediente[campo] = safe_float(result.get('valor', 0.0))
+            
+            ingredientes.append(ingrediente)
+        
         cursor.close()
         conn.close()
         
