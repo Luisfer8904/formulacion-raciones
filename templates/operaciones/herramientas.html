@@ -65,6 +65,64 @@
             <span class="status-badge status-active">Activo</span>
         </div>
     </div>
+
+    <!-- Conversor de Unidades Avanzado -->
+    <div class="tool-card" onclick="abrirConversorAvanzado()">
+        <div class="tool-icon bg-warning">
+            <i class="fas fa-exchange-alt"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Conversor de Unidades Avanzado</h5>
+            <p>Conversor estilo Google con múltiples categorías de unidades</p>
+            <div class="tool-features">
+                <span class="feature-tag">Longitud</span>
+                <span class="feature-tag">Masa</span>
+                <span class="feature-tag">Temperatura</span>
+                <span class="feature-tag">Volumen</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Reporte Comparativo -->
+    <div class="tool-card" onclick="abrirReporteComparativo()">
+        <div class="tool-icon bg-info">
+            <i class="fas fa-balance-scale"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Reporte Comparativo de Fórmulas</h5>
+            <p>Compare la composición nutricional entre dos fórmulas diferentes</p>
+            <div class="tool-features">
+                <span class="feature-tag">Comparación</span>
+                <span class="feature-tag">Nutrientes</span>
+                <span class="feature-tag">Análisis</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Estimador de Ingredientes -->
+    <div class="tool-card" onclick="abrirEstimadorIngredientes()">
+        <div class="tool-icon bg-danger">
+            <i class="fas fa-industry"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Estimador de Necesidades de Ingredientes</h5>
+            <p>Calcule las cantidades exactas de ingredientes para sus producciones</p>
+            <div class="tool-features">
+                <span class="feature-tag">Producción</span>
+                <span class="feature-tag">Ingredientes</span>
+                <span class="feature-tag">Costos</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
 </div>
 
 <!-- Estado de Herramientas -->
@@ -77,7 +135,7 @@
             <div class="card-body">
                 <div class="tools-stats">
                     <div class="stat-item">
-                        <div class="stat-number text-success">3</div>
+                        <div class="stat-number text-success">6</div>
                         <div class="stat-label">Herramientas Activas</div>
                     </div>
                     <div class="stat-item">
@@ -105,6 +163,14 @@
                     <div class="usage-item">
                         <i class="fas fa-calculator text-success me-2"></i>
                         <small>Calculadora de Aportes - Hace 1 día</small>
+                    </div>
+                    <div class="usage-item">
+                        <i class="fas fa-exchange-alt text-warning me-2"></i>
+                        <small>Conversor Avanzado - Hace 2 días</small>
+                    </div>
+                    <div class="usage-item">
+                        <i class="fas fa-balance-scale text-info me-2"></i>
+                        <small>Reporte Comparativo - Hace 3 días</small>
                     </div>
                 </div>
             </div>
@@ -381,6 +447,18 @@ function abrirConversor() {
 function abrirCalculadoraAportes() {
     // Usar la nueva calculadora mejorada
     abrirCalculadoraAportesMejorada();
+}
+
+function abrirConversorAvanzado() {
+    window.location.href = '/conversor_avanzado';
+}
+
+function abrirReporteComparativo() {
+    window.location.href = '/reporte_comparativo';
+}
+
+function abrirEstimadorIngredientes() {
+    window.location.href = '/calculadora_ingredientes';
 }
 
 function calcularEjemplo() {

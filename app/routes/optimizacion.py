@@ -257,7 +257,18 @@ def optimizar_formulacion():
 
     if not ingredientes or not requerimientos:
         print("❌ Error: Ingredientes o requerimientos vacíos")
-        return jsonify({'error': 'Datos incompletos'}), 400
+        return jsonify({
+            'error': 'Datos incompletos',
+            'validacion': {
+                'tipo': 'datos_incompletos',
+                'mensaje': 'No se han proporcionado ingredientes o requerimientos suficientes',
+                'sugerencias': [
+                    'Agregue al menos 2 ingredientes a la formulación',
+                    'Defina al menos 1 requerimiento nutricional',
+                    'Verifique que los ingredientes tengan valores nutricionales'
+                ]
+            }
+        }), 400
 
     # Validar que los ingredientes tengan estructura de nutrientes (pero pueden tener valores 0)
     for ing in ingredientes:
@@ -303,7 +314,30 @@ def optimizar_formulacion():
     suma_maximos = sum(bound[1] for bound in bounds_ingredientes)
     if suma_maximos < 100:
         print(f"❌ Error: La suma de límites máximos ({suma_maximos}%) no llega al 100%")
-        return jsonify({'error': 'Los límites máximos de ingredientes no permiten una mezcla que sume 100%'}), 400
+        
+        # Identificar ingredientes con límites muy restrictivos
+        ingredientes_restrictivos = []
+        for i, (ing, bound) in enumerate(zip(ingredientes, bounds_ingredientes)):
+            if bound[1] < 20:  # Límites máximos muy bajos
+                ingredientes_restrictivos.append(f"{ing['nombre']} (máx: {bound[1]}%)")
+        
+        return jsonify({
+            'error': 'Los límites máximos de ingredientes no permiten una mezcla que sume 100%',
+            'validacion': {
+                'tipo': 'limites_maximos_insuficientes',
+                'mensaje': f'La suma de límites máximos es {suma_maximos}%, necesita ser ≥100%',
+                'detalles': {
+                    'suma_actual': suma_maximos,
+                    'suma_requerida': 100,
+                    'deficit': 100 - suma_maximos
+                },
+                'sugerencias': [
+                    'Aumente los límites máximos de algunos ingredientes',
+                    'Agregue más ingredientes a la formulación',
+                    f'Necesita aumentar {100 - suma_maximos:.1f}% en límites máximos'
+                ] + ([f'Ingredientes con límites restrictivos: {", ".join(ingredientes_restrictivos)}'] if ingredientes_restrictivos else [])
+            }
+        }), 400
 
     print(f"✅ Suma de límites máximos: {suma_maximos}% (≥100%)")
 
@@ -315,15 +349,58 @@ def optimizar_formulacion():
     suma_minimos = sum(bound[0] for bound in bounds_ingredientes)
     if suma_minimos > 100:
         print(f"❌ Error: La suma de límites mínimos ({suma_minimos}%) excede el 100%")
-        return jsonify({'error': 'Los límites mínimos de ingredientes exceden el 100%'}), 400
+        
+        # Identificar ingredientes con límites mínimos altos
+        ingredientes_altos = []
+        for i, (ing, bound) in enumerate(zip(ingredientes, bounds_ingredientes)):
+            if bound[0] > 15:  # Límites mínimos altos
+                ingredientes_altos.append(f"{ing['nombre']} (mín: {bound[0]}%)")
+        
+        return jsonify({
+            'error': 'Los límites mínimos de ingredientes exceden el 100%',
+            'validacion': {
+                'tipo': 'limites_minimos_excesivos',
+                'mensaje': f'La suma de límites mínimos es {suma_minimos}%, debe ser ≤100%',
+                'detalles': {
+                    'suma_actual': suma_minimos,
+                    'suma_maxima': 100,
+                    'exceso': suma_minimos - 100
+                },
+                'sugerencias': [
+                    'Reduzca los límites mínimos de algunos ingredientes',
+                    'Elimine ingredientes con límites mínimos muy altos',
+                    f'Necesita reducir {suma_minimos - 100:.1f}% en límites mínimos'
+                ] + ([f'Ingredientes con límites altos: {", ".join(ingredientes_altos)}'] if ingredientes_altos else [])
+            }
+        }), 400
     
     print(f"✅ Suma de límites mínimos: {suma_minimos}% (≤100%)")
     
     # Validar que cada límite mínimo sea menor o igual al máximo
+    ingredientes_inconsistentes = []
     for i, (ing, bound) in enumerate(zip(ingredientes, bounds_ingredientes)):
         if bound[0] > bound[1]:
             print(f"❌ Error: {ing['nombre']} tiene límite mínimo ({bound[0]}%) mayor al máximo ({bound[1]}%)")
-            return jsonify({'error': f"Límite mínimo de {ing['nombre']} es mayor al máximo"}), 400
+            ingredientes_inconsistentes.append(f"{ing['nombre']} (mín: {bound[0]}%, máx: {bound[1]}%)")
+    
+    if ingredientes_inconsistentes:
+        return jsonify({
+            'error': 'Límites inconsistentes en ingredientes',
+            'validacion': {
+                'tipo': 'limites_inconsistentes',
+                'mensaje': 'Algunos ingredientes tienen límite mínimo mayor al máximo',
+                'detalles': {
+                    'ingredientes_afectados': ingredientes_inconsistentes
+                },
+                'sugerencias': [
+                    'Corrija los límites de los ingredientes afectados',
+                    'Asegúrese que límite mínimo ≤ límite máximo',
+                    'Revise la configuración de cada ingrediente'
+                ]
+            }
+        }), 400
+    
+    for i, (ing, bound) in enumerate(zip(ingredientes, bounds_ingredientes)):
         print(f"✅ {ing['nombre']}: {bound[0]}% ≤ {bound[1]}%")
 
     print("\n" + "="*60)
@@ -489,8 +566,74 @@ def optimizar_formulacion():
     # Seleccionar el mejor resultado
     if not mejores_resultados:
         print("❌ Ninguna optimización fue exitosa")
+        
+        # Analizar posibles causas del fallo
+        causas_posibles = []
+        sugerencias_especificas = []
+        
+        # Verificar si hay conflictos en requerimientos nutricionales
+        nutrientes_problematicos = []
+        for i, req in enumerate(requerimientos):
+            req_min = req.get('min')
+            req_max = req.get('max')
+            if req_min and req_max and float(req_min) > float(req_max):
+                nutrientes_problematicos.append(f"{req['nombre']} (mín: {req_min}, máx: {req_max})")
+        
+        if nutrientes_problematicos:
+            causas_posibles.append("Requerimientos nutricionales inconsistentes")
+            sugerencias_especificas.extend([
+                f"Corrija los requerimientos de: {', '.join(nutrientes_problematicos)}",
+                "Verifique que valor mínimo ≤ valor máximo para cada nutriente"
+            ])
+        
+        # Verificar si faltan nutrientes en ingredientes
+        nutrientes_faltantes = []
+        for req in requerimientos:
+            nutriente_nombre = req['nombre']
+            ingredientes_sin_nutriente = []
+            for ing in ingredientes:
+                nutrientes = ing.get('aporte', {})
+                if isinstance(nutrientes.get(nutriente_nombre), dict):
+                    valor = float(nutrientes.get(nutriente_nombre, {}).get('valor', 0))
+                else:
+                    valor = float(nutrientes.get(nutriente_nombre, 0))
+                
+                if valor == 0:
+                    ingredientes_sin_nutriente.append(ing['nombre'])
+            
+            if len(ingredientes_sin_nutriente) == len(ingredientes):
+                nutrientes_faltantes.append(nutriente_nombre)
+        
+        if nutrientes_faltantes:
+            causas_posibles.append("Nutrientes sin aportes en ningún ingrediente")
+            sugerencias_especificas.extend([
+                f"Agregue ingredientes que aporten: {', '.join(nutrientes_faltantes)}",
+                "Verifique los valores nutricionales de sus ingredientes"
+            ])
+        
+        # Verificar si los costos son muy altos o muy bajos
+        costos_cero = [ing['nombre'] for ing in ingredientes if float(ing.get('costo', 0)) == 0]
+        if len(costos_cero) == len(ingredientes):
+            causas_posibles.append("Todos los ingredientes tienen costo cero")
+            sugerencias_especificas.append("Defina costos realistas para los ingredientes")
+        
         return jsonify({
-            'error': 'No se pudo encontrar una solución factible. Revisa que los límites sean compatibles.'
+            'error': 'No se pudo encontrar una solución factible',
+            'validacion': {
+                'tipo': 'optimizacion_fallida',
+                'mensaje': 'La optimización no pudo encontrar una solución que cumpla todos los requisitos',
+                'causas_posibles': causas_posibles if causas_posibles else [
+                    "Límites de ingredientes muy restrictivos",
+                    "Requerimientos nutricionales inalcanzables",
+                    "Conflictos entre restricciones"
+                ],
+                'sugerencias': sugerencias_especificas if sugerencias_especificas else [
+                    "Revise y ajuste los límites de ingredientes",
+                    "Verifique que los requerimientos nutricionales sean alcanzables",
+                    "Considere agregar más ingredientes a la formulación",
+                    "Revise que los valores nutricionales sean correctos"
+                ]
+            }
         }), 400
     
     # Ordenar por costo (menor es mejor)

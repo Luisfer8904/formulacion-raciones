@@ -16,6 +16,9 @@ from .routes.calculadora_nutricional import calculadora_nutricional_bp
 from .routes.conversor_unidades import conversor_unidades_bp
 from .routes.calculadora_aportes_nueva import calculadora_aportes_nueva_bp
 from .routes.planificador import planificador_bp
+from .routes.conversor_unidades_avanzado import conversor_avanzado_bp
+from .routes.reporte_comparativo import reporte_comparativo_bp
+from .routes.calculadora_ingredientes import calculadora_ingredientes_bp
 
 def create_app():
     # Cargar variables de entorno desde archivo .env
@@ -104,5 +107,8 @@ def create_app():
     app.register_blueprint(conversor_unidades_bp)
     app.register_blueprint(calculadora_aportes_nueva_bp)
     app.register_blueprint(planificador_bp)
+    app.register_blueprint(conversor_avanzado_bp)
+    app.register_blueprint(reporte_comparativo_bp)
+    app.register_blueprint(calculadora_ingredientes_bp)
 
     return app

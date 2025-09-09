@@ -1,0 +1,507 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="conversor-container fade-in-up">
+    <!-- Header -->
+    <div class="conversor-header">
+        <h2><i class="fas fa-exchange-alt me-2"></i>Conversor de Unidades</h2>
+        <p class="text-muted">Convierte entre diferentes unidades de medida de forma rápida y precisa</p>
+    </div>
+
+    <!-- Selector de Categoría -->
+    <div class="categoria-selector mb-4">
+        <div class="row">
+            {% for categoria_id, categoria_data in categorias.items() %}
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-3">
+                <div class="categoria-card" data-categoria="{{ categoria_id }}" onclick="seleccionarCategoria('{{ categoria_id }}')">
+                    <div class="categoria-icon">
+                        <i class="{{ categoria_data.icono }}"></i>
+                    </div>
+                    <div class="categoria-nombre">{{ categoria_data.nombre }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Conversor Principal -->
+    <div class="conversor-main" id="conversorMain" style="display: none;">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i id="categoriaIcono" class="fas fa-ruler me-2"></i>
+                    <span id="categoriaNombre">Longitud</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Valor de Entrada -->
+                    <div class="col-md-6">
+                        <div class="conversion-input">
+                            <label class="form-label">Convertir de:</label>
+                            <div class="input-group">
+                                <input type="number" 
+                                       class="form-control form-control-lg" 
+                                       id="valorEntrada" 
+                                       placeholder="Ingrese valor"
+                                       step="any"
+                                       oninput="convertirEnTiempoReal()">
+                                <select class="form-select" id="unidadOrigen" onchange="convertirEnTiempoReal()">
+                                    <option value="">Seleccione unidad</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Valor de Salida -->
+                    <div class="col-md-6">
+                        <div class="conversion-output">
+                            <label class="form-label">Resultado:</label>
+                            <div class="input-group">
+                                <input type="text" 
+                                       class="form-control form-control-lg resultado-input" 
+                                       id="valorSalida" 
+                                       readonly>
+                                <select class="form-select" id="unidadDestino" onchange="convertirEnTiempoReal()">
+                                    <option value="">Seleccione unidad</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de Intercambio -->
+                <div class="text-center my-3">
+                    <button class="btn btn-outline-primary btn-sm" onclick="intercambiarUnidades()">
+                        <i class="fas fa-exchange-alt"></i> Intercambiar
+                    </button>
+                </div>
+
+                <!-- Resultado Detallado -->
+                <div id="resultadoDetallado" class="resultado-detallado" style="display: none;">
+                    <div class="alert alert-success">
+                        <div class="resultado-principal">
+                            <span id="textoResultado"></span>
+                        </div>
+                        <div class="resultado-formula" id="formulaConversion" style="display: none;">
+                            <small class="text-muted"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversiones Comunes -->
+                <div id="conversionesComunes" class="conversiones-comunes mt-4" style="display: none;">
+                    <h6>Conversiones comunes:</h6>
+                    <div class="row" id="listaConversiones">
+                        <!-- Se llenan dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instrucciones -->
+    <div class="instrucciones mt-4" id="instrucciones">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-info-circle text-primary mb-3" style="font-size: 3rem;"></i>
+                <h5>Seleccione una categoría para comenzar</h5>
+                <p class="text-muted">Elija el tipo de unidad que desea convertir de las opciones disponibles arriba.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.conversor-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.conversor-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.conversor-header h2 {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.categoria-selector {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.categoria-card {
+    background: #f8f9fa;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.categoria-card:hover {
+    background: #e9ecef;
+    border-color: #007bff;
+    transform: translateY(-2px);
+}
+
+.categoria-card.active {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+
+.categoria-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.categoria-nombre {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.conversor-main {
+    margin-top: 2rem;
+}
+
+.conversion-input, .conversion-output {
+    margin-bottom: 1rem;
+}
+
+.form-control-lg {
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+}
+
+.resultado-input {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.resultado-detallado {
+    margin-top: 1rem;
+}
+
+.resultado-principal {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.resultado-formula {
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+.conversiones-comunes {
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+}
+
+.conversion-comun {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.conversion-comun:hover {
+    background: #e9ecef;
+}
+
+.instrucciones {
+    margin-top: 2rem;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .categoria-card {
+        height: 80px;
+        padding: 0.5rem;
+    }
+    
+    .categoria-icon {
+        font-size: 1.2rem;
+    }
+    
+    .categoria-nombre {
+        font-size: 0.75rem;
+    }
+}
+</style>
+
+<script>
+let categoriaActual = null;
+let unidadesActuales = {};
+
+function seleccionarCategoria(categoria) {
+    // Actualizar UI
+    document.querySelectorAll('.categoria-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    document.querySelector(`[data-categoria="${categoria}"]`).classList.add('active');
+    
+    // Mostrar conversor principal
+    document.getElementById('conversorMain').style.display = 'block';
+    document.getElementById('instrucciones').style.display = 'none';
+    
+    // Actualizar categoría actual
+    categoriaActual = categoria;
+    
+    // Cargar unidades para esta categoría
+    cargarUnidades(categoria);
+}
+
+function cargarUnidades(categoria) {
+    fetch(`/api/obtener_unidades/${categoria}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                unidadesActuales = data.unidades;
+                
+                // Actualizar header
+                const categoriaData = {{ categorias | tojson }};
+                document.getElementById('categoriaIcono').className = categoriaData[categoria].icono + ' me-2';
+                document.getElementById('categoriaNombre').textContent = data.nombre_categoria;
+                
+                // Llenar selectores de unidades
+                const selectOrigen = document.getElementById('unidadOrigen');
+                const selectDestino = document.getElementById('unidadDestino');
+                
+                selectOrigen.innerHTML = '<option value="">Seleccione unidad</option>';
+                selectDestino.innerHTML = '<option value="">Seleccione unidad</option>';
+                
+                Object.keys(data.unidades).forEach(unidadId => {
+                    const unidad = data.unidades[unidadId];
+                    const option1 = new Option(unidad.nombre, unidadId);
+                    const option2 = new Option(unidad.nombre, unidadId);
+                    selectOrigen.add(option1);
+                    selectDestino.add(option2);
+                });
+                
+                // Seleccionar unidades por defecto
+                if (Object.keys(data.unidades).length >= 2) {
+                    const unidadKeys = Object.keys(data.unidades);
+                    selectOrigen.value = unidadKeys[0];
+                    selectDestino.value = unidadKeys[1];
+                }
+                
+                // Limpiar resultados
+                document.getElementById('valorEntrada').value = '';
+                document.getElementById('valorSalida').value = '';
+                document.getElementById('resultadoDetallado').style.display = 'none';
+                document.getElementById('conversionesComunes').style.display = 'none';
+                
+                // Generar conversiones comunes
+                generarConversionesComunes();
+            }
+        })
+        .catch(error => {
+            console.error('Error cargando unidades:', error);
+            mostrarNotificacion('Error al cargar unidades', 'danger');
+        });
+}
+
+function convertirEnTiempoReal() {
+    const valor = document.getElementById('valorEntrada').value;
+    const unidadOrigen = document.getElementById('unidadOrigen').value;
+    const unidadDestino = document.getElementById('unidadDestino').value;
+    
+    if (!valor || !unidadOrigen || !unidadDestino || !categoriaActual) {
+        document.getElementById('valorSalida').value = '';
+        document.getElementById('resultadoDetallado').style.display = 'none';
+        return;
+    }
+    
+    const datos = {
+        valor: parseFloat(valor),
+        categoria: categoriaActual,
+        unidad_origen: unidadOrigen,
+        unidad_destino: unidadDestino
+    };
+    
+    fetch('/api/convertir_avanzado', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datos)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('valorSalida').value = data.resultado_formateado;
+            document.getElementById('textoResultado').textContent = data.mensaje;
+            document.getElementById('resultadoDetallado').style.display = 'block';
+            
+            if (data.formula) {
+                document.getElementById('formulaConversion').style.display = 'block';
+                document.getElementById('formulaConversion').querySelector('small').textContent = data.formula;
+            } else {
+                document.getElementById('formulaConversion').style.display = 'none';
+            }
+        } else {
+            mostrarNotificacion(data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error en conversión:', error);
+        mostrarNotificacion('Error en la conversión', 'danger');
+    });
+}
+
+function intercambiarUnidades() {
+    const selectOrigen = document.getElementById('unidadOrigen');
+    const selectDestino = document.getElementById('unidadDestino');
+    const valorEntrada = document.getElementById('valorEntrada');
+    const valorSalida = document.getElementById('valorSalida');
+    
+    // Intercambiar unidades
+    const tempUnidad = selectOrigen.value;
+    selectOrigen.value = selectDestino.value;
+    selectDestino.value = tempUnidad;
+    
+    // Intercambiar valores
+    const tempValor = valorSalida.value;
+    valorEntrada.value = tempValor;
+    
+    // Reconvertir
+    convertirEnTiempoReal();
+}
+
+function generarConversionesComunes() {
+    if (!categoriaActual || !unidadesActuales) return;
+    
+    const listaConversiones = document.getElementById('listaConversiones');
+    listaConversiones.innerHTML = '';
+    
+    // Definir conversiones comunes por categoría
+    const conversionesComunes = {
+        'longitud': [
+            {valor: 1, origen: 'm', destino: 'ft', descripcion: '1 metro'},
+            {valor: 1, origen: 'km', destino: 'mi', descripcion: '1 kilómetro'},
+            {valor: 1, origen: 'in', destino: 'cm', descripcion: '1 pulgada'}
+        ],
+        'masa': [
+            {valor: 1, origen: 'kg', destino: 'lb', descripcion: '1 kilogramo'},
+            {valor: 1, origen: 'g', destino: 'oz', descripcion: '1 gramo'},
+            {valor: 1, origen: 't', destino: 'lb', descripcion: '1 tonelada'}
+        ],
+        'volumen': [
+            {valor: 1, origen: 'l', destino: 'gal', descripcion: '1 litro'},
+            {valor: 1, origen: 'ml', destino: 'fl_oz', descripcion: '1 mililitro'},
+            {valor: 1, origen: 'cup', destino: 'ml', descripcion: '1 taza'}
+        ],
+        'temperatura': [
+            {valor: 0, origen: 'c', destino: 'f', descripcion: '0°C'},
+            {valor: 100, origen: 'c', destino: 'f', descripcion: '100°C'},
+            {valor: 32, origen: 'f', destino: 'c', descripcion: '32°F'}
+        ]
+    };
+    
+    const conversiones = conversionesComunes[categoriaActual];
+    if (!conversiones) {
+        document.getElementById('conversionesComunes').style.display = 'none';
+        return;
+    }
+    
+    conversiones.forEach(conv => {
+        if (unidadesActuales[conv.origen] && unidadesActuales[conv.destino]) {
+            const datos = {
+                valor: conv.valor,
+                categoria: categoriaActual,
+                unidad_origen: conv.origen,
+                unidad_destino: conv.destino
+            };
+            
+            fetch('/api/convertir_avanzado', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const div = document.createElement('div');
+                    div.className = 'col-md-4 mb-2';
+                    div.innerHTML = `
+                        <div class="conversion-comun" onclick="aplicarConversionComun('${conv.origen}', '${conv.destino}', ${conv.valor})">
+                            <strong>${conv.descripcion}</strong><br>
+                            <small>${data.mensaje}</small>
+                        </div>
+                    `;
+                    listaConversiones.appendChild(div);
+                }
+            });
+        }
+    });
+    
+    document.getElementById('conversionesComunes').style.display = 'block';
+}
+
+function aplicarConversionComun(origen, destino, valor) {
+    document.getElementById('unidadOrigen').value = origen;
+    document.getElementById('unidadDestino').value = destino;
+    document.getElementById('valorEntrada').value = valor;
+    convertirEnTiempoReal();
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 5000);
+}
+
+// Inicializar con longitud por defecto
+document.addEventListener('DOMContentLoaded', function() {
+    // Opcional: seleccionar longitud por defecto
+    // seleccionarCategoria('longitud');
+});
+</script>
+
+{% endblock %}

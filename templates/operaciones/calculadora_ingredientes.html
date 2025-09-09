@@ -1,0 +1,670 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="calculadora-ingredientes-container fade-in-up">
+    <!-- Header -->
+    <div class="calculadora-header">
+        <h2><i class="fas fa-calculator me-2"></i>Estimador de Necesidades de Ingredientes</h2>
+        <p class="text-muted">Calcule las cantidades exactas de ingredientes necesarias para sus producciones</p>
+    </div>
+
+    <!-- Planificación de Producciones -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-industry me-2"></i>Planificación de Producciones</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div id="listaProducciones">
+                        <!-- Se llenan dinámicamente -->
+                    </div>
+                    <button class="btn btn-outline-primary" onclick="agregarProduccion()">
+                        <i class="fas fa-plus"></i> Agregar Producción
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <div class="resumen-planificacion">
+                        <h6>Resumen de Planificación</h6>
+                        <div class="stat-item">
+                            <span class="stat-label">Total Producciones:</span>
+                            <span class="stat-value" id="totalProducciones">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Cantidad Total:</span>
+                            <span class="stat-value" id="cantidadTotal">0 kg</span>
+                        </div>
+                        <hr>
+                        <button class="btn btn-success w-100" onclick="calcularNecesidades()" id="btnCalcular" disabled>
+                            <i class="fas fa-calculator"></i> Calcular Necesidades
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultados -->
+    <div id="resultadosCalculadora" style="display: none;">
+        <!-- Estadísticas Generales -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Estadísticas Generales</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number text-primary" id="totalIngredientesDiferentes">0</div>
+                            <div class="stat-label">Ingredientes Diferentes</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number text-success" id="cantidadTotalProducir">0</div>
+                            <div class="stat-label">kg Total a Producir</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number text-warning" id="costoTotalProduccion">$0</div>
+                            <div class="stat-label">Costo Total</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number text-info" id="costoPromedioKg">$0</div>
+                            <div class="stat-label">Costo Promedio/kg</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Necesidades Totales -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Necesidades Totales de Ingredientes</h5>
+                <button class="btn btn-outline-light btn-sm" onclick="exportarNecesidades()">
+                    <i class="fas fa-download"></i> Exportar
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaNecesidades">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Ingrediente</th>
+                                <th>Cantidad Total (kg)</th>
+                                <th>Precio Unitario</th>
+                                <th>Costo Total</th>
+                                <th>% del Costo</th>
+                                <th>Fórmulas que lo usan</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpoTablaNecesidades">
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalle por Producción -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Detalle por Producción</h5>
+            </div>
+            <div class="card-body">
+                <div id="detalleProduccion">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingCalculadora" class="text-center" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Calculando...</span>
+        </div>
+        <p class="mt-2">Calculando necesidades de ingredientes...</p>
+    </div>
+</div>
+
+<!-- Modal para Editar Precio -->
+<div class="modal fade" id="modalEditarPrecio" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Precio de Ingrediente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Ingrediente:</label>
+                    <input type="text" class="form-control" id="nombreIngredienteModal" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Precio Actual:</label>
+                    <input type="text" class="form-control" id="precioActualModal" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nuevo Precio ($/kg):</label>
+                    <input type="number" class="form-control" id="nuevoPrecioModal" step="0.01" min="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarNuevoPrecio()">Actualizar Precio</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.calculadora-ingredientes-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.calculadora-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.calculadora-header h2 {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.produccion-item {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.produccion-item .btn-remove {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.resumen-planificacion {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.stat-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.formula-badge {
+    display: inline-block;
+    background: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin: 0.1rem;
+}
+
+.detalle-produccion-item {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.detalle-produccion-header {
+    background: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px 6px 0 0;
+    margin: -1rem -1rem 1rem -1rem;
+    font-weight: 600;
+}
+
+.ingrediente-detalle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.ingrediente-detalle:last-child {
+    border-bottom: none;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    .resumen-planificacion {
+        margin-top: 1rem;
+    }
+}
+</style>
+
+<script>
+let formulasDisponibles = [];
+let contadorProducciones = 0;
+let necesidadesCalculadas = null;
+let ingredienteEditando = null;
+
+// Cargar datos iniciales
+document.addEventListener('DOMContentLoaded', function() {
+    cargarFormulasDisponibles();
+    agregarProduccion(); // Agregar una producción inicial
+});
+
+function cargarFormulasDisponibles() {
+    fetch('/api/obtener_formulas_ingredientes')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                formulasDisponibles = data.formulas;
+                actualizarSelectoresFormulas();
+            } else {
+                mostrarNotificacion('Error al cargar fórmulas', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarNotificacion('Error de conexión', 'danger');
+        });
+}
+
+function actualizarSelectoresFormulas() {
+    const selects = document.querySelectorAll('.formula-select');
+    selects.forEach(select => {
+        const valorActual = select.value;
+        select.innerHTML = '<option value="">Seleccione una fórmula</option>';
+        
+        formulasDisponibles.forEach(formula => {
+            const option = new Option(
+                `${formula.nombre} (${formula.num_ingredientes} ingredientes)`,
+                formula.id
+            );
+            select.add(option);
+        });
+        
+        if (valorActual) {
+            select.value = valorActual;
+        }
+    });
+}
+
+function agregarProduccion() {
+    contadorProducciones++;
+    const container = document.getElementById('listaProducciones');
+    
+    const div = document.createElement('div');
+    div.className = 'produccion-item';
+    div.id = `produccion_${contadorProducciones}`;
+    div.innerHTML = `
+        <button type="button" class="btn btn-outline-danger btn-sm btn-remove" onclick="removerProduccion(${contadorProducciones})">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Fórmula:</label>
+                <select class="form-select formula-select" onchange="actualizarResumen()">
+                    <option value="">Seleccione una fórmula</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Cantidad a Producir (kg):</label>
+                <input type="number" class="form-control cantidad-input" min="0" step="0.1" placeholder="0" oninput="actualizarResumen()">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Costo Est.:</label>
+                <input type="text" class="form-control costo-estimado" readonly placeholder="$0">
+            </div>
+        </div>
+        <div class="ingredientes-preview mt-2" style="display: none;">
+            <small class="text-muted">
+                <strong>Ingredientes:</strong> <span class="lista-ingredientes"></span>
+            </small>
+        </div>
+    `;
+    
+    container.appendChild(div);
+    actualizarSelectoresFormulas();
+    actualizarResumen();
+}
+
+function removerProduccion(id) {
+    const elemento = document.getElementById(`produccion_${id}`);
+    if (elemento) {
+        elemento.remove();
+        actualizarResumen();
+    }
+}
+
+function actualizarResumen() {
+    const producciones = document.querySelectorAll('.produccion-item');
+    let totalProducciones = 0;
+    let cantidadTotal = 0;
+    let costoTotal = 0;
+    
+    producciones.forEach(produccion => {
+        const formulaSelect = produccion.querySelector('.formula-select');
+        const cantidadInput = produccion.querySelector('.cantidad-input');
+        const costoEstimado = produccion.querySelector('.costo-estimado');
+        const ingredientesPreview = produccion.querySelector('.ingredientes-preview');
+        const listaIngredientes = produccion.querySelector('.lista-ingredientes');
+        
+        const formulaId = formulaSelect.value;
+        const cantidad = parseFloat(cantidadInput.value) || 0;
+        
+        if (formulaId && cantidad > 0) {
+            totalProducciones++;
+            cantidadTotal += cantidad;
+            
+            // Encontrar la fórmula seleccionada
+            const formula = formulasDisponibles.find(f => f.id == formulaId);
+            if (formula) {
+                // Calcular costo estimado
+                const costoFormula = (formula.costo_total || 0) * cantidad / 100;
+                costoTotal += costoFormula;
+                costoEstimado.value = `$${costoFormula.toFixed(2)}`;
+                
+                // Mostrar ingredientes
+                const ingredientesTexto = formula.ingredientes
+                    .slice(0, 3)
+                    .map(ing => `${ing.ingrediente_nombre} (${ing.porcentaje}%)`)
+                    .join(', ');
+                
+                listaIngredientes.textContent = ingredientesTexto + 
+                    (formula.ingredientes.length > 3 ? '...' : '');
+                ingredientesPreview.style.display = 'block';
+            }
+        } else {
+            costoEstimado.value = '$0';
+            ingredientesPreview.style.display = 'none';
+        }
+    });
+    
+    document.getElementById('totalProducciones').textContent = totalProducciones;
+    document.getElementById('cantidadTotal').textContent = `${cantidadTotal.toFixed(1)} kg`;
+    
+    const btnCalcular = document.getElementById('btnCalcular');
+    btnCalcular.disabled = totalProducciones === 0;
+}
+
+function calcularNecesidades() {
+    const producciones = [];
+    
+    document.querySelectorAll('.produccion-item').forEach(produccion => {
+        const formulaSelect = produccion.querySelector('.formula-select');
+        const cantidadInput = produccion.querySelector('.cantidad-input');
+        
+        const formulaId = formulaSelect.value;
+        const cantidad = parseFloat(cantidadInput.value) || 0;
+        
+        if (formulaId && cantidad > 0) {
+            producciones.push({
+                formula_id: parseInt(formulaId),
+                cantidad: cantidad
+            });
+        }
+    });
+    
+    if (producciones.length === 0) {
+        mostrarNotificacion('Agregue al menos una producción válida', 'warning');
+        return;
+    }
+    
+    document.getElementById('loadingCalculadora').style.display = 'block';
+    document.getElementById('resultadosCalculadora').style.display = 'none';
+    
+    fetch('/api/calcular_necesidades', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            producciones: producciones
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('loadingCalculadora').style.display = 'none';
+        
+        if (data.success) {
+            necesidadesCalculadas = data;
+            mostrarResultados(data);
+        } else {
+            mostrarNotificacion(data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        document.getElementById('loadingCalculadora').style.display = 'none';
+        console.error('Error:', error);
+        mostrarNotificacion('Error en el cálculo', 'danger');
+    });
+}
+
+function mostrarResultados(data) {
+    // Actualizar estadísticas generales
+    document.getElementById('totalIngredientesDiferentes').textContent = data.estadisticas.total_ingredientes_diferentes;
+    document.getElementById('cantidadTotalProducir').textContent = data.estadisticas.cantidad_total_producir.toFixed(1);
+    document.getElementById('costoTotalProduccion').textContent = `$${data.costo_total_produccion}`;
+    
+    const costoPromedio = data.estadisticas.cantidad_total_producir > 0 
+        ? data.costo_total_produccion / data.estadisticas.cantidad_total_producir 
+        : 0;
+    document.getElementById('costoPromedioKg').textContent = `$${costoPromedio.toFixed(2)}`;
+    
+    // Llenar tabla de necesidades
+    const tbody = document.getElementById('cuerpoTablaNecesidades');
+    tbody.innerHTML = '';
+    
+    data.necesidades_totales.forEach(necesidad => {
+        const porcentajeCosto = (necesidad.costo_total / data.costo_total_produccion * 100).toFixed(1);
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>${necesidad.nombre}</strong></td>
+            <td>${necesidad.cantidad_total} kg</td>
+            <td>$${necesidad.precio_unitario}</td>
+            <td><strong>$${necesidad.costo_total}</strong></td>
+            <td>${porcentajeCosto}%</td>
+            <td>
+                ${necesidad.formulas_que_lo_usan.map(f => 
+                    `<span class="formula-badge">${f.formula} (${f.cantidad.toFixed(2)} kg)</span>`
+                ).join('')}
+            </td>
+            <td>
+                <button class="btn btn-outline-primary btn-sm" onclick="editarPrecio(${necesidad.ingrediente_id}, '${necesidad.nombre}', ${necesidad.precio_unitario})">
+                    <i class="fas fa-edit"></i> Precio
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    // Mostrar detalle por producción
+    const detalleContainer = document.getElementById('detalleProduccion');
+    detalleContainer.innerHTML = '';
+    
+    data.resumen_producciones.forEach(produccion => {
+        const div = document.createElement('div');
+        div.className = 'detalle-produccion-item';
+        div.innerHTML = `
+            <div class="detalle-produccion-header">
+                ${produccion.formula} - ${produccion.cantidad_producir} kg (Costo: $${produccion.costo_total})
+            </div>
+            ${produccion.ingredientes.map(ing => `
+                <div class="ingrediente-detalle">
+                    <div>
+                        <strong>${ing.ingrediente}</strong> (${ing.porcentaje}%)
+                    </div>
+                    <div>
+                        ${ing.cantidad_necesaria} kg × $${ing.precio_unitario} = <strong>$${ing.costo_total}</strong>
+                    </div>
+                </div>
+            `).join('')}
+        `;
+        detalleContainer.appendChild(div);
+    });
+    
+    document.getElementById('resultadosCalculadora').style.display = 'block';
+}
+
+function editarPrecio(ingredienteId, nombre, precioActual) {
+    ingredienteEditando = ingredienteId;
+    document.getElementById('nombreIngredienteModal').value = nombre;
+    document.getElementById('precioActualModal').value = `$${precioActual}`;
+    document.getElementById('nuevoPrecioModal').value = precioActual;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modalEditarPrecio'));
+    modal.show();
+}
+
+function guardarNuevoPrecio() {
+    const nuevoPrecio = parseFloat(document.getElementById('nuevoPrecioModal').value);
+    
+    if (isNaN(nuevoPrecio) || nuevoPrecio < 0) {
+        mostrarNotificacion('Ingrese un precio válido', 'warning');
+        return;
+    }
+    
+    fetch('/api/actualizar_precio_ingrediente', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ingrediente_id: ingredienteEditando,
+            nuevo_precio: nuevoPrecio
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion('Precio actualizado correctamente', 'success');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarPrecio'));
+            modal.hide();
+            
+            // Recalcular si hay resultados
+            if (necesidadesCalculadas) {
+                calcularNecesidades();
+            }
+        } else {
+            mostrarNotificacion(data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error al actualizar precio', 'danger');
+    });
+}
+
+function exportarNecesidades() {
+    if (!necesidadesCalculadas) {
+        mostrarNotificacion('No hay datos para exportar', 'warning');
+        return;
+    }
+    
+    // Crear CSV
+    let csv = 'Ingrediente,Cantidad Total (kg),Precio Unitario,Costo Total,% del Costo\n';
+    
+    necesidadesCalculadas.necesidades_totales.forEach(necesidad => {
+        const porcentajeCosto = (necesidad.costo_total / necesidadesCalculadas.costo_total_produccion * 100).toFixed(1);
+        csv += `"${necesidad.nombre}",${necesidad.cantidad_total},${necesidad.precio_unitario},${necesidad.costo_total},${porcentajeCosto}%\n`;
+    });
+    
+    // Descargar archivo
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `necesidades_ingredientes_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    mostrarNotificacion('Archivo exportado correctamente', 'success');
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 5000);
+}
+</script>
+
+{% endblock %}

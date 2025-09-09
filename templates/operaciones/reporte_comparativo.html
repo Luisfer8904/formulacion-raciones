@@ -1,0 +1,557 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<div class="reporte-comparativo-container fade-in-up">
+    <!-- Header -->
+    <div class="reporte-header">
+        <h2><i class="fas fa-balance-scale me-2"></i>Reporte Comparativo de Fórmulas</h2>
+        <p class="text-muted">Compare la composición nutricional entre dos fórmulas diferentes</p>
+    </div>
+
+    <!-- Selector de Fórmulas -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-flask me-2"></i>Selección de Fórmulas</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Fórmula A:</label>
+                    <select class="form-select" id="formula1Select" onchange="cargarComposicion(1)">
+                        <option value="">Seleccione la primera fórmula</option>
+                    </select>
+                    <div id="infoFormula1" class="formula-info mt-2" style="display: none;">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <span id="detallesFormula1"></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Fórmula B:</label>
+                    <select class="form-select" id="formula2Select" onchange="cargarComposicion(2)">
+                        <option value="">Seleccione la segunda fórmula</option>
+                    </select>
+                    <div id="infoFormula2" class="formula-info mt-2" style="display: none;">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <span id="detallesFormula2"></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selector de Nutrientes -->
+    <div class="card shadow-sm mb-4" id="selectorNutrientes" style="display: none;">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Nutrientes a Comparar</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div id="listaCheckboxNutrientes" class="nutrientes-checkbox-grid">
+                        <!-- Se llenan dinámicamente -->
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="acciones-nutrientes">
+                        <button class="btn btn-outline-primary btn-sm mb-2" onclick="seleccionarTodosNutrientes()">
+                            <i class="fas fa-check-double"></i> Seleccionar Todos
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm mb-2" onclick="limpiarSeleccionNutrientes()">
+                            <i class="fas fa-times"></i> Limpiar Selección
+                        </button>
+                        <button class="btn btn-primary" onclick="compararFormulas()" id="btnComparar" disabled>
+                            <i class="fas fa-balance-scale"></i> Comparar Fórmulas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultados de Comparación -->
+    <div id="resultadosComparacion" style="display: none;">
+        <!-- Resumen -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Resumen de Comparación</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number text-primary" id="nutrientesComparados">0</div>
+                            <div class="stat-label">Nutrientes Comparados</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number text-success" id="formula1Mejor">0</div>
+                            <div class="stat-label">Fórmula A Superior</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number text-warning" id="formula2Mejor">0</div>
+                            <div class="stat-label">Fórmula B Superior</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number text-secondary" id="nutrientesIguales">0</div>
+                            <div class="stat-label">Valores Similares</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Comparación Detallada -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i>Comparación Detallada</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaComparacion">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Nutriente</th>
+                                <th>Fórmula A</th>
+                                <th>Fórmula B</th>
+                                <th>Diferencia</th>
+                                <th>% Diferencia</th>
+                                <th>Mejor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpoTablaComparacion">
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingComparacion" class="text-center" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Comparando fórmulas...</p>
+    </div>
+</div>
+
+<style>
+.reporte-comparativo-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.reporte-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.reporte-header h2 {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.formula-info {
+    background: #f8f9fa;
+    border-radius: 4px;
+    padding: 0.5rem;
+    border-left: 3px solid #007bff;
+}
+
+.nutrientes-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 1rem;
+}
+
+.nutriente-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.nutriente-checkbox:hover {
+    background-color: #f8f9fa;
+}
+
+.nutriente-checkbox input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.acciones-nutrientes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-card {
+    padding: 1rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.diferencia-positiva {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.diferencia-negativa {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.diferencia-neutral {
+    color: #6c757d;
+}
+
+.mejor-formula-a {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.mejor-formula-b {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.formulas-iguales {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nutrientes-checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .acciones-nutrientes {
+        margin-top: 1rem;
+    }
+    
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+
+<script>
+let formulasDisponibles = [];
+let nutrientesDisponibles = [];
+let composicionFormula1 = null;
+let composicionFormula2 = null;
+
+// Cargar datos iniciales
+document.addEventListener('DOMContentLoaded', function() {
+    cargarFormulasDisponibles();
+    cargarNutrientesDisponibles();
+});
+
+function cargarFormulasDisponibles() {
+    fetch('/api/obtener_formulas_usuario')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                formulasDisponibles = data.formulas;
+                llenarSelectoresFormulas();
+            } else {
+                mostrarNotificacion('Error al cargar fórmulas', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarNotificacion('Error de conexión', 'danger');
+        });
+}
+
+function cargarNutrientesDisponibles() {
+    fetch('/api/obtener_nutrientes_disponibles')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                nutrientesDisponibles = data.nutrientes;
+                llenarCheckboxNutrientes();
+            } else {
+                mostrarNotificacion('Error al cargar nutrientes', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarNotificacion('Error de conexión', 'danger');
+        });
+}
+
+function llenarSelectoresFormulas() {
+    const select1 = document.getElementById('formula1Select');
+    const select2 = document.getElementById('formula2Select');
+    
+    // Limpiar opciones existentes (excepto la primera)
+    select1.innerHTML = '<option value="">Seleccione la primera fórmula</option>';
+    select2.innerHTML = '<option value="">Seleccione la segunda fórmula</option>';
+    
+    formulasDisponibles.forEach(formula => {
+        const option1 = new Option(
+            `${formula.nombre} (${formula.num_ingredientes} ingredientes)`,
+            formula.id
+        );
+        const option2 = new Option(
+            `${formula.nombre} (${formula.num_ingredientes} ingredientes)`,
+            formula.id
+        );
+        
+        select1.add(option1);
+        select2.add(option2);
+    });
+}
+
+function llenarCheckboxNutrientes() {
+    const container = document.getElementById('listaCheckboxNutrientes');
+    container.innerHTML = '';
+    
+    nutrientesDisponibles.forEach(nutriente => {
+        const div = document.createElement('div');
+        div.className = 'nutriente-checkbox';
+        div.innerHTML = `
+            <input type="checkbox" id="nutriente_${nutriente.id}" value="${nutriente.nombre}" onchange="actualizarBotonComparar()">
+            <label for="nutriente_${nutriente.id}">${nutriente.nombre} (${nutriente.unidad})</label>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function cargarComposicion(numeroFormula) {
+    const selectId = `formula${numeroFormula}Select`;
+    const infoId = `infoFormula${numeroFormula}`;
+    const detallesId = `detallesFormula${numeroFormula}`;
+    
+    const formulaId = document.getElementById(selectId).value;
+    
+    if (!formulaId) {
+        document.getElementById(infoId).style.display = 'none';
+        if (numeroFormula === 1) composicionFormula1 = null;
+        else composicionFormula2 = null;
+        verificarFormulasSeleccionadas();
+        return;
+    }
+    
+    fetch(`/api/obtener_composicion_formula/${formulaId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (numeroFormula === 1) {
+                    composicionFormula1 = data;
+                } else {
+                    composicionFormula2 = data;
+                }
+                
+                // Mostrar información de la fórmula
+                document.getElementById(detallesId).textContent = 
+                    `${data.ingredientes.length} ingredientes - Creada: ${new Date(data.formula.fecha_creacion || Date.now()).toLocaleDateString()}`;
+                document.getElementById(infoId).style.display = 'block';
+                
+                verificarFormulasSeleccionadas();
+            } else {
+                mostrarNotificacion(data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarNotificacion('Error al cargar composición', 'danger');
+        });
+}
+
+function verificarFormulasSeleccionadas() {
+    const selectorNutrientes = document.getElementById('selectorNutrientes');
+    
+    if (composicionFormula1 && composicionFormula2) {
+        selectorNutrientes.style.display = 'block';
+        actualizarBotonComparar();
+    } else {
+        selectorNutrientes.style.display = 'none';
+        document.getElementById('resultadosComparacion').style.display = 'none';
+    }
+}
+
+function seleccionarTodosNutrientes() {
+    const checkboxes = document.querySelectorAll('#listaCheckboxNutrientes input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+    actualizarBotonComparar();
+}
+
+function limpiarSeleccionNutrientes() {
+    const checkboxes = document.querySelectorAll('#listaCheckboxNutrientes input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    actualizarBotonComparar();
+}
+
+function actualizarBotonComparar() {
+    const checkboxes = document.querySelectorAll('#listaCheckboxNutrientes input[type="checkbox"]:checked');
+    const btnComparar = document.getElementById('btnComparar');
+    
+    btnComparar.disabled = checkboxes.length === 0 || !composicionFormula1 || !composicionFormula2;
+}
+
+function compararFormulas() {
+    const checkboxes = document.querySelectorAll('#listaCheckboxNutrientes input[type="checkbox"]:checked');
+    const nutrientesSeleccionados = Array.from(checkboxes).map(cb => cb.value);
+    
+    if (nutrientesSeleccionados.length === 0) {
+        mostrarNotificacion('Seleccione al menos un nutriente', 'warning');
+        return;
+    }
+    
+    document.getElementById('loadingComparacion').style.display = 'block';
+    document.getElementById('resultadosComparacion').style.display = 'none';
+    
+    const datos = {
+        formula1_id: document.getElementById('formula1Select').value,
+        formula2_id: document.getElementById('formula2Select').value,
+        nutrientes_seleccionados: nutrientesSeleccionados
+    };
+    
+    fetch('/api/comparar_formulas', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datos)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('loadingComparacion').style.display = 'none';
+        
+        if (data.success) {
+            mostrarResultadosComparacion(data.comparacion);
+        } else {
+            mostrarNotificacion(data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        document.getElementById('loadingComparacion').style.display = 'none';
+        console.error('Error:', error);
+        mostrarNotificacion('Error en la comparación', 'danger');
+    });
+}
+
+function mostrarResultadosComparacion(comparacion) {
+    // Actualizar resumen
+    document.getElementById('nutrientesComparados').textContent = comparacion.resumen.nutrientes_comparados;
+    document.getElementById('formula1Mejor').textContent = comparacion.resumen.formula1_mejor;
+    document.getElementById('formula2Mejor').textContent = comparacion.resumen.formula2_mejor;
+    document.getElementById('nutrientesIguales').textContent = comparacion.resumen.iguales;
+    
+    // Llenar tabla de comparación
+    const tbody = document.getElementById('cuerpoTablaComparacion');
+    tbody.innerHTML = '';
+    
+    Object.keys(comparacion.diferencias).forEach(nutriente => {
+        const formula1Data = comparacion.formula1.nutrientes[nutriente];
+        const formula2Data = comparacion.formula2.nutrientes[nutriente];
+        const diferencia = comparacion.diferencias[nutriente];
+        
+        const row = document.createElement('tr');
+        
+        // Determinar cuál es mejor
+        let mejorTexto = 'Similar';
+        let claseRow = 'formulas-iguales';
+        
+        if (Math.abs(diferencia.diferencia_absoluta) > 0.001) {
+            if (diferencia.diferencia_absoluta > 0) {
+                mejorTexto = 'Fórmula B';
+                claseRow = 'mejor-formula-b';
+            } else {
+                mejorTexto = 'Fórmula A';
+                claseRow = 'mejor-formula-a';
+            }
+        }
+        
+        row.className = claseRow;
+        row.innerHTML = `
+            <td><strong>${nutriente}</strong></td>
+            <td>${formula1Data.valor} ${formula1Data.unidad}</td>
+            <td>${formula2Data.valor} ${formula2Data.unidad}</td>
+            <td class="${diferencia.diferencia_absoluta > 0 ? 'diferencia-positiva' : diferencia.diferencia_absoluta < 0 ? 'diferencia-negativa' : 'diferencia-neutral'}">
+                ${diferencia.diferencia_absoluta > 0 ? '+' : ''}${diferencia.diferencia_absoluta} ${diferencia.unidad}
+            </td>
+            <td class="${diferencia.diferencia_porcentual > 0 ? 'diferencia-positiva' : diferencia.diferencia_porcentual < 0 ? 'diferencia-negativa' : 'diferencia-neutral'}">
+                ${diferencia.diferencia_porcentual > 0 ? '+' : ''}${diferencia.diferencia_porcentual}%
+            </td>
+            <td><strong>${mejorTexto}</strong></td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+    
+    document.getElementById('resultadosComparacion').style.display = 'block';
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 5000);
+}
+</script>
+
+{% endblock %}
