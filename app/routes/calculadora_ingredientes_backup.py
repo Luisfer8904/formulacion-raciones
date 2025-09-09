@@ -47,10 +47,10 @@ def obtener_formulas_ingredientes():
         for formula_raw in formulas_raw:
             # Convertir formula a diccionario seguro
             formula = {
-                'id': int(formula_raw['id']),
-                'nombre': str(formula_raw['nombre']),
-                'tipo_animales': str(formula_raw['tipo_animales']) if formula_raw['tipo_animales'] else '',
-                'etapa_produccion': str(formula_raw['etapa_produccion']) if formula_raw['etapa_produccion'] else '',
+                'id': formula_raw['id'],
+                'nombre': formula_raw['nombre'],
+                'tipo_animales': formula_raw.get('tipo_animales', ''),
+                'etapa_produccion': formula_raw.get('etapa_produccion', ''),
                 'fecha_creacion': formula_raw['fecha_creacion'].isoformat() if formula_raw['fecha_creacion'] else None,
                 'total_ingredientes': int(formula_raw['total_ingredientes']) if formula_raw['total_ingredientes'] else 0
             }
@@ -128,7 +128,7 @@ def calcular_necesidades():
             
             # Verificar que la fórmula pertenece al usuario
             cursor.execute("""
-                SELECT id, nombre FROM mezclas 
+                SELECT id, nombre, costo_total FROM mezclas 
                 WHERE id = %s AND usuario_id = %s
             """, (formula_id, session['user_id']))
             
@@ -152,10 +152,10 @@ def calcular_necesidades():
             costo_formula = 0
             
             for ingrediente in ingredientes_formula:
-                porcentaje = float(ingrediente['porcentaje']) if ingrediente['porcentaje'] else 0.0
-                precio_kg = float(ingrediente['precio']) if ingrediente['precio'] else 0.0
-                nombre_ingrediente = str(ingrediente['ingrediente_nombre'])
-                ingrediente_id = int(ingrediente['id'])
+                porcentaje = float(ingrediente['porcentaje'])
+                precio_kg = float(ingrediente['precio'] or 0)
+                nombre_ingrediente = ingrediente['ingrediente_nombre']
+                ingrediente_id = ingrediente['id']
                 
                 # Calcular cantidad necesaria
                 cantidad_necesaria = (cantidad_producir * porcentaje) / 100
@@ -175,7 +175,7 @@ def calcular_necesidades():
                 necesidades_totales[ingrediente_id]['cantidad_total'] += cantidad_necesaria
                 necesidades_totales[ingrediente_id]['costo_total'] += costo_ingrediente
                 necesidades_totales[ingrediente_id]['formulas_que_lo_usan'].append({
-                    'formula': str(formula['nombre']),
+                    'formula': formula['nombre'],
                     'cantidad': cantidad_necesaria,
                     'porcentaje': porcentaje
                 })
@@ -191,7 +191,7 @@ def calcular_necesidades():
             costo_total_produccion += costo_formula
             
             resumen_producciones.append({
-                'formula': str(formula['nombre']),
+                'formula': formula['nombre'],
                 'cantidad_producir': cantidad_producir,
                 'ingredientes': necesidades_formula,
                 'costo_total': round(costo_formula, 2)

@@ -63,6 +63,25 @@
         </div>
     </div>
     
+    <!-- Temporalmente oculto para presentación -->
+    <!--
+    <div class="summary-card" onclick="navegarA('{{ url_for('reportes_mejorado_bp.reportes') }}')">
+        <div class="summary-card-content">
+            <div class="summary-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="summary-info">
+                <h4 id="total-reportes">{{ total_reportes }}</h4>
+                <small>Reportes</small>
+                <div class="summary-trend">
+                    <i class="fas fa-arrow-up text-success"></i>
+                    <span class="text-success">+1 hoy</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    -->
+    
     <div class="summary-card" onclick="navegarA('{{ url_for('nutrientes_bp.ver_nutrientes') }}')">
         <div class="summary-card-content">
             <div class="summary-icon">
@@ -115,6 +134,7 @@
                         </a>
                     </div>
 
+
                     <div class="col-md-6">
                         <a href="{{ url_for('mezclas_bp.ver_mezclas') }}" class="nav-card-modern">
                             <div class="nav-card-icon-modern bg-info">
@@ -129,6 +149,8 @@
                     </div>
 
                     <!-- Herramientas - Disponible para todos los planes -->
+                    {% set user_plan = session.get('tipo_plan', 'basico') %}
+                    {% if user_plan in ['basico', 'personal', 'profesional'] %}
                     <div class="col-md-6">
                         <a href="{{ url_for('herramientas_bp.herramientas') }}" class="nav-card-modern">
                             <div class="nav-card-icon-modern bg-secondary">
@@ -141,6 +163,39 @@
                             <i class="fas fa-arrow-right nav-card-arrow"></i>
                         </a>
                     </div>
+                    {% endif %}
+
+                    <!-- Reportes - Disponible para personal y profesional -->
+                    {% if user_plan in ['personal', 'profesional'] %}
+                    <div class="col-md-6">
+                        <a href="{{ url_for('reportes_mejorado_bp.reportes') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-warning">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Generador de Reportes</h6>
+                                <p class="mb-0">Análisis y comparaciones detalladas</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Planificador de Producción - Solo para profesional -->
+                    {% if user_plan == 'profesional' %}
+                    <div class="col-md-6">
+                        <a href="{{ url_for('planificador_bp.planificador') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-danger">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Planificador de Producción</h6>
+                                <p class="mb-0">Gestión de bachadas e inventarios</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
+                    {% endif %}
 
                     <!-- Administrador - Solo para admins -->
                     {% if session.get('rol') == 'admin' %}
@@ -157,6 +212,22 @@
                         </a>
                     </div>
                     {% endif %}
+
+                    <!-- Temporalmente oculto para presentación -->
+                    <!--
+                    <div class="col-md-6">
+                        <a href="{{ url_for('planificador_bp.planificador') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-danger">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Planificador de Producción</h6>
+                                <p class="mb-0">Gestión de bachadas e inventarios</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
+                    -->
                 </div>
             </div>
         </div>
@@ -186,8 +257,8 @@
                     <div class="status-item">
                         <div class="status-indicator bg-warning"></div>
                         <div class="status-info">
-                            <small class="text-muted">Herramientas</small>
-                            <div class="fw-bold text-warning">Actualizadas</div>
+                            <small class="text-muted">Reportes PDF</small>
+                            <div class="fw-bold text-warning">En Desarrollo</div>
                         </div>
                     </div>
                 </div>
