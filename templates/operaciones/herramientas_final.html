@@ -153,19 +153,8 @@
                         <div class="col-md-6">
                             <h6>Cálculos Nutricionales con Materia Seca</h6>
                             <div class="mb-3">
-                                <label class="form-label">Seleccionar Nutriente</label>
-                                <select class="form-select" id="tipoNutriente">
-                                    <option value="proteina">Proteína Cruda (%)</option>
-                                    <option value="grasa">Grasa Cruda (%)</option>
-                                    <option value="fibra">Fibra Cruda (%)</option>
-                                    <option value="cenizas">Cenizas (%)</option>
-                                    <option value="carbohidratos">Carbohidratos (%)</option>
-                                    <option value="energia">Energía Metabolizable (Mcal/kg)</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Porcentaje del Nutriente (%)</label>
-                                <input type="number" class="form-control" id="porcentajeNutriente" placeholder="% Nutriente" value="22">
+                                <label class="form-label">Proteína Cruda (%)</label>
+                                <input type="number" class="form-control" id="proteina" placeholder="% Proteína" value="22">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Materia Seca (%)</label>
@@ -175,7 +164,7 @@
                                 <label class="form-label">Cantidad Total (kg)</label>
                                 <input type="number" class="form-control" id="cantidad" placeholder="Cantidad en kg" value="3">
                             </div>
-                            <button class="btn btn-success" onclick="calcularNutrienteConMS()">Calcular Nutriente Total</button>
+                            <button class="btn btn-success" onclick="calcularProteinaConMS()">Calcular Proteína Total</button>
                             <div id="resultadoProteina" class="mt-2"></div>
                         </div>
                     </div>
@@ -379,69 +368,7 @@ function abrirConversor() {
 }
 
 function abrirCalculadoraAportes() {
-    // Usar la nueva calculadora mejorada
-    abrirCalculadoraAportesMejorada();
-}
-
-function calcularEjemplo() {
-    // Obtener valores del modal de aportes (con IDs únicos)
-    const consumoInput = document.getElementById('consumoAnimalAportes');
-    const materiaSecaInput = document.getElementById('materiaSecaDietaAportes');
-    
-    const consumo = consumoInput ? parseFloat(consumoInput.value) || 3 : 3;
-    const materiaSeca = materiaSecaInput ? parseFloat(materiaSecaInput.value) || 88 : 88;
-    const proteina = 22; // Ejemplo fijo
-    
-    console.log('Calculando con valores:', { consumo, materiaSeca, proteina });
-    
-    // Cálculo paso a paso
-    const consumoMS = consumo * (materiaSeca / 100);
-    const proteinaTotal = consumoMS * (proteina / 100);
-    
-    const resultadoHtml = `
-        <div class="alert alert-success">
-            <h6><strong>Resultado del Cálculo</strong></h6>
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Datos de Entrada:</strong><br>
-                    • Consumo: ${consumo} kg/día<br>
-                    • Materia Seca: ${materiaSeca}%<br>
-                    • Proteína en dieta: ${proteina}%
-                </div>
-                <div class="col-md-6">
-                    <strong>Cálculo:</strong><br>
-                    1. MS: ${consumo} kg × ${materiaSeca}% = ${consumoMS.toFixed(4)} kg<br>
-                    2. Proteína: ${consumoMS.toFixed(4)} kg × ${proteina}% = <strong>${proteinaTotal.toFixed(4)} kg</strong>
-                </div>
-            </div>
-            <hr>
-            <div class="text-center">
-                <h5 class="text-success">Aporte de Proteína: <strong>${proteinaTotal.toFixed(4)} kg/día</strong></h5>
-                <small class="text-muted">Este es el aporte diario de proteína que recibirá el animal</small>
-            </div>
-        </div>
-        
-        <div class="alert alert-info">
-            <strong>Fórmula Utilizada:</strong><br>
-            Aporte Nutriente = Consumo × (% Materia Seca / 100) × (% Nutriente / 100)<br>
-            <small>Esta es la misma fórmula utilizada en el formulador principal</small>
-        </div>
-        
-        <div class="alert alert-warning">
-            <strong>Verificación del Ejemplo Solicitado:</strong><br>
-            Con los valores: 3kg × 88% × 22% = <strong>0.5808 kg</strong> ✅<br>
-            <small>Este resultado coincide exactamente con el ejemplo solicitado</small>
-        </div>
-    `;
-    
-    const resultadoDiv = document.getElementById('resultadoCalculoAportes');
-    if (resultadoDiv) {
-        resultadoDiv.innerHTML = resultadoHtml;
-        console.log('Resultado mostrado correctamente');
-    } else {
-        console.error('No se encontró el elemento resultadoCalculoAportes');
-        alert('Error: No se pudo mostrar el resultado');
-    }
+    mostrarNotificacion('Calculadora de Aportes Nutricionales - Funcionalidad mejorada con materia seca disponible', 'success');
 }
 
 function convertirUnidades() {
@@ -475,49 +402,28 @@ function convertirUnidades() {
         </div>`;
 }
 
-function calcularNutrienteConMS() {
-    const tipoNutriente = document.getElementById('tipoNutriente').value;
-    const porcentajeNutriente = parseFloat(document.getElementById('porcentajeNutriente').value);
+function calcularProteinaConMS() {
+    const proteina = parseFloat(document.getElementById('proteina').value);
     const materiaSeca = parseFloat(document.getElementById('materiaSeca').value);
     const cantidad = parseFloat(document.getElementById('cantidad').value);
     
-    if (!porcentajeNutriente || !materiaSeca || !cantidad) {
+    if (!proteina || !materiaSeca || !cantidad) {
         document.getElementById('resultadoProteina').innerHTML = 
             '<div class="alert alert-warning">Por favor complete todos los campos</div>';
         return;
     }
     
-    // Obtener nombre del nutriente
-    const nombresNutrientes = {
-        'proteina': 'Proteína Cruda',
-        'grasa': 'Grasa Cruda',
-        'fibra': 'Fibra Cruda',
-        'cenizas': 'Cenizas',
-        'carbohidratos': 'Carbohidratos',
-        'energia': 'Energía Metabolizable'
-    };
-    
-    const nombreNutriente = nombresNutrientes[tipoNutriente];
-    const unidad = tipoNutriente === 'energia' ? 'Mcal' : 'kg';
-    
-    // Cálculo como en el formulador: Cantidad * %MS * %Nutriente
+    // Cálculo como en el formulador: Cantidad * %MS * %Proteína
     const cantidadMS = cantidad * (materiaSeca / 100);
-    const nutrienteTotal = tipoNutriente === 'energia' 
-        ? cantidadMS * porcentajeNutriente  // Para energía no se divide por 100
-        : cantidadMS * (porcentajeNutriente / 100);
+    const proteinaTotal = cantidadMS * (proteina / 100);
     
     document.getElementById('resultadoProteina').innerHTML = 
         `<div class="alert alert-success">
             <strong>Cálculo paso a paso:</strong><br>
             1. Materia Seca: ${cantidad} kg × ${materiaSeca}% = ${cantidadMS.toFixed(4)} kg<br>
-            2. ${nombreNutriente}: ${cantidadMS.toFixed(4)} kg × ${porcentajeNutriente}${tipoNutriente === 'energia' ? ' Mcal/kg' : '%'} = <strong>${nutrienteTotal.toFixed(4)} ${unidad}</strong><br>
-            <small class="text-muted">Ejemplo: ${cantidad} kg de alimento con ${materiaSeca}% MS y ${porcentajeNutriente}${tipoNutriente === 'energia' ? ' Mcal/kg' : '%'} de ${nombreNutriente.toLowerCase()}</small>
+            2. Proteína Total: ${cantidadMS.toFixed(4)} kg × ${proteina}% = <strong>${proteinaTotal.toFixed(4)} kg</strong><br>
+            <small class="text-muted">Ejemplo: ${cantidad} kg de alimento con ${materiaSeca}% MS y ${proteina}% proteína</small>
         </div>`;
-}
-
-// Mantener la función original para compatibilidad
-function calcularProteinaConMS() {
-    calcularNutrienteConMS();
 }
 
 function convertirUnidadesModal() {
@@ -584,8 +490,4 @@ function mostrarNotificacion(mensaje, tipo) {
     }, 3000);
 }
 </script>
-
-<!-- Script para calculadora de aportes mejorada -->
-<script src="{{ url_for('static', filename='js/calculadora-aportes-mejorada.js') }}"></script>
-
 {% endblock %}
