@@ -88,6 +88,14 @@ function optimizarMezcla() {
   };
   console.log("🟢 Datos enviados a backend (optimizarMezcla):", data);
 
+  // Mostrar indicador de carga
+  const btnOptimizar = document.querySelector('button[onclick="optimizarMezcla()"]');
+  const textoOriginal = btnOptimizar ? btnOptimizar.textContent : '';
+  if (btnOptimizar) {
+    btnOptimizar.disabled = true;
+    btnOptimizar.textContent = '⏳ Optimizando...';
+  }
+
   fetch("/optimizar_formulacion", {
     method: "POST",
     headers: {'Content-Type': 'application/json'},
@@ -96,20 +104,67 @@ function optimizarMezcla() {
   .then(response => response.json())
   .then(data => {
     console.log("🔍 Respuesta del backend:", data);
-    if (!data.resultado) {
-      alert(data.error || "No se pudo optimizar la mezcla.");
-      return;
+    
+    // Restaurar botón
+    if (btnOptimizar) {
+      btnOptimizar.disabled = false;
+      btnOptimizar.textContent = textoOriginal;
     }
-    const inclusiones = data.resultado;
-    filas.forEach((fila, i) => {
-      if (!fila.querySelector("select").value) return;
-      fila.querySelector('input[name^="inclusion_"]').value = formatearInclusion(inclusiones[i].inclusion);
-      actualizarValores(fila.querySelector('input[name^="inclusion_"]'));
-    });
-    calcularMinerales();
+    
+    // Procesar respuesta con el nuevo sistema de notificaciones
+    if (typeof notificaciones !== 'undefined') {
+      notificaciones.procesarRespuestaOptimizacion(data);
+    }
+    
+    // Si hay resultado exitoso, actualizar la tabla
+    if (data.resultado && data.exito) {
+      const inclusiones = data.resultado;
+      filas.forEach((fila, i) => {
+        if (!fila.querySelector("select").value) return;
+        fila.querySelector('input[name^="inclusion_"]').value = formatearInclusion(inclusiones[i].inclusion);
+        actualizarValores(fila.querySelector('input[name^="inclusion_"]'));
+      });
+      calcularMinerales();
+    } else if (data.validacion) {
+      // Mostrar validación específica
+      if (typeof notificaciones !== 'undefined') {
+        notificaciones.mostrarValidacion(data.validacion);
+      } else {
+        // Fallback para navegadores sin el sistema de notificaciones
+        alert(data.error || "No se pudo optimizar la mezcla.");
+      }
+    } else if (!data.resultado) {
+      // Fallback para errores sin validación
+      if (typeof notificaciones !== 'undefined') {
+        notificaciones.mostrarToast(
+          '❌ Error',
+          data.error || "No se pudo optimizar la mezcla.",
+          'error'
+        );
+      } else {
+        alert(data.error || "No se pudo optimizar la mezcla.");
+      }
+    }
   })
   .catch(error => {
     console.error('Error en optimizarMezcla:', error);
-    alert('No se pudo optimizar la mezcla.');
+    
+    // Restaurar botón
+    if (btnOptimizar) {
+      btnOptimizar.disabled = false;
+      btnOptimizar.textContent = textoOriginal;
+    }
+    
+    // Mostrar error de conexión
+    if (typeof notificaciones !== 'undefined') {
+      notificaciones.mostrarToast(
+        '🔌 Error de Conexión',
+        'No se pudo conectar con el servidor. Verifique su conexión a internet.',
+        'error',
+        7000
+      );
+    } else {
+      alert('No se pudo optimizar la mezcla. Error de conexión.');
+    }
   });
 }

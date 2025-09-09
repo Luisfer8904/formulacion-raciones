@@ -617,23 +617,156 @@ def optimizar_formulacion():
             causas_posibles.append("Todos los ingredientes tienen costo cero")
             sugerencias_especificas.append("Defina costos realistas para los ingredientes")
         
+        # ANÁLISIS DETALLADO DE NUTRIENTES FALTANTES Y APORTES ACTUALES
+        print("\n" + "="*60)
+        print("🔍 ANÁLISIS DETALLADO DE FALLA EN OPTIMIZACIÓN")
+        print("="*60)
+        
+        # Calcular aportes actuales con distribución uniforme
+        distribucion_uniforme = [100.0 / len(ingredientes)] * len(ingredientes)
+        aportes_actuales = {}
+        nutrientes_deficientes = []
+        nutrientes_sin_aporte = []
+        
+        for i, req in enumerate(requerimientos):
+            nombre_nutriente = req['nombre']
+            req_min = req.get('min')
+            req_max = req.get('max')
+            
+            # Calcular aporte actual con distribución uniforme
+            aporte_total = 0.0
+            ingredientes_que_aportan = []
+            
+            for j, ing in enumerate(ingredientes):
+                nutrientes = ing.get('aporte', {})
+                ms = float(ing.get('ms', 100))
+                
+                # Obtener valor base del nutriente
+                if isinstance(nutrientes.get(nombre_nutriente), dict):
+                    valor_base = float(nutrientes.get(nombre_nutriente, {}).get('valor', 0))
+                else:
+                    valor_base = float(nutrientes.get(nombre_nutriente, 0))
+                
+                # Calcular aporte según el tipo de optimización
+                if tipo_optimizacion == 'base_seca':
+                    aporte_ingrediente = distribucion_uniforme[j] * valor_base * (ms / 100) / 100
+                else:
+                    aporte_ingrediente = distribucion_uniforme[j] * valor_base / 100
+                
+                aporte_total += aporte_ingrediente
+                
+                if valor_base > 0:
+                    ingredientes_que_aportan.append({
+                        'nombre': ing['nombre'],
+                        'valor_base': valor_base,
+                        'aporte': aporte_ingrediente,
+                        'ms': ms
+                    })
+            
+            aportes_actuales[nombre_nutriente] = {
+                'aporte_total': aporte_total,
+                'requerimiento_min': float(req_min) if req_min and req_min != '' else None,
+                'requerimiento_max': float(req_max) if req_max and req_max != '' else None,
+                'ingredientes_que_aportan': ingredientes_que_aportan,
+                'deficit': 0,
+                'exceso': 0
+            }
+            
+            # Analizar deficiencias
+            if req_min and req_min != '' and float(req_min) > 0:
+                req_min_val = float(req_min)
+                if aporte_total < req_min_val:
+                    deficit = req_min_val - aporte_total
+                    aportes_actuales[nombre_nutriente]['deficit'] = deficit
+                    
+                    if len(ingredientes_que_aportan) == 0:
+                        nutrientes_sin_aporte.append({
+                            'nutriente': nombre_nutriente,
+                            'requerimiento': req_min_val,
+                            'aporte_actual': aporte_total,
+                            'deficit': deficit
+                        })
+                    else:
+                        nutrientes_deficientes.append({
+                            'nutriente': nombre_nutriente,
+                            'requerimiento': req_min_val,
+                            'aporte_actual': aporte_total,
+                            'deficit': deficit,
+                            'ingredientes_disponibles': len(ingredientes_que_aportan)
+                        })
+            
+            print(f"🧪 {nombre_nutriente}:")
+            print(f"   Aporte actual: {aporte_total:.4f}")
+            print(f"   Requerimiento mín: {req_min}")
+            print(f"   Ingredientes que aportan: {len(ingredientes_que_aportan)}")
+            if ingredientes_que_aportan:
+                for ing_aporte in ingredientes_que_aportan[:3]:  # Mostrar solo los primeros 3
+                    print(f"     - {ing_aporte['nombre']}: {ing_aporte['valor_base']:.2f} → {ing_aporte['aporte']:.4f}")
+        
+        # Generar diagnóstico específico
+        diagnostico = {
+            'tipo': 'optimizacion_fallida_detallada',
+            'mensaje': 'No se pudo encontrar una solución factible. Análisis detallado:',
+            'aportes_actuales': aportes_actuales,
+            'nutrientes_sin_aporte': nutrientes_sin_aporte,
+            'nutrientes_deficientes': nutrientes_deficientes,
+            'causas_principales': [],
+            'sugerencias_especificas': []
+        }
+        
+        # Análisis de causas principales
+        if nutrientes_sin_aporte:
+            diagnostico['causas_principales'].append(
+                f"Faltan ingredientes que aporten: {', '.join([n['nutriente'] for n in nutrientes_sin_aporte])}"
+            )
+            for nutriente_faltante in nutrientes_sin_aporte:
+                diagnostico['sugerencias_especificas'].append(
+                    f"Agregue ingredientes que aporten {nutriente_faltante['nutriente']} "
+                    f"(necesita {nutriente_faltante['deficit']:.4f} adicional)"
+                )
+        
+        if nutrientes_deficientes:
+            diagnostico['causas_principales'].append(
+                f"Aportes insuficientes en: {', '.join([n['nutriente'] for n in nutrientes_deficientes])}"
+            )
+            for nutriente_def in nutrientes_deficientes:
+                diagnostico['sugerencias_especificas'].append(
+                    f"Aumente la inclusión de ingredientes ricos en {nutriente_def['nutriente']} "
+                    f"(déficit: {nutriente_def['deficit']:.4f})"
+                )
+        
+        # Verificar límites de ingredientes
+        suma_minimos = sum(bound[0] for bound in bounds_ingredientes)
+        suma_maximos = sum(bound[1] for bound in bounds_ingredientes)
+        
+        if suma_minimos > 95:
+            diagnostico['causas_principales'].append("Límites mínimos muy restrictivos")
+            diagnostico['sugerencias_especificas'].append(
+                f"Reduzca límites mínimos (suma actual: {suma_minimos:.1f}%)"
+            )
+        
+        if suma_maximos < 105:
+            diagnostico['causas_principales'].append("Límites máximos insuficientes")
+            diagnostico['sugerencias_especificas'].append(
+                f"Aumente límites máximos (suma actual: {suma_maximos:.1f}%)"
+            )
+        
+        # Agregar sugerencias generales si no hay específicas
+        if not diagnostico['sugerencias_especificas']:
+            diagnostico['sugerencias_especificas'] = [
+                "Revise los valores nutricionales de los ingredientes",
+                "Verifique que los requerimientos sean alcanzables",
+                "Considere ajustar los límites de inclusión"
+            ]
+        
+        print(f"\n📋 DIAGNÓSTICO FINAL:")
+        print(f"   Nutrientes sin aporte: {len(nutrientes_sin_aporte)}")
+        print(f"   Nutrientes deficientes: {len(nutrientes_deficientes)}")
+        print(f"   Causas principales: {len(diagnostico['causas_principales'])}")
+        
         return jsonify({
             'error': 'No se pudo encontrar una solución factible',
-            'validacion': {
-                'tipo': 'optimizacion_fallida',
-                'mensaje': 'La optimización no pudo encontrar una solución que cumpla todos los requisitos',
-                'causas_posibles': causas_posibles if causas_posibles else [
-                    "Límites de ingredientes muy restrictivos",
-                    "Requerimientos nutricionales inalcanzables",
-                    "Conflictos entre restricciones"
-                ],
-                'sugerencias': sugerencias_especificas if sugerencias_especificas else [
-                    "Revise y ajuste los límites de ingredientes",
-                    "Verifique que los requerimientos nutricionales sean alcanzables",
-                    "Considere agregar más ingredientes a la formulación",
-                    "Revise que los valores nutricionales sean correctos"
-                ]
-            }
+            'validacion': diagnostico
         }), 400
     
     # Ordenar por costo (menor es mejor)
@@ -732,5 +865,23 @@ def optimizar_formulacion():
     return jsonify({
         'resultado': resultado_lista, 
         'costo_total': round(costo_total, 2),
-        'mensaje': 'Optimización completada exitosamente'
+        'mensaje': 'Optimización completada exitosamente',
+        'exito': True,
+        'notificacion': {
+            'tipo': 'exito',
+            'titulo': '✅ Optimización Exitosa',
+            'mensaje': f'Se encontró una solución óptima con costo de ${costo_total:.2f}',
+            'detalles': {
+                'metodo_usado': mejor_metodo,
+                'costo_total': round(costo_total, 2),
+                'ingredientes_usados': len([r for r in resultado_lista if r['inclusion'] > 0.01]),
+                'suma_verificada': round(suma_final, 2),
+                'restricciones_cumplidas': len(todas_restricciones)
+            },
+            'sugerencias': [
+                f'La mezcla usa {len([r for r in resultado_lista if r["inclusion"] > 0.01])} ingredientes principales',
+                f'Costo por kg: ${costo_total:.2f}',
+                'Todos los requerimientos nutricionales han sido cumplidos'
+            ]
+        }
     })

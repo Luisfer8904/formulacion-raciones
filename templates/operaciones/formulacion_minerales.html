@@ -3,6 +3,8 @@
 {% block contenido %}
 <!-- CSS específico para correcciones de Safari -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/safari-fixes.css') }}">
+<!-- CSS para sistema de notificaciones de optimización -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notificaciones.css') }}">
 <div style="height: calc(100vh - 60px); overflow-y: auto; padding-bottom: 100px;">
 <div class="container mt-4">
   <!-- Header moderno -->
@@ -301,6 +303,9 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Sistema de Notificaciones para Optimización -->
+<script src="{{ url_for('static', filename='js/notificaciones-optimizacion.js') }}"></script>
 
 <!-- JavaScript del Formulador -->
 <script src="{{ url_for('static', filename='js/formulador/config.js') }}"></script>
