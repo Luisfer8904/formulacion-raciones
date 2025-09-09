@@ -28,14 +28,15 @@ def obtener_formulas_usuario():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         
-        # Obtener mezclas del usuario con información básica
+        # Usar la misma consulta que funciona en calculadora_aportes_nueva
         cursor.execute("""
-            SELECT m.id, m.nombre, m.fecha_creacion, m.costo_total,
-                   COUNT(mi.id) as num_ingredientes
+            SELECT m.id, m.nombre, m.tipo_animales, m.etapa_produccion, m.fecha_creacion,
+                   COUNT(mi.ingrediente_id) as total_ingredientes
             FROM mezclas m
             LEFT JOIN mezcla_ingredientes mi ON m.id = mi.mezcla_id
             WHERE m.usuario_id = %s
-            GROUP BY m.id, m.nombre, m.fecha_creacion, m.costo_total
+            GROUP BY m.id, m.nombre, m.tipo_animales, m.etapa_produccion, m.fecha_creacion
+            HAVING total_ingredientes > 0
             ORDER BY m.fecha_creacion DESC
         """, (session['user_id'],))
         
@@ -47,9 +48,10 @@ def obtener_formulas_usuario():
             formulas.append({
                 'id': formula['id'],
                 'nombre': formula['nombre'],
+                'tipo_animales': formula.get('tipo_animales', ''),
+                'etapa_produccion': formula.get('etapa_produccion', ''),
                 'fecha_creacion': formula['fecha_creacion'].isoformat() if formula['fecha_creacion'] else None,
-                'costo_total': float(formula['costo_total']) if formula['costo_total'] else 0.0,
-                'num_ingredientes': int(formula['num_ingredientes']) if formula['num_ingredientes'] else 0
+                'total_ingredientes': int(formula['total_ingredientes']) if formula['total_ingredientes'] else 0
             })
         
         cursor.close()

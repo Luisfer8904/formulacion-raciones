@@ -28,14 +28,15 @@ def obtener_formulas_ingredientes():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         
-        # Obtener fórmulas del usuario
+        # Usar la misma consulta que funciona en calculadora_aportes_nueva
         cursor.execute("""
-            SELECT m.id, m.nombre, m.fecha_creacion, m.costo_total,
-                   COUNT(mi.id) as num_ingredientes
+            SELECT m.id, m.nombre, m.tipo_animales, m.etapa_produccion, m.fecha_creacion,
+                   COUNT(mi.ingrediente_id) as total_ingredientes
             FROM mezclas m
             LEFT JOIN mezcla_ingredientes mi ON m.id = mi.mezcla_id
             WHERE m.usuario_id = %s
-            GROUP BY m.id, m.nombre, m.fecha_creacion, m.costo_total
+            GROUP BY m.id, m.nombre, m.tipo_animales, m.etapa_produccion, m.fecha_creacion
+            HAVING total_ingredientes > 0
             ORDER BY m.fecha_creacion DESC
         """, (session['user_id'],))
         
