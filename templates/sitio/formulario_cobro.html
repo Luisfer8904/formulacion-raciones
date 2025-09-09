@@ -104,31 +104,58 @@
 
                             <!-- Plan de Suscripción (solo visible si se selecciona suscripción) -->
                             <div id="planes-suscripcion" class="mb-4" style="display: none;">
-                                <label class="form-label fw-bold">Plan de Suscripción</label>
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <div class="card border-2" id="card-basico">
-                                            <div class="card-body text-center p-3">
+                                <label class="form-label fw-bold mb-3">Plan de Suscripción</label>
+                                
+                                <!-- Planes Básico y Profesional en una fila -->
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <div class="card border-2 h-100 plan-card" id="card-basico">
+                                            <div class="card-body text-center p-4">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="plan" id="plan_basico" value="basico">
                                                     <label class="form-check-label w-100" for="plan_basico">
-                                                        <h6 class="fw-bold" style="color: #8A72C7;">Básico</h6>
-                                                        <p class="h5 fw-bold mb-1">$12<small class="text-muted">/mes</small></p>
-                                                        <p class="text-muted small mb-0">Herramientas básicas</p>
+                                                        <div class="plan-icon mb-2">
+                                                            <i class="fas fa-seedling" style="font-size: 2rem; color: #8A72C7;"></i>
+                                                        </div>
+                                                        <h5 class="fw-bold mb-2" style="color: #8A72C7;">Básico</h5>
+                                                        <div class="price-display mb-3">
+                                                            <span class="h3 fw-bold" style="color: #8A72C7;">$12</span>
+                                                            <span class="text-muted">/mes</span>
+                                                        </div>
+                                                        <div class="features-list text-start">
+                                                            <p class="small mb-1"><i class="fas fa-check text-success me-2"></i>Hasta 50 formulaciones/mes</p>
+                                                            <p class="small mb-1"><i class="fas fa-check text-success me-2"></i>Herramientas básicas</p>
+                                                            <p class="small mb-1"><i class="fas fa-check text-success me-2"></i>Base de datos ingredientes</p>
+                                                            <p class="small mb-0"><i class="fas fa-check text-success me-2"></i>Soporte por email</p>
+                                                        </div>
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="card border-2" id="card-profesional">
-                                            <div class="card-body text-center p-3">
+                                    <div class="col-md-6">
+                                        <div class="card border-2 h-100 plan-card position-relative" id="card-profesional">
+                                            <div class="popular-badge">
+                                                <span class="badge bg-warning text-dark px-2 py-1">Más Popular</span>
+                                            </div>
+                                            <div class="card-body text-center p-4">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="plan" id="plan_profesional" value="profesional">
                                                     <label class="form-check-label w-100" for="plan_profesional">
-                                                        <h6 class="fw-bold text-warning">Profesional</h6>
-                                                        <p class="h5 fw-bold mb-1">$24<small class="text-muted">/mes</small></p>
-                                                        <p class="text-muted small mb-0">Herramientas + Reportes</p>
+                                                        <div class="plan-icon mb-2">
+                                                            <i class="fas fa-rocket" style="font-size: 2rem; color: #FF9800;"></i>
+                                                        </div>
+                                                        <h5 class="fw-bold mb-2" style="color: #FF9800;">Profesional</h5>
+                                                        <div class="price-display mb-3">
+                                                            <span class="h3 fw-bold" style="color: #FF9800;">$24</span>
+                                                            <span class="text-muted">/mes</span>
+                                                        </div>
+                                                        <div class="features-list text-start">
+                                                            <p class="small mb-1"><i class="fas fa-check text-success me-2"></i>Todo lo del plan Básico</p>
+                                                            <p class="small mb-1"><i class="fas fa-check text-success me-2"></i>Formulaciones ilimitadas</p>
+                                                            <p class="small mb-1"><i class="fas fa-check text-success me-2"></i>Herramientas avanzadas</p>
+                                                            <p class="small mb-0"><i class="fas fa-check text-success me-2"></i>Reportes detallados</p>
+                                                        </div>
                                                     </label>
                                                 </div>
                                             </div>
@@ -136,17 +163,35 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Fila adicional para plan institucional -->
-                                <div class="row g-3 mt-2">
-                                    <div class="col-md-6 mx-auto">
-                                        <div class="card border-2" id="card-institucional">
-                                            <div class="card-body text-center p-3">
+                                <!-- Plan Institucional en fila separada -->
+                                <div class="row g-3">
+                                    <div class="col-md-8 mx-auto">
+                                        <div class="card border-2 plan-card" id="card-institucional">
+                                            <div class="card-body text-center p-4">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="plan" id="plan_institucional" value="institucional">
                                                     <label class="form-check-label w-100" for="plan_institucional">
-                                                        <h6 class="fw-bold text-success">Institucional</h6>
-                                                        <p class="h6 fw-bold mb-1">Precio<br>personalizado</p>
-                                                        <p class="text-muted small mb-0">Usuarios ilimitados</p>
+                                                        <div class="row align-items-center">
+                                                            <div class="col-md-4">
+                                                                <div class="plan-icon mb-2">
+                                                                    <i class="fas fa-building" style="font-size: 2.5rem; color: #28a745;"></i>
+                                                                </div>
+                                                                <h5 class="fw-bold mb-2" style="color: #28a745;">Institucional</h5>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="price-display">
+                                                                    <span class="h4 fw-bold" style="color: #28a745;">Precio</span><br>
+                                                                    <span class="h5 fw-bold" style="color: #28a745;">personalizado</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="features-list text-start">
+                                                                    <p class="small mb-1"><i class="fas fa-check text-success me-2"></i>Todo lo del Profesional</p>
+                                                                    <p class="small mb-1"><i class="fas fa-check text-success me-2"></i>Usuarios ilimitados</p>
+                                                                    <p class="small mb-0"><i class="fas fa-check text-success me-2"></i>Soporte 24/7</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </label>
                                                 </div>
                                             </div>
@@ -192,22 +237,71 @@
     .card {
         transition: all 0.3s ease;
         cursor: pointer;
+        border-radius: 15px;
     }
     
     .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .plan-card {
+        border-width: 2px;
+        border-style: solid;
+        border-color: #e9ecef;
+    }
+    
+    .plan-card:hover {
+        border-color: #8A72C7;
     }
     
     .form-check-input:checked + .form-check-label .card {
         border-color: #8A72C7 !important;
         background-color: #f8f6ff;
+        box-shadow: 0 8px 25px rgba(138, 114, 199, 0.2);
     }
     
     .card.selected {
         border-color: #8A72C7 !important;
         background-color: #f8f6ff;
-        transform: translateY(-2px);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(138, 114, 199, 0.2);
+    }
+    
+    .popular-badge {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+    }
+    
+    .popular-badge .badge {
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+    }
+    
+    .plan-icon {
+        margin-bottom: 1rem;
+    }
+    
+    .price-display {
+        margin: 1rem 0;
+        padding: 0.5rem 0;
+    }
+    
+    .features-list {
+        background-color: rgba(248, 249, 250, 0.5);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .features-list p {
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
     }
     
     .form-control:focus, .form-select:focus {
@@ -218,6 +312,41 @@
     .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(138, 114, 199, 0.3);
+    }
+    
+    /* Estilos específicos para cada plan */
+    #card-basico.selected {
+        border-color: #8A72C7 !important;
+        background: linear-gradient(135deg, #f8f6ff 0%, #f0ebff 100%);
+    }
+    
+    #card-profesional.selected {
+        border-color: #FF9800 !important;
+        background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    }
+    
+    #card-institucional.selected {
+        border-color: #28a745 !important;
+        background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .plan-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .plan-icon i {
+            font-size: 1.5rem !important;
+        }
+        
+        .price-display .h3 {
+            font-size: 1.5rem;
+        }
+        
+        .features-list {
+            text-align: center !important;
+        }
     }
 </style>
 
