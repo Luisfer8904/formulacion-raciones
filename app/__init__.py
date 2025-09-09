@@ -11,6 +11,8 @@ from .routes.usuarios import usuarios_bp
 from .routes.reportes_mejorado import reportes_mejorado_bp
 from .routes.herramientas import herramientas_bp
 from .routes.herramientas_basicas import herramientas_basicas_bp
+from .routes.herramientas_api import herramientas_api_bp
+from .routes.herramientas_modular import herramientas_modular_bp, registrar_herramientas_blueprints
 from .routes.calculadora_ingredientes import calculadora_ingredientes_bp
 from .routes.reporte_comparativo import reporte_comparativo_bp
 from .routes.conversor_unidades_avanzado import conversor_unidades_avanzado_bp
@@ -102,6 +104,11 @@ def create_app():
     app.register_blueprint(reportes_mejorado_bp)
     app.register_blueprint(herramientas_bp)
     app.register_blueprint(herramientas_basicas_bp)
+    app.register_blueprint(herramientas_api_bp)
+    
+    # Registrar herramientas modulares
+    registrar_herramientas_blueprints(app)
+    
     app.register_blueprint(calculadora_ingredientes_bp)
     app.register_blueprint(reporte_comparativo_bp)
     app.register_blueprint(conversor_unidades_avanzado_bp)

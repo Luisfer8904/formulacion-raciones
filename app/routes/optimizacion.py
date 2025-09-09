@@ -53,8 +53,37 @@ def formulacion_minerales():
     unidad_medida = config_usuario['unidad_medida'] if config_usuario else 'kg'
     tipo_moneda = config_usuario['tipo_moneda'] if config_usuario else '$'
 
-    # Obtener todos los ingredientes
-    cursor.execute("SELECT id, nombre, comentario, ms, precio FROM ingredientes WHERE usuario_id = %s ORDER BY nombre ASC", (session['user_id'],))
+    # Obtener todos los ingredientes con límites
+    # Verificar si las columnas de límites existen
+    cursor.execute("""
+        SELECT COLUMN_NAME 
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = DATABASE() 
+        AND TABLE_NAME = 'ingredientes'
+        AND COLUMN_NAME IN ('limite_min', 'limite_max')
+    """)
+    columnas_limites = cursor.fetchall()
+    tiene_limites = len(columnas_limites) == 2
+    
+    if tiene_limites:
+        cursor.execute("""
+            SELECT id, nombre, comentario, ms, precio, 
+                   COALESCE(limite_min, 0.00) as limite_min,
+                   COALESCE(limite_max, 100.00) as limite_max
+            FROM ingredientes 
+            WHERE usuario_id = %s 
+            ORDER BY nombre ASC
+        """, (session['user_id'],))
+    else:
+        cursor.execute("""
+            SELECT id, nombre, comentario, ms, precio,
+                   0.00 as limite_min,
+                   100.00 as limite_max
+            FROM ingredientes 
+            WHERE usuario_id = %s 
+            ORDER BY nombre ASC
+        """, (session['user_id'],))
+    
     ingredientes_raw = cursor.fetchall()
 
     # Obtener todos los nutrientes disponibles filtrados por usuario (incluyendo id y unidad)
@@ -70,6 +99,8 @@ def formulacion_minerales():
             'precio': ing_typed.get('precio', 0.0) if hasattr(ing_typed, 'get') else 0.0,
             'comentario': ing_typed.get('comentario', '') if hasattr(ing_typed, 'get') else '',
             'ms': ing_typed.get('ms', 100) if hasattr(ing_typed, 'get') else 100,
+            'limite_min': float(ing_typed.get('limite_min', 0.0)) if hasattr(ing_typed, 'get') else 0.0,
+            'limite_max': float(ing_typed.get('limite_max', 100.0)) if hasattr(ing_typed, 'get') else 100.0,
             'nutrientes': []
         }
         for nutriente in nutrientes_info:
@@ -377,7 +408,11 @@ def optimizar_formulacion():
     matriz_nutrientes = []
     
     for ing in ingredientes:
-        costos.append(float(ing.get('costo', 0)))
+        # Usar precio en lugar de costo
+        precio = float(ing.get('precio', 0))
+        costos.append(precio)
+        
+        # Obtener límites del ingrediente (ya incluidos en la consulta)
         limite_min = float(ing.get('limite_min', 0))
         limite_max = float(ing.get('limite_max', 100))
         
@@ -385,16 +420,20 @@ def optimizar_formulacion():
         print(f"🔍 Datos ingrediente {ing['nombre']}:")
         print(f"   - limite_min: {limite_min}")
         print(f"   - limite_max: {limite_max}")
-        print(f"   - costo: {costos[-1]}")
+        print(f"   - precio: {precio}")
         
-        # Si los límites son 0, omitir la regla (usar valores por defecto)
-        if limite_min == 0 and limite_max == 0:
-            print(f"⚠️ Omitiendo límites para {ing['nombre']} (min=0, max=0)")
-            bounds_ingredientes.append((0, 100))  # Valores por defecto
-        else:
-            bounds_ingredientes.append((limite_min, limite_max))
+        # Validar límites
+        if limite_min < 0:
+            limite_min = 0
+        if limite_max > 100:
+            limite_max = 100
+        if limite_min > limite_max:
+            limite_min = 0
+            limite_max = 100
         
-        print(f"📊 {ing['nombre']}: bounds=({bounds_ingredientes[-1][0]}, {bounds_ingredientes[-1][1]}), costo={costos[-1]}")
+        bounds_ingredientes.append((limite_min, limite_max))
+        
+        print(f"📊 {ing['nombre']}: bounds=({bounds_ingredientes[-1][0]}, {bounds_ingredientes[-1][1]}), precio={precio}")
 
     # Construir matriz de nutrientes para diagnóstico temprano
     matriz_nutrientes = []

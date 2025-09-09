@@ -1,0 +1,533 @@
+{% extends "operaciones/layout.html" %}
+
+{% block contenido %}
+<!-- Header profesional -->
+<div class="feedpro-header fade-in-up">
+    <h2><i class="fas fa-tools me-2"></i>Herramientas FeedPro - Versión Modular</h2>
+    <small>Utilidades avanzadas optimizadas para mejor rendimiento</small>
+</div>
+
+<!-- Herramientas Principales -->
+<div class="tools-grid fade-in-up">
+    <!-- Calculadora Nutricional -->
+    <div class="tool-card" onclick="abrirCalculadoraNutricional()">
+        <div class="tool-icon bg-primary">
+            <i class="fas fa-calculator"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Calculadora Nutricional</h5>
+            <p>Calcule valores nutricionales con materia seca usando APIs optimizadas</p>
+            <div class="tool-features">
+                <span class="feature-tag">API Backend</span>
+                <span class="feature-tag">Materia Seca</span>
+                <span class="feature-tag">Optimizado</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Conversor de Unidades -->
+    <div class="tool-card" onclick="abrirConversorUnidades()">
+        <div class="tool-icon bg-success">
+            <i class="fas fa-exchange-alt"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Conversor de Unidades</h5>
+            <p>Convierta entre diferentes unidades con precisión mejorada</p>
+            <div class="tool-features">
+                <span class="feature-tag">Peso</span>
+                <span class="feature-tag">Volumen</span>
+                <span class="feature-tag">Precisión</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Gestión de Límites -->
+    <div class="tool-card" onclick="abrirGestionLimites()">
+        <div class="tool-icon bg-warning">
+            <i class="fas fa-sliders-h"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Gestión de Límites</h5>
+            <p>Configure límites mínimos y máximos para ingredientes</p>
+            <div class="tool-features">
+                <span class="feature-tag">Límites</span>
+                <span class="feature-tag">Ingredientes</span>
+                <span class="feature-tag">Optimización</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Calculadora de Aportes -->
+    <div class="tool-card" onclick="abrirCalculadoraAportes()">
+        <div class="tool-icon bg-info">
+            <i class="fas fa-chart-pie"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Calculadora de Aportes</h5>
+            <p>Calcule aportes nutricionales de fórmulas completas</p>
+            <div class="tool-features">
+                <span class="feature-tag">Aportes</span>
+                <span class="feature-tag">Fórmulas</span>
+                <span class="feature-tag">Análisis</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Reporte Comparativo -->
+    <div class="tool-card" onclick="abrirReporteComparativo()">
+        <div class="tool-icon bg-danger">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Reporte Comparativo</h5>
+            <p>Compare dos fórmulas y analice diferencias nutricionales</p>
+            <div class="tool-features">
+                <span class="feature-tag">Comparación</span>
+                <span class="feature-tag">Nutrientes</span>
+                <span class="feature-tag">Análisis</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Calculadora de Ingredientes -->
+    <div class="tool-card" onclick="abrirCalculadoraIngredientes()">
+        <div class="tool-icon bg-secondary">
+            <i class="fas fa-seedling"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Calculadora de Ingredientes</h5>
+            <p>Calcule cantidades de ingredientes según el consumo animal</p>
+            <div class="tool-features">
+                <span class="feature-tag">Consumo</span>
+                <span class="feature-tag">Ingredientes</span>
+                <span class="feature-tag">Cantidades</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+</div>
+
+<!-- Estado de Herramientas -->
+<div class="row fade-in-up mt-4">
+    <div class="col-lg-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Estado del Sistema Modular</h5>
+            </div>
+            <div class="card-body">
+                <div class="tools-stats">
+                    <div class="stat-item">
+                        <div class="stat-number text-success">6</div>
+                        <div class="stat-label">Herramientas Activas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number text-info">4</div>
+                        <div class="stat-label">APIs Backend</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number text-warning">0</div>
+                        <div class="stat-label">En Mantenimiento</div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-rocket me-2"></i>Sistema Optimizado</h6>
+                    <p class="mb-0">Las herramientas han sido refactorizadas en módulos separados para mejor rendimiento y mantenibilidad. Cada herramienta ahora tiene su propio archivo Python y API backend.</p>
+                </div>
+                
+                <div class="recent-usage">
+                    <h6 class="mb-3">Mejoras Implementadas</h6>
+                    <div class="usage-item">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <small>APIs backend separadas por herramienta</small>
+                    </div>
+                    <div class="usage-item">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <small>Gestión de límites de ingredientes</small>
+                    </div>
+                    <div class="usage-item">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <small>Cálculos optimizados con validación</small>
+                    </div>
+                    <div class="usage-item">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <small>Manejo robusto de errores</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modales para cada herramienta -->
+<!-- Modal Calculadora Nutricional -->
+<div class="modal fade" id="calculadoraNutricionalModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-calculator me-2"></i>Calculadora Nutricional</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Seleccionar Nutriente</h6>
+                        <div class="mb-3">
+                            <select class="form-select" id="tipoNutriente">
+                                <option value="proteina">Proteína Cruda (%)</option>
+                                <option value="grasa">Grasa Cruda (%)</option>
+                                <option value="fibra">Fibra Cruda (%)</option>
+                                <option value="cenizas">Cenizas (%)</option>
+                                <option value="carbohidratos">Carbohidratos (%)</option>
+                                <option value="energia">Energía Metabolizable (Mcal/kg)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Porcentaje del Nutriente (%)</label>
+                            <input type="number" class="form-control" id="porcentajeNutriente" placeholder="% Nutriente" value="22" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Materia Seca (%)</label>
+                            <input type="number" class="form-control" id="materiaSeca" placeholder="% Materia Seca" value="88" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cantidad Total (kg)</label>
+                            <input type="number" class="form-control" id="cantidad" placeholder="Cantidad en kg" value="3" step="0.01">
+                        </div>
+                        <button class="btn btn-success" onclick="calcularNutrienteAPI()">Calcular Nutriente Total</button>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Resultado</h6>
+                        <div id="resultadoNutriente"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Conversor de Unidades -->
+<div class="modal fade" id="conversorUnidadesModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-exchange-alt me-2"></i>Conversor de Unidades</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Valor a convertir</label>
+                    <input type="number" class="form-control" id="valorConvertir" placeholder="Ingrese valor" step="0.001">
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label">De:</label>
+                        <select class="form-select" id="unidadOrigen">
+                            <option value="kg">Kilogramos</option>
+                            <option value="g">Gramos</option>
+                            <option value="lb">Libras</option>
+                            <option value="oz">Onzas</option>
+                            <option value="ton">Toneladas</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">A:</label>
+                        <select class="form-select" id="unidadDestino">
+                            <option value="g">Gramos</option>
+                            <option value="kg">Kilogramos</option>
+                            <option value="lb">Libras</option>
+                            <option value="oz">Onzas</option>
+                            <option value="ton">Toneladas</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3" onclick="convertirUnidadesAPI()">Convertir</button>
+                <div id="resultadoConversion" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.tool-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    border-color: #6c757d;
+}
+
+.tool-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+.tool-content h5 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.tool-content p {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.tool-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.feature-tag {
+    background: #f8f9fa;
+    color: #6c757d;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.tool-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.tools-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.usage-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<!-- Cargar JavaScript optimizado -->
+<script src="{{ url_for('static', filename='js/herramientas-mejoradas.js') }}"></script>
+
+<script>
+// Funciones específicas para abrir modales
+function abrirCalculadoraNutricional() {
+    const modal = new bootstrap.Modal(document.getElementById('calculadoraNutricionalModal'));
+    modal.show();
+}
+
+function abrirConversorUnidades() {
+    const modal = new bootstrap.Modal(document.getElementById('conversorUnidadesModal'));
+    modal.show();
+}
+
+function abrirGestionLimites() {
+    // Esta función está definida en herramientas-mejoradas.js
+    if (typeof window.abrirGestionLimites === 'function') {
+        window.abrirGestionLimites();
+    } else {
+        console.error('Función abrirGestionLimites no encontrada');
+    }
+}
+
+function abrirCalculadoraAportes() {
+    alert('Calculadora de Aportes - En desarrollo');
+}
+
+function abrirReporteComparativo() {
+    // Redirigir a la página de reportes existente
+    window.location.href = '/reporte_comparativo';
+}
+
+function abrirCalculadoraIngredientes() {
+    // Redirigir a la calculadora de ingredientes existente
+    window.location.href = '/calculadora_ingredientes';
+}
+
+// Funciones de API que usan las nuevas APIs backend
+function calcularNutrienteAPI() {
+    const tipoNutriente = document.getElementById('tipoNutriente').value;
+    const porcentajeNutriente = parseFloat(document.getElementById('porcentajeNutriente').value);
+    const materiaSeca = parseFloat(document.getElementById('materiaSeca').value);
+    const cantidad = parseFloat(document.getElementById('cantidad').value);
+    const resultadoDiv = document.getElementById('resultadoNutriente');
+    
+    if (!porcentajeNutriente || !materiaSeca || !cantidad) {
+        resultadoDiv.innerHTML = '<div class="alert alert-warning">Por favor complete todos los campos</div>';
+        return;
+    }
+    
+    resultadoDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Calculando...</div>';
+    
+    fetch('/api/calcular_nutriente', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tipo_nutriente: tipoNutriente,
+            porcentaje_nutriente: porcentajeNutriente,
+            materia_seca: materiaSeca,
+            cantidad: cantidad
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            resultadoDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <h6><strong>Cálculo de ${data.nombre_nutriente}</strong></h6>
+                    <div class="mb-2">
+                        <strong>Cálculo paso a paso:</strong><br>
+                        1. ${data.calculo.paso1}<br>
+                        2. ${data.calculo.paso2}
+                    </div>
+                    <div class="text-center p-3 bg-light rounded">
+                        <h5 class="text-success mb-0">${data.resultado} ${data.unidad}</h5>
+                        <small class="text-muted">Total de ${data.nombre_nutriente}</small>
+                    </div>
+                </div>
+            `;
+        } else {
+            resultadoDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${data.error}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        resultadoDiv.innerHTML = `<div class="alert alert-danger">❌ Error de conexión</div>`;
+    });
+}
+
+function convertirUnidadesAPI() {
+    const valor = parseFloat(document.getElementById('valorConvertir').value);
+    const origen = document.getElementById('unidadOrigen').value;
+    const destino = document.getElementById('unidadDestino').value;
+    const resultadoDiv = document.getElementById('resultadoConversion');
+    
+    if (!valor || valor <= 0) {
+        resultadoDiv.innerHTML = '<div class="alert alert-warning">Por favor ingrese un valor válido mayor a 0</div>';
+        return;
+    }
+    
+    resultadoDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Convirtiendo...</div>';
+    
+    fetch('/api/convertir_unidades', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            valor: valor,
+            origen: origen,
+            destino: destino
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            resultadoDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <h6><strong>Resultado de Conversión</strong></h6>
+                    <p class="mb-0">${data.mensaje}</p>
+                    <small class="text-muted">Resultado: ${data.resultado}</small>
+                </div>
+            `;
+        } else {
+            resultadoDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${data.error}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        resultadoDiv.innerHTML = `<div class="alert alert-danger">❌ Error de conexión</div>`;
+    });
+}
+</script>
+
+{% endblock %}
