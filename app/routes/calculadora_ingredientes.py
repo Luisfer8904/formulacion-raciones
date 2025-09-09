@@ -39,11 +39,20 @@ def obtener_formulas_ingredientes():
             ORDER BY m.fecha_creacion DESC
         """, (session['user_id'],))
         
-        formulas = cursor.fetchall()
+        formulas_raw = cursor.fetchall()
         
         # Para cada fórmula, obtener sus ingredientes
         formulas_con_ingredientes = []
-        for formula in formulas:
+        for formula_raw in formulas_raw:
+            # Convertir formula a diccionario seguro
+            formula = {
+                'id': formula_raw['id'],
+                'nombre': formula_raw['nombre'],
+                'fecha_creacion': formula_raw['fecha_creacion'].isoformat() if formula_raw['fecha_creacion'] else None,
+                'costo_total': float(formula_raw['costo_total']) if formula_raw['costo_total'] else 0.0,
+                'num_ingredientes': int(formula_raw['num_ingredientes']) if formula_raw['num_ingredientes'] else 0
+            }
+            
             cursor.execute("""
                 SELECT mi.porcentaje, i.nombre as ingrediente_nombre, 
                        i.precio, i.ms, mi.ingrediente_id
@@ -53,11 +62,21 @@ def obtener_formulas_ingredientes():
                 ORDER BY mi.porcentaje DESC
             """, (formula['id'],))
             
-            ingredientes = cursor.fetchall()
+            ingredientes_raw = cursor.fetchall()
             
-            formula_data = dict(formula)
-            formula_data['ingredientes'] = ingredientes
-            formulas_con_ingredientes.append(formula_data)
+            # Convertir ingredientes a formato seguro
+            ingredientes = []
+            for ing_raw in ingredientes_raw:
+                ingredientes.append({
+                    'porcentaje': float(ing_raw['porcentaje']) if ing_raw['porcentaje'] else 0.0,
+                    'ingrediente_nombre': str(ing_raw['ingrediente_nombre']) if ing_raw['ingrediente_nombre'] else '',
+                    'precio': float(ing_raw['precio']) if ing_raw['precio'] else 0.0,
+                    'ms': float(ing_raw['ms']) if ing_raw['ms'] else 100.0,
+                    'ingrediente_id': int(ing_raw['ingrediente_id']) if ing_raw['ingrediente_id'] else 0
+                })
+            
+            formula['ingredientes'] = ingredientes
+            formulas_con_ingredientes.append(formula)
         
         cursor.close()
         conn.close()

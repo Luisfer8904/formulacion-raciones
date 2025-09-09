@@ -10,53 +10,8 @@
         </div>
 
         <div class="row g-4 justify-content-center">
-            <!-- Plan Básico -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="text-center mb-4">
-                            <h3 class="card-title fw-bold">Básico</h3>
-                            <p class="text-muted">Ideal para empezar</p>
-                            <div class="price-display mb-3">
-                                <span class="display-4 fw-bold" style="color: #8A72C7;">$12</span>
-                                <span class="text-muted">/mes</span>
-                            </div>
-                        </div>
-
-                        <ul class="list-unstyled mb-4">
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
-                                Hasta 20 formulaciones/mes
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
-                                Herramientas básicas
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
-                                Base de datos de ingredientes
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
-                                Soporte por email
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
-                                1 usuario
-                            </li>
-                        </ul>
-
-                        <div class="text-center">
-                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='basico') }}" class="btn btn-lg w-100" style="background: #8A72C7; color: white; border: none; border-radius: 50px; font-weight: 600; text-decoration: none;">
-                                Empezar prueba gratis (14 días)
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Plan Personal -->
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-4 col-md-6">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
@@ -75,15 +30,15 @@
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Herramientas + Reportes
+                                Herramientas completas
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Base de datos completa de ingredientes
+                                Base de datos de ingredientes
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Reportes estándar
+                                Optimización de costos
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
@@ -105,7 +60,7 @@
             </div>
 
             <!-- Plan Profesional -->
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-4 col-md-6">
                 <div class="card h-100 border-0 shadow-lg position-relative" style="border: 2px solid #FF9800 !important;">
                     <div class="position-absolute top-0 start-50 translate-middle">
                         <span class="badge px-3 py-2" style="background: #FF9800; color: white; border-radius: 20px; font-size: 0.8rem;">
@@ -130,7 +85,7 @@
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Herramientas + Reportes + Gestión de Producción
+                                Todas las herramientas avanzadas
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
@@ -138,11 +93,11 @@
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Reportes avanzados y personalizados
+                                Análisis comparativos
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Optimización de costos
+                                Optimización avanzada
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
@@ -163,19 +118,16 @@
                 </div>
             </div>
 
-            <!-- Plan Institucional -->
-            <div class="col-lg-3 col-md-6">
+            <!-- Plan Empresarial -->
+            <div class="col-lg-4 col-md-6">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <h3 class="card-title fw-bold">Institucional</h3>
+                            <h3 class="card-title fw-bold">Empresarial</h3>
                             <p class="text-muted">Para grandes operaciones</p>
                             <div class="price-display mb-3">
-                                <span class="display-4 fw-bold" style="color: #7CB342;">Precio</span>
-                                <br>
-                                <span class="display-6 fw-bold" style="color: #7CB342;">personalizado</span>
-                                <br>
-                                <span class="text-muted small">Según cantidad de usuarios</span>
+                                <span class="display-4 fw-bold" style="color: #7CB342;">$120</span>
+                                <span class="text-muted">/mes</span>
                             </div>
                         </div>
 
@@ -211,7 +163,7 @@
                         </ul>
 
                         <div class="text-center">
-                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='institucional') }}" class="btn btn-outline-success btn-lg w-100" style="border-radius: 50px; font-weight: 600; text-decoration: none;">
+                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='empresarial') }}" class="btn btn-outline-success btn-lg w-100" style="border-radius: 50px; font-weight: 600; text-decoration: none;">
                                 Contactar ventas
                             </a>
                         </div>

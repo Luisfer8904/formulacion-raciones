@@ -39,7 +39,18 @@ def obtener_formulas_usuario():
             ORDER BY m.fecha_creacion DESC
         """, (session['user_id'],))
         
-        formulas = cursor.fetchall()
+        formulas_raw = cursor.fetchall()
+        
+        # Convertir a lista de diccionarios para asegurar compatibilidad
+        formulas = []
+        for formula in formulas_raw:
+            formulas.append({
+                'id': formula['id'],
+                'nombre': formula['nombre'],
+                'fecha_creacion': formula['fecha_creacion'].isoformat() if formula['fecha_creacion'] else None,
+                'costo_total': float(formula['costo_total']) if formula['costo_total'] else 0.0,
+                'num_ingredientes': int(formula['num_ingredientes']) if formula['num_ingredientes'] else 0
+            })
         
         cursor.close()
         conn.close()
