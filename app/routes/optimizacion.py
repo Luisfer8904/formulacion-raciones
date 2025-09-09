@@ -53,37 +53,8 @@ def formulacion_minerales():
     unidad_medida = config_usuario['unidad_medida'] if config_usuario else 'kg'
     tipo_moneda = config_usuario['tipo_moneda'] if config_usuario else '$'
 
-    # Obtener todos los ingredientes con límites
-    # Verificar si las columnas de límites existen
-    cursor.execute("""
-        SELECT COLUMN_NAME 
-        FROM INFORMATION_SCHEMA.COLUMNS 
-        WHERE TABLE_SCHEMA = DATABASE() 
-        AND TABLE_NAME = 'ingredientes'
-        AND COLUMN_NAME IN ('limite_min', 'limite_max')
-    """)
-    columnas_limites = cursor.fetchall()
-    tiene_limites = len(columnas_limites) == 2
-    
-    if tiene_limites:
-        cursor.execute("""
-            SELECT id, nombre, comentario, ms, precio, 
-                   COALESCE(limite_min, 0.00) as limite_min,
-                   COALESCE(limite_max, 100.00) as limite_max
-            FROM ingredientes 
-            WHERE usuario_id = %s 
-            ORDER BY nombre ASC
-        """, (session['user_id'],))
-    else:
-        cursor.execute("""
-            SELECT id, nombre, comentario, ms, precio,
-                   0.00 as limite_min,
-                   100.00 as limite_max
-            FROM ingredientes 
-            WHERE usuario_id = %s 
-            ORDER BY nombre ASC
-        """, (session['user_id'],))
-    
+    # Obtener todos los ingredientes
+    cursor.execute("SELECT id, nombre, comentario, ms, precio FROM ingredientes WHERE usuario_id = %s ORDER BY nombre ASC", (session['user_id'],))
     ingredientes_raw = cursor.fetchall()
 
     # Obtener todos los nutrientes disponibles filtrados por usuario (incluyendo id y unidad)
@@ -99,8 +70,6 @@ def formulacion_minerales():
             'precio': ing_typed.get('precio', 0.0) if hasattr(ing_typed, 'get') else 0.0,
             'comentario': ing_typed.get('comentario', '') if hasattr(ing_typed, 'get') else '',
             'ms': ing_typed.get('ms', 100) if hasattr(ing_typed, 'get') else 100,
-            'limite_min': float(ing_typed.get('limite_min', 0.0)) if hasattr(ing_typed, 'get') else 0.0,
-            'limite_max': float(ing_typed.get('limite_max', 100.0)) if hasattr(ing_typed, 'get') else 100.0,
             'nutrientes': []
         }
         for nutriente in nutrientes_info:
@@ -273,94 +242,6 @@ def obtener_nutrientes_requerimiento(requerimiento_id):
         print("❌ Error al obtener nutrientes del requerimiento:", e)
         return jsonify({'error': 'Error al cargar nutrientes'}), 500
 
-def diagnosticar_fallo_optimizacion(ingredientes, requerimientos, bounds_ingredientes, matriz_nutrientes):
-    """
-    Diagnostica por qué falló la optimización y devuelve un mensaje explicativo detallado
-    """
-    diagnosticos = []
-    
-    # 1. Verificar límites de ingredientes
-    suma_minimos = sum(bound[0] for bound in bounds_ingredientes)
-    suma_maximos = sum(bound[1] for bound in bounds_ingredientes)
-    
-    if suma_minimos > 100:
-        diagnosticos.append({
-            'tipo': 'limites_incompatibles',
-            'titulo': 'Límites mínimos incompatibles',
-            'mensaje': f'La suma de los límites mínimos de ingredientes es {suma_minimos:.1f}%, pero debe ser ≤ 100%.',
-            'solucion': 'Reduce los límites mínimos de algunos ingredientes para que su suma no exceda el 100%.',
-            'detalles': [f"{ing['nombre']}: mín {bound[0]}%" for ing, bound in zip(ingredientes, bounds_ingredientes) if bound[0] > 0]
-        })
-    
-    if suma_maximos < 100:
-        diagnosticos.append({
-            'tipo': 'limites_incompatibles',
-            'titulo': 'Límites máximos insuficientes',
-            'mensaje': f'La suma de los límites máximos de ingredientes es {suma_maximos:.1f}%, pero debe ser ≥ 100%.',
-            'solucion': 'Aumenta los límites máximos de algunos ingredientes para permitir mezclas que sumen 100%.',
-            'detalles': [f"{ing['nombre']}: máx {bound[1]}%" for ing, bound in zip(ingredientes, bounds_ingredientes)]
-        })
-    
-    # 2. Verificar límites individuales de ingredientes
-    for ing, bound in zip(ingredientes, bounds_ingredientes):
-        if bound[0] > bound[1]:
-            diagnosticos.append({
-                'tipo': 'limite_individual_invalido',
-                'titulo': f'Límite inválido en {ing["nombre"]}',
-                'mensaje': f'El límite mínimo ({bound[0]}%) es mayor al máximo ({bound[1]}%).',
-                'solucion': f'Ajusta los límites de {ing["nombre"]} para que mínimo ≤ máximo.',
-                'detalles': []
-            })
-    
-    # 3. Verificar disponibilidad de nutrientes
-    for i, req in enumerate(requerimientos):
-        req_min = req.get('min')
-        if req_min and float(req_min) > 0:
-            # Calcular el máximo aporte posible de este nutriente
-            max_aporte_posible = 0
-            for j, ing in enumerate(ingredientes):
-                max_inclusion = bounds_ingredientes[j][1]
-                aporte_nutriente = matriz_nutrientes[i][j]
-                max_aporte_posible += (max_inclusion * aporte_nutriente) / 100
-            
-            if max_aporte_posible < float(req_min):
-                diagnosticos.append({
-                    'tipo': 'nutriente_insuficiente',
-                    'titulo': f'Nutriente {req["nombre"]} insuficiente',
-                    'mensaje': f'El máximo aporte posible de {req["nombre"]} es {max_aporte_posible:.3f}, pero se requiere mínimo {req_min}.',
-                    'solucion': f'Agrega ingredientes con mayor contenido de {req["nombre"]} o reduce el requerimiento mínimo.',
-                    'detalles': [f"{ing['nombre']}: {matriz_nutrientes[i][j]:.3f} por 100%" for j, ing in enumerate(ingredientes) if matriz_nutrientes[i][j] > 0]
-                })
-    
-    # 4. Verificar costos
-    costos_cero = [ing['nombre'] for ing in ingredientes if float(ing.get('costo', 0)) == 0]
-    if len(costos_cero) == len(ingredientes):
-        diagnosticos.append({
-            'tipo': 'costos_faltantes',
-            'titulo': 'Costos no definidos',
-            'mensaje': 'Todos los ingredientes tienen costo $0, lo que puede causar problemas en la optimización.',
-            'solucion': 'Define costos realistas para los ingredientes.',
-            'detalles': costos_cero
-        })
-    
-    # 5. Verificar datos de nutrientes
-    ingredientes_sin_nutrientes = []
-    for ing in ingredientes:
-        aporte = ing.get('aporte', {})
-        if not aporte or all(float(v) == 0 for v in aporte.values()):
-            ingredientes_sin_nutrientes.append(ing['nombre'])
-    
-    if ingredientes_sin_nutrientes:
-        diagnosticos.append({
-            'tipo': 'nutrientes_faltantes',
-            'titulo': 'Ingredientes sin información nutricional',
-            'mensaje': f'{len(ingredientes_sin_nutrientes)} ingrediente(s) no tienen datos de nutrientes.',
-            'solucion': 'Completa la información nutricional de todos los ingredientes.',
-            'detalles': ingredientes_sin_nutrientes
-        })
-    
-    return diagnosticos
-
 @optimizacion_bp.route('/optimizar_formulacion', methods=['POST'])
 def optimizar_formulacion():
     print("🚀 INICIANDO OPTIMIZACIÓN PASO A PASO")
@@ -376,16 +257,7 @@ def optimizar_formulacion():
 
     if not ingredientes or not requerimientos:
         print("❌ Error: Ingredientes o requerimientos vacíos")
-        return jsonify({
-            'error': 'Datos incompletos',
-            'diagnostico': {
-                'tipo': 'datos_incompletos',
-                'titulo': 'Datos insuficientes para optimizar',
-                'mensaje': 'Se necesitan al menos un ingrediente y un requerimiento nutricional.',
-                'solucion': 'Agrega ingredientes y define requerimientos nutricionales antes de optimizar.',
-                'detalles': []
-            }
-        }), 400
+        return jsonify({'error': 'Datos incompletos'}), 400
 
     # Validar que los ingredientes tengan estructura de nutrientes (pero pueden tener valores 0)
     for ing in ingredientes:
@@ -408,11 +280,7 @@ def optimizar_formulacion():
     matriz_nutrientes = []
     
     for ing in ingredientes:
-        # Usar precio en lugar de costo
-        precio = float(ing.get('precio', 0))
-        costos.append(precio)
-        
-        # Obtener límites del ingrediente (ya incluidos en la consulta)
+        costos.append(float(ing.get('costo', 0)))
         limite_min = float(ing.get('limite_min', 0))
         limite_max = float(ing.get('limite_max', 100))
         
@@ -420,23 +288,49 @@ def optimizar_formulacion():
         print(f"🔍 Datos ingrediente {ing['nombre']}:")
         print(f"   - limite_min: {limite_min}")
         print(f"   - limite_max: {limite_max}")
-        print(f"   - precio: {precio}")
+        print(f"   - costo: {costos[-1]}")
         
-        # Validar límites
-        if limite_min < 0:
-            limite_min = 0
-        if limite_max > 100:
-            limite_max = 100
-        if limite_min > limite_max:
-            limite_min = 0
-            limite_max = 100
+        # Si los límites son 0, omitir la regla (usar valores por defecto)
+        if limite_min == 0 and limite_max == 0:
+            print(f"⚠️ Omitiendo límites para {ing['nombre']} (min=0, max=0)")
+            bounds_ingredientes.append((0, 100))  # Valores por defecto
+        else:
+            bounds_ingredientes.append((limite_min, limite_max))
         
-        bounds_ingredientes.append((limite_min, limite_max))
-        
-        print(f"📊 {ing['nombre']}: bounds=({bounds_ingredientes[-1][0]}, {bounds_ingredientes[-1][1]}), precio={precio}")
+        print(f"📊 {ing['nombre']}: bounds=({bounds_ingredientes[-1][0]}, {bounds_ingredientes[-1][1]}), costo={costos[-1]}")
 
-    # Construir matriz de nutrientes para diagnóstico temprano
-    matriz_nutrientes = []
+    # Verificar que la suma de límites máximos permita llegar a 100%
+    suma_maximos = sum(bound[1] for bound in bounds_ingredientes)
+    if suma_maximos < 100:
+        print(f"❌ Error: La suma de límites máximos ({suma_maximos}%) no llega al 100%")
+        return jsonify({'error': 'Los límites máximos de ingredientes no permiten una mezcla que sume 100%'}), 400
+
+    print(f"✅ Suma de límites máximos: {suma_maximos}% (≥100%)")
+
+    print("\n" + "="*60)
+    print("PASO 2: VALIDAR LÍMITES MÍNIMOS Y MÁXIMOS DE INGREDIENTES")
+    print("="*60)
+    
+    # Verificar que los límites mínimos no excedan 100%
+    suma_minimos = sum(bound[0] for bound in bounds_ingredientes)
+    if suma_minimos > 100:
+        print(f"❌ Error: La suma de límites mínimos ({suma_minimos}%) excede el 100%")
+        return jsonify({'error': 'Los límites mínimos de ingredientes exceden el 100%'}), 400
+    
+    print(f"✅ Suma de límites mínimos: {suma_minimos}% (≤100%)")
+    
+    # Validar que cada límite mínimo sea menor o igual al máximo
+    for i, (ing, bound) in enumerate(zip(ingredientes, bounds_ingredientes)):
+        if bound[0] > bound[1]:
+            print(f"❌ Error: {ing['nombre']} tiene límite mínimo ({bound[0]}%) mayor al máximo ({bound[1]}%)")
+            return jsonify({'error': f"Límite mínimo de {ing['nombre']} es mayor al máximo"}), 400
+        print(f"✅ {ing['nombre']}: {bound[0]}% ≤ {bound[1]}%")
+
+    print("\n" + "="*60)
+    print("PASO 3: AJUSTAR LÍMITES MÍNIMOS Y MÁXIMOS DE NUTRIENTES")
+    print("="*60)
+    
+    # Construir matriz de nutrientes según el tipo de optimización seleccionado
     for req in requerimientos:
         fila = []
         for ing in ingredientes:
@@ -452,51 +346,17 @@ def optimizar_formulacion():
             
             # Aplicar cálculo según el tipo de optimización
             if tipo_optimizacion == 'base_seca':
+                # Base seca: aplicar materia seca
                 valor_nutriente = valor_base * (ms / 100)
+                print(f"🧪 {ing['nombre']} - {req['nombre']} (base seca): {valor_base} * ({ms}/100) = {valor_nutriente}")
             else:
+                # Base húmeda (tal como): usar valor directo
                 valor_nutriente = valor_base
+                print(f"🧪 {ing['nombre']} - {req['nombre']} (base húmeda): {valor_nutriente}")
             
             fila.append(valor_nutriente)
         matriz_nutrientes.append(fila)
-
-    # Realizar diagnóstico temprano
-    diagnosticos_tempranos = diagnosticar_fallo_optimizacion(ingredientes, requerimientos, bounds_ingredientes, matriz_nutrientes)
-    
-    if diagnosticos_tempranos:
-        print("❌ Errores detectados en validación temprana:")
-        for diag in diagnosticos_tempranos:
-            print(f"   - {diag['titulo']}: {diag['mensaje']}")
-        
-        return jsonify({
-            'error': 'Problemas detectados antes de la optimización',
-            'diagnosticos': diagnosticos_tempranos
-        }), 400
-
-    print(f"✅ Validaciones tempranas completadas exitosamente")
-
-    print("\n" + "="*60)
-    print("PASO 2: VALIDAR LÍMITES MÍNIMOS Y MÁXIMOS DE INGREDIENTES")
-    print("="*60)
-    
-    # Verificar que la suma de límites máximos permita llegar a 100%
-    suma_maximos = sum(bound[1] for bound in bounds_ingredientes)
-    print(f"✅ Suma de límites máximos: {suma_maximos}% (≥100%)")
-    
-    # Verificar que los límites mínimos no excedan 100%
-    suma_minimos = sum(bound[0] for bound in bounds_ingredientes)
-    print(f"✅ Suma de límites mínimos: {suma_minimos}% (≤100%)")
-    
-    # Validar que cada límite mínimo sea menor o igual al máximo
-    for i, (ing, bound) in enumerate(zip(ingredientes, bounds_ingredientes)):
-        print(f"✅ {ing['nombre']}: {bound[0]}% ≤ {bound[1]}%")
-
-    print("\n" + "="*60)
-    print("PASO 3: AJUSTAR LÍMITES MÍNIMOS Y MÁXIMOS DE NUTRIENTES")
-    print("="*60)
-    
-    # La matriz ya fue construida en el diagnóstico temprano, solo imprimir para debug
-    for i, req in enumerate(requerimientos):
-        print(f"🧪 {req['nombre']} ({tipo_optimizacion}): aportes por ingrediente = {matriz_nutrientes[i]}")
+        print(f"🧪 {req['nombre']} ({tipo_optimizacion}): aportes por ingrediente = {fila}")
 
     # Procesar requerimientos de nutrientes
     restricciones_nutrientes = []
@@ -629,27 +489,8 @@ def optimizar_formulacion():
     # Seleccionar el mejor resultado
     if not mejores_resultados:
         print("❌ Ninguna optimización fue exitosa")
-        
-        # Realizar diagnóstico detallado del fallo
-        diagnosticos_fallo = diagnosticar_fallo_optimizacion(ingredientes, requerimientos, bounds_ingredientes, matriz_nutrientes)
-        
-        # Agregar diagnósticos específicos de convergencia
-        diagnosticos_fallo.append({
-            'tipo': 'convergencia_fallida',
-            'titulo': 'El algoritmo de optimización no pudo converger',
-            'mensaje': 'Se probaron múltiples métodos de optimización pero ninguno encontró una solución factible.',
-            'solucion': 'Revisa los límites de ingredientes y requerimientos nutricionales. Puede que las restricciones sean demasiado estrictas o incompatibles entre sí.',
-            'detalles': [
-                f'Métodos probados: {len(puntos_iniciales)} configuraciones diferentes',
-                f'Ingredientes: {len(ingredientes)}',
-                f'Requerimientos: {len(requerimientos)}',
-                f'Restricciones totales: {len(todas_restricciones)}'
-            ]
-        })
-        
         return jsonify({
-            'error': 'No se pudo encontrar una solución factible',
-            'diagnosticos': diagnosticos_fallo
+            'error': 'No se pudo encontrar una solución factible. Revisa que los límites sean compatibles.'
         }), 400
     
     # Ordenar por costo (menor es mejor)
@@ -717,25 +558,7 @@ def optimizar_formulacion():
     # Ahora, validar si la optimización fue exitosa (minimización del costo)
     if not resultado.success:
         print("❌ Error: Optimización no exitosa")
-        print(f"❌ Mensaje del optimizador: {resultado.message}")
-        
-        # Crear diagnóstico específico para fallo del optimizador
-        diagnostico_optimizador = {
-            'tipo': 'optimizador_fallo',
-            'titulo': 'El optimizador reportó un error',
-            'mensaje': f'Mensaje del sistema: {resultado.message}',
-            'solucion': 'Revisa los datos de entrada y ajusta los límites para hacer el problema más factible.',
-            'detalles': [
-                f'Código de salida: {getattr(resultado, "status", "No disponible")}',
-                f'Número de iteraciones: {getattr(resultado, "nit", "No disponible")}',
-                f'Función objetivo final: {getattr(resultado, "fun", "No disponible")}'
-            ]
-        }
-        
-        return jsonify({
-            'error': 'La optimización falló durante la ejecución',
-            'diagnostico': diagnostico_optimizador
-        }), 400
+        return jsonify({'error': 'No se pudo optimizar la mezcla'}), 400
 
     print("\n" + "="*60)
     print("✅ OPTIMIZACIÓN EXITOSA")

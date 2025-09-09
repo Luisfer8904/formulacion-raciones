@@ -47,55 +47,55 @@
         </div>
     </div>
 
-    <!-- Calculadora de Aportes Nutricionales -->
-    <div class="tool-card" onclick="abrirCalculadoraAportes()">
-        <div class="tool-icon bg-success">
-            <i class="fas fa-calculator"></i>
-        </div>
-        <div class="tool-content">
-            <h5>Calculadora de Aportes Nutricionales</h5>
-            <p>Calcule aportes nutricionales de fórmulas considerando materia seca</p>
-            <div class="tool-features">
-                <span class="feature-tag">Aportes</span>
-                <span class="feature-tag">Nutrientes</span>
-                <span class="feature-tag">Materia Seca</span>
-            </div>
-        </div>
-        <div class="tool-status">
-            <span class="status-badge status-active">Activo</span>
-        </div>
-    </div>
-
-    <!-- Calculadora de Ingredientes -->
-    <div class="tool-card" onclick="abrirCalculadoraIngredientes()">
-        <div class="tool-icon bg-info">
-            <i class="fas fa-seedling"></i>
-        </div>
-        <div class="tool-content">
-            <h5>Calculadora de Ingredientes</h5>
-            <p>Calcule cantidades de ingredientes según el consumo animal</p>
-            <div class="tool-features">
-                <span class="feature-tag">Consumo</span>
-                <span class="feature-tag">Ingredientes</span>
-                <span class="feature-tag">Cantidades</span>
-            </div>
-        </div>
-        <div class="tool-status">
-            <span class="status-badge status-active">Activo</span>
-        </div>
-    </div>
-
-    <!-- Reporte Comparativo -->
-    <div class="tool-card" onclick="abrirReporteComparativo()">
+    <!-- Analizador de Costos -->
+    <div class="tool-card" onclick="abrirAnalizadorCostos()">
         <div class="tool-icon bg-warning">
-            <i class="fas fa-chart-line"></i>
+            <i class="fas fa-dollar-sign"></i>
         </div>
         <div class="tool-content">
-            <h5>Reporte Comparativo</h5>
-            <p>Compare dos fórmulas y analice diferencias nutricionales</p>
+            <h5>Analizador de Costos</h5>
+            <p>Analice la estructura de costos de sus formulaciones</p>
+            <div class="tool-features">
+                <span class="feature-tag">Costos</span>
+                <span class="feature-tag">Márgenes</span>
+                <span class="feature-tag">Rentabilidad</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Validador de Fórmulas -->
+    <div class="tool-card" onclick="abrirValidador()">
+        <div class="tool-icon bg-info">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Validador de Fórmulas</h5>
+            <p>Valide la consistencia y calidad de sus formulaciones</p>
+            <div class="tool-features">
+                <span class="feature-tag">Validación</span>
+                <span class="feature-tag">Calidad</span>
+                <span class="feature-tag">Alertas</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-active">Activo</span>
+        </div>
+    </div>
+
+    <!-- Comparador de Ingredientes -->
+    <div class="tool-card" onclick="abrirComparador()">
+        <div class="tool-icon bg-secondary">
+            <i class="fas fa-balance-scale"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Comparador de Ingredientes</h5>
+            <p>Compare perfiles nutricionales entre diferentes ingredientes</p>
             <div class="tool-features">
                 <span class="feature-tag">Comparación</span>
-                <span class="feature-tag">Nutrientes</span>
+                <span class="feature-tag">Perfiles</span>
                 <span class="feature-tag">Análisis</span>
             </div>
         </div>
@@ -103,11 +103,86 @@
             <span class="status-badge status-active">Activo</span>
         </div>
     </div>
+
+    <!-- Optimizador Avanzado -->
+    <div class="tool-card" onclick="abrirOptimizador()">
+        <div class="tool-icon bg-danger">
+            <i class="fas fa-cogs"></i>
+        </div>
+        <div class="tool-content">
+            <h5>Optimizador Avanzado</h5>
+            <p>Herramientas avanzadas de optimización y análisis</p>
+            <div class="tool-features">
+                <span class="feature-tag">Optimización</span>
+                <span class="feature-tag">Algoritmos</span>
+                <span class="feature-tag">Avanzado</span>
+            </div>
+        </div>
+        <div class="tool-status">
+            <span class="status-badge status-development">En Desarrollo</span>
+        </div>
+    </div>
 </div>
 
-<!-- Estado de Herramientas -->
+<!-- Herramientas de Análisis -->
 <div class="row fade-in-up mt-4">
-    <div class="col-lg-12">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Herramientas de Análisis</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="analysis-tool" onclick="abrirAnalisisNutricional()">
+                            <div class="analysis-icon">
+                                <i class="fas fa-microscope"></i>
+                            </div>
+                            <div class="analysis-content">
+                                <h6>Análisis Nutricional Detallado</h6>
+                                <p class="mb-0">Análisis profundo de perfiles nutricionales</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="analysis-tool" onclick="abrirAnalisisEconomico()">
+                            <div class="analysis-icon">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="analysis-content">
+                                <h6>Análisis Económico</h6>
+                                <p class="mb-0">Evaluación de costos y rentabilidad</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="analysis-tool" onclick="abrirAnalisisTendencias()">
+                            <div class="analysis-icon">
+                                <i class="fas fa-trending-up"></i>
+                            </div>
+                            <div class="analysis-content">
+                                <h6>Análisis de Tendencias</h6>
+                                <p class="mb-0">Tendencias de precios y disponibilidad</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="analysis-tool" onclick="abrirAnalisisCalidad()">
+                            <div class="analysis-icon">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="analysis-content">
+                                <h6>Análisis de Calidad</h6>
+                                <p class="mb-0">Evaluación de calidad de ingredientes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
         <div class="card shadow-sm">
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Estado de Herramientas</h5>
@@ -119,12 +194,12 @@
                         <div class="stat-label">Herramientas Activas</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number text-warning">0</div>
+                        <div class="stat-number text-warning">1</div>
                         <div class="stat-label">En Desarrollo</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number text-info">1</div>
-                        <div class="stat-label">Módulo Integrado</div>
+                        <div class="stat-number text-info">4</div>
+                        <div class="stat-label">Análisis Disponibles</div>
                     </div>
                 </div>
                 
@@ -133,20 +208,16 @@
                 <div class="recent-usage">
                     <h6 class="mb-3">Uso Reciente</h6>
                     <div class="usage-item">
-                        <i class="fas fa-chart-line text-warning me-2"></i>
-                        <small>Reporte Comparativo - Hace 1 hora</small>
-                    </div>
-                    <div class="usage-item">
-                        <i class="fas fa-seedling text-info me-2"></i>
-                        <small>Calculadora de Ingredientes - Hace 2 horas</small>
-                    </div>
-                    <div class="usage-item">
                         <i class="fas fa-calculator text-primary me-2"></i>
-                        <small>Calculadora Nutricional - Ayer</small>
+                        <small>Calculadora Nutricional - Hace 2 horas</small>
                     </div>
                     <div class="usage-item">
                         <i class="fas fa-exchange-alt text-success me-2"></i>
-                        <small>Conversor de Unidades - Hace 2 días</small>
+                        <small>Conversor de Unidades - Ayer</small>
+                    </div>
+                    <div class="usage-item">
+                        <i class="fas fa-dollar-sign text-warning me-2"></i>
+                        <small>Analizador de Costos - Hace 3 días</small>
                     </div>
                 </div>
             </div>
@@ -154,6 +225,7 @@
     </div>
 </div>
 
+<!-- Modales para Herramientas -->
 <!-- Modal Calculadora -->
 <div class="modal fade" id="calculadoraModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -193,31 +265,16 @@
                             <div id="resultadoConversion" class="mt-2"></div>
                         </div>
                         <div class="col-md-6">
-                            <h6>Cálculos Nutricionales con Materia Seca</h6>
+                            <h6>Cálculos Nutricionales</h6>
                             <div class="mb-3">
-                                <label class="form-label">Seleccionar Nutriente</label>
-                                <select class="form-select" id="tipoNutriente">
-                                    <option value="proteina">Proteína Cruda (%)</option>
-                                    <option value="grasa">Grasa Cruda (%)</option>
-                                    <option value="fibra">Fibra Cruda (%)</option>
-                                    <option value="cenizas">Cenizas (%)</option>
-                                    <option value="carbohidratos">Carbohidratos (%)</option>
-                                    <option value="energia">Energía Metabolizable (Mcal/kg)</option>
-                                </select>
+                                <label class="form-label">Proteína Cruda (%)</label>
+                                <input type="number" class="form-control" id="proteina" placeholder="% Proteína">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Porcentaje del Nutriente (%)</label>
-                                <input type="number" class="form-control" id="porcentajeNutriente" placeholder="% Nutriente" value="22">
+                                <label class="form-label">Cantidad (kg)</label>
+                                <input type="number" class="form-control" id="cantidad" placeholder="Cantidad en kg">
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Materia Seca (%)</label>
-                                <input type="number" class="form-control" id="materiaSeca" placeholder="% Materia Seca" value="88">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Cantidad Total (kg)</label>
-                                <input type="number" class="form-control" id="cantidad" placeholder="Cantidad en kg" value="3">
-                            </div>
-                            <button class="btn btn-success" onclick="calcularNutrienteConMS()">Calcular Nutriente Total</button>
+                            <button class="btn btn-success" onclick="calcularProteina()">Calcular Proteína Total</button>
                             <div id="resultadoProteina" class="mt-2"></div>
                         </div>
                     </div>
@@ -227,143 +284,31 @@
     </div>
 </div>
 
-<!-- Modal Calculadora de Ingredientes -->
-<div class="modal fade" id="calculadoraIngredientesModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-seedling me-2"></i>Calculadora de Ingredientes</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Datos del Animal</h6>
-                        <div class="mb-3">
-                            <label class="form-label">Consumo Diario (kg)</label>
-                            <input type="number" class="form-control" id="consumoDiario" placeholder="Ej: 3.0" step="0.1" value="3.0">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Número de Animales</label>
-                            <input type="number" class="form-control" id="numeroAnimales" placeholder="Ej: 100" value="100">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Días de Producción</label>
-                            <input type="number" class="form-control" id="diasProduccion" placeholder="Ej: 30" value="30">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Seleccionar Fórmula</h6>
-                        <div class="mb-3">
-                            <label class="form-label">Fórmula a Calcular</label>
-                            <select class="form-select" id="selectFormulaIngredientes">
-                                <option value="">Seleccionar fórmula...</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-info" onclick="calcularIngredientes()">Calcular Ingredientes</button>
-                    </div>
-                </div>
-                <div id="resultadoIngredientes" class="mt-4" style="display:none;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Reporte Comparativo Mejorado -->
-<div class="modal fade" id="reporteComparativoModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-chart-line me-2"></i>Reporte Comparativo de Fórmulas</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h6>Selección de Fórmulas</h6>
-                        <div class="mb-3">
-                            <label class="form-label">Fórmula A</label>
-                            <select class="form-select" id="selectFormulaA">
-                                <option value="">Seleccionar fórmula A...</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Fórmula B</label>
-                            <select class="form-select" id="selectFormulaB">
-                                <option value="">Seleccionar fórmula B...</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>Nutrientes a Comparar</h6>
-                        <div class="nutrientes-selection" style="max-height: 200px; overflow-y: auto;">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="proteina_bruta" checked>
-                                <label class="form-check-label" for="proteina_bruta">Proteína Bruta (%)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="energia_metabolizable" checked>
-                                <label class="form-check-label" for="energia_metabolizable">Energía Metabolizable (Mcal/kg)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="fibra_bruta">
-                                <label class="form-check-label" for="fibra_bruta">Fibra Bruta (%)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="grasa_bruta">
-                                <label class="form-check-label" for="grasa_bruta">Grasa Bruta (%)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="cenizas">
-                                <label class="form-check-label" for="cenizas">Cenizas (%)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="calcio">
-                                <label class="form-check-label" for="calcio">Calcio (%)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="fosforo">
-                                <label class="form-check-label" for="fosforo">Fósforo (%)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="lisina">
-                                <label class="form-check-label" for="lisina">Lisina (%)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="metionina">
-                                <label class="form-check-label" for="metionina">Metionina (%)</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>Opciones de Comparación</h6>
-                        <div class="mb-3">
-                            <label class="form-label">Consumo para Análisis (kg/día)</label>
-                            <input type="number" class="form-control" id="consumoAnalisis" value="3.0" step="0.1">
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="incluirCostos" checked>
-                            <label class="form-check-label" for="incluirCostos">Incluir análisis de costos</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="mostrarPorcentajes" checked>
-                            <label class="form-check-label" for="mostrarPorcentajes">Mostrar diferencias en %</label>
-                        </div>
-                    </div>
-                </div>
-                <div id="resultadoComparativo" class="mt-4" style="display:none;"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button class="btn btn-warning" onclick="generarReporteComparativo()">
-                    <i class="fas fa-chart-bar me-1"></i>Generar Comparación
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
+.herramientas-header {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    padding: 2.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    color: white;
+    box-shadow: 0 8px 32px rgba(108, 117, 125, 0.2);
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0 0;
+    color: rgba(255,255,255,0.9);
+    font-weight: 400;
+}
+
 .tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -446,6 +391,48 @@
     color: #155724;
 }
 
+.status-development {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.analysis-tool {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.analysis-tool:hover {
+    background: #e9ecef;
+    transform: translateX(4px);
+}
+
+.analysis-icon {
+    width: 40px;
+    height: 40px;
+    background: #6c757d;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 1rem;
+}
+
+.analysis-content h6 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+}
+
+.analysis-content p {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
 .tools-stats {
     display: flex;
     justify-content: space-around;
@@ -493,82 +480,221 @@
         transform: translateY(0);
     }
 }
+
+@media (max-width: 768px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .herramientas-header {
+        padding: 1.5rem;
+    }
+}
 </style>
 
 <script>
+function actualizarHerramientas() {
+    const btn = event.target.closest('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Actualizando...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        mostrarNotificacion('Herramientas actualizadas', 'success');
+    }, 1500);
+}
+
 function abrirCalculadora() {
     const modal = new bootstrap.Modal(document.getElementById('calculadoraModal'));
     modal.show();
 }
 
 function abrirConversor() {
+    // Crear modal dinámico para conversor
     const modalHtml = `
         <div class="modal fade" id="conversorModal" tabindex="-1">
-
-function abrirCalculadoraAportes() {
-    // Usar la nueva calculadora mejorada
-    abrirCalculadoraAportesMejorada();
-}
-
-function calcularEjemplo() {
-    // Obtener valores del modal de aportes (con IDs únicos)
-    const consumoInput = document.getElementById('consumoAnimalAportes');
-    const materiaSecaInput = document.getElementById('materiaSecaDietaAportes');
-    
-    const consumo = consumoInput ? parseFloat(consumoInput.value) || 3 : 3;
-    const materiaSeca = materiaSecaInput ? parseFloat(materiaSecaInput.value) || 88 : 88;
-    const proteina = 22; // Ejemplo fijo
-    
-    console.log('Calculando con valores:', { consumo, materiaSeca, proteina });
-    
-    // Cálculo paso a paso
-    const consumoMS = consumo * (materiaSeca / 100);
-    const proteinaTotal = consumoMS * (proteina / 100);
-    
-    const resultadoHtml = `
-        <div class="alert alert-success">
-            <h6><strong>Resultado del Cálculo</strong></h6>
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Datos de Entrada:</strong><br>
-                    • Consumo: ${consumo} kg/día<br>
-                    • Materia Seca: ${materiaSeca}%<br>
-                    • Proteína en dieta: ${proteina}%
-                </div>
-                <div class="col-md-6">
-                    <strong>Cálculo:</strong><br>
-                    1. MS: ${consumo} kg × ${materiaSeca}% = ${consumoMS.toFixed(4)} kg<br>
-                    2. Proteína: ${consumoMS.toFixed(4)} kg × ${proteina}% = <strong>${proteinaTotal.toFixed(4)} kg</strong>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-exchange-alt me-2"></i>Conversor de Unidades</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Valor a Convertir</label>
+                            <input type="number" class="form-control" id="valorConversorModal" step="0.000001" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">De</label>
+                                <select class="form-select" id="unidadOrigenModal" required>
+                                    <option value="kg">Kilogramos (kg)</option>
+                                    <option value="g">Gramos (g)</option>
+                                    <option value="lb">Libras (lb)</option>
+                                    <option value="oz">Onzas (oz)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">A</label>
+                                <select class="form-select" id="unidadDestinoModal" required>
+                                    <option value="kg">Kilogramos (kg)</option>
+                                    <option value="g">Gramos (g)</option>
+                                    <option value="lb">Libras (lb)</option>
+                                    <option value="oz">Onzas (oz)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="resultadoConversorModal" class="alert d-none mt-3"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="convertirUnidadesModal()">Convertir</button>
+                    </div>
                 </div>
             </div>
-            <hr>
-            <div class="text-center">
-                <h5 class="text-success">Aporte de Proteína: <strong>${proteinaTotal.toFixed(4)} kg/día</strong></h5>
-                <small class="text-muted">Este es el aporte diario de proteína que recibirá el animal</small>
-            </div>
-        </div>
-        
-        <div class="alert alert-info">
-            <strong>Fórmula Utilizada:</strong><br>
-            Aporte Nutriente = Consumo × (% Materia Seca / 100) × (% Nutriente / 100)<br>
-            <small>Esta es la misma fórmula utilizada en el formulador principal</small>
-        </div>
-        
-        <div class="alert alert-warning">
-            <strong>Verificación del Ejemplo Solicitado:</strong><br>
-            Con los valores: 3kg × 88% × 22% = <strong>0.5808 kg</strong> ✅<br>
-            <small>Este resultado coincide exactamente con el ejemplo solicitado</small>
         </div>
     `;
     
-    const resultadoDiv = document.getElementById('resultadoCalculoAportes');
-    if (resultadoDiv) {
-        resultadoDiv.innerHTML = resultadoHtml;
-        console.log('Resultado mostrado correctamente');
-    } else {
-        console.error('No se encontró el elemento resultadoCalculoAportes');
-        alert('Error: No se pudo mostrar el resultado');
+    // Remover modal existente si existe
+    const existingModal = document.getElementById('conversorModal');
+    if (existingModal) {
+        existingModal.remove();
     }
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('conversorModal'));
+    modal.show();
+}
+
+function abrirAnalizadorCostos() {
+    // Crear modal dinámico para analizador de costos
+    const modalHtml = `
+        <div class="modal fade" id="analizadorCostosModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-dollar-sign me-2"></i>Analizador de Costos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-success btn-sm" onclick="agregarIngredienteCosto()">
+                                <i class="fas fa-plus me-1"></i>Agregar Ingrediente
+                            </button>
+                        </div>
+                        <div id="ingredientesCostoModal">
+                            <!-- Los ingredientes se agregarán dinámicamente -->
+                        </div>
+                        <div id="resultadoAnalisisCostosModal" class="mt-3 d-none"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="analizarCostosModal()">Analizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remover modal existente si existe
+    const existingModal = document.getElementById('analizadorCostosModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Agregar primer ingrediente
+    setTimeout(() => {
+        agregarIngredienteCosto();
+    }, 100);
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('analizadorCostosModal'));
+    modal.show();
+}
+
+function abrirValidador() {
+    // Crear modal dinámico para validador
+    const modalHtml = `
+        <div class="modal fade" id="validadorModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Validador de Fórmulas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-success btn-sm" onclick="agregarIngredienteValidacion()">
+                                <i class="fas fa-plus me-1"></i>Agregar Ingrediente
+                            </button>
+                        </div>
+                        <div id="ingredientesValidacionModal">
+                            <!-- Los ingredientes se agregarán dinámicamente -->
+                        </div>
+                        <div id="resultadoValidacionModal" class="mt-3 d-none"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="validarFormulaModal()">Validar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remover modal existente si existe
+    const existingModal = document.getElementById('validadorModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Agregar primer ingrediente
+    setTimeout(() => {
+        agregarIngredienteValidacion();
+    }, 100);
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('validadorModal'));
+    modal.show();
+}
+
+function abrirComparador() {
+    mostrarNotificacion('Comparador de Ingredientes - Funcionalidad en desarrollo', 'info');
+}
+
+function abrirOptimizador() {
+    mostrarNotificacion('Optimizador Avanzado - En desarrollo', 'warning');
+}
+
+function abrirAnalisisNutricional() {
+    mostrarNotificacion('Análisis Nutricional - Funcionalidad en desarrollo', 'info');
+}
+
+function abrirAnalisisEconomico() {
+    mostrarNotificacion('Análisis Económico - Funcionalidad en desarrollo', 'info');
+}
+
+function abrirAnalisisTendencias() {
+    mostrarNotificacion('Análisis de Tendencias - Funcionalidad en desarrollo', 'info');
+}
+
+function abrirAnalisisCalidad() {
+    mostrarNotificacion('Análisis de Calidad - Funcionalidad en desarrollo', 'info');
 }
 
 function convertirUnidades() {
@@ -582,6 +708,7 @@ function convertirUnidades() {
         return;
     }
     
+    // Conversiones básicas (ejemplo)
     const conversiones = {
         'kg': { 'g': 1000, 'lb': 2.20462, 'oz': 35.274 },
         'g': { 'kg': 0.001, 'lb': 0.00220462, 'oz': 0.035274 },
@@ -602,50 +729,44 @@ function convertirUnidades() {
         </div>`;
 }
 
-function calcularNutrienteConMS() {
-    const tipoNutriente = document.getElementById('tipoNutriente').value;
-    const porcentajeNutriente = parseFloat(document.getElementById('porcentajeNutriente').value);
-    const materiaSeca = parseFloat(document.getElementById('materiaSeca').value);
+function calcularProteina() {
+    const proteina = parseFloat(document.getElementById('proteina').value);
     const cantidad = parseFloat(document.getElementById('cantidad').value);
     
-    if (!porcentajeNutriente || !materiaSeca || !cantidad) {
+    if (!proteina || !cantidad) {
         document.getElementById('resultadoProteina').innerHTML = 
             '<div class="alert alert-warning">Por favor complete todos los campos</div>';
         return;
     }
     
-    // Obtener nombre del nutriente
-    const nombresNutrientes = {
-        'proteina': 'Proteína Cruda',
-        'grasa': 'Grasa Cruda',
-        'fibra': 'Fibra Cruda',
-        'cenizas': 'Cenizas',
-        'carbohidratos': 'Carbohidratos',
-        'energia': 'Energía Metabolizable'
-    };
-    
-    const nombreNutriente = nombresNutrientes[tipoNutriente];
-    const unidad = tipoNutriente === 'energia' ? 'Mcal' : 'kg';
-    
-    // Cálculo como en el formulador: Cantidad * %MS * %Nutriente
-    const cantidadMS = cantidad * (materiaSeca / 100);
-    const nutrienteTotal = tipoNutriente === 'energia' 
-        ? cantidadMS * porcentajeNutriente  // Para energía no se divide por 100
-        : cantidadMS * (porcentajeNutriente / 100);
+    const proteinaTotal = (proteina / 100) * cantidad;
     
     document.getElementById('resultadoProteina').innerHTML = 
         `<div class="alert alert-success">
-            <strong>Cálculo paso a paso:</strong><br>
-            1. Materia Seca: ${cantidad} kg × ${materiaSeca}% = ${cantidadMS.toFixed(4)} kg<br>
-            2. ${nombreNutriente}: ${cantidadMS.toFixed(4)} kg × ${porcentajeNutriente}${tipoNutriente === 'energia' ? ' Mcal/kg' : '%'} = <strong>${nutrienteTotal.toFixed(4)} ${unidad}</strong><br>
-            <small class="text-muted">Ejemplo: ${cantidad} kg de alimento con ${materiaSeca}% MS y ${porcentajeNutriente}${tipoNutriente === 'energia' ? ' Mcal/kg' : '%'} de ${nombreNutriente.toLowerCase()}</small>
+            <strong>Proteína Total:</strong> ${proteinaTotal.toFixed(2)} kg<br>
+            <small>En ${cantidad} kg de alimento con ${proteina}% de proteína</small>
         </div>`;
 }
 
-// Mantener la función original para compatibilidad
-function calcularProteinaConMS() {
-    calcularNutrienteConMS();
+function mostrarNotificacion(mensaje, tipo) {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 3000);
 }
+
+// Funciones para conectar con APIs
 
 function convertirUnidadesModal() {
     const valor = parseFloat(document.getElementById('valorConversorModal').value);
@@ -693,471 +814,238 @@ function convertirUnidadesModal() {
     });
 }
 
-function mostrarNotificacion(mensaje, tipo) {
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
-    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-    toast.innerHTML = `
-        ${mensaje}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
+function agregarIngredienteCosto() {
+    const container = document.getElementById('ingredientesCostoModal');
     
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.remove();
-        }
-    }, 3000);
-}
-
-// ==== Calculadora de Ingredientes ====
-function abrirCalculadoraIngredientes() {
-    const modal = new bootstrap.Modal(document.getElementById('calculadoraIngredientesModal'));
-    const selectFormula = document.getElementById('selectFormulaIngredientes');
-    
-    // Cargar fórmulas disponibles
-    selectFormula.innerHTML = '<option value="">Cargando...</option>';
-    
-    fetch('/api/mezclas_usuario')
-        .then(r => r.json())
-        .then(data => {
-            if (!Array.isArray(data) && data.success && Array.isArray(data.mezclas)) {
-                data = data.mezclas;
-            }
-            const options = ['<option value="">Seleccionar fórmula...</option>']
-                .concat((data || []).map(m => `<option value="${m.id}">${m.nombre}</option>`));
-            selectFormula.innerHTML = options.join('');
-        })
-        .catch(() => {
-            selectFormula.innerHTML = '<option value="">Error al cargar fórmulas</option>';
-        });
-    
-    modal.show();
-}
-
-function calcularIngredientes() {
-    const formulaId = document.getElementById('selectFormulaIngredientes').value;
-    const consumoDiario = parseFloat(document.getElementById('consumoDiario').value) || 0;
-    const numeroAnimales = parseInt(document.getElementById('numeroAnimales').value) || 0;
-    const diasProduccion = parseInt(document.getElementById('diasProduccion').value) || 0;
-    const resultadoDiv = document.getElementById('resultadoIngredientes');
-    
-    if (!formulaId) {
-        alert('Por favor selecciona una fórmula.');
-        return;
-    }
-    
-    if (consumoDiario <= 0 || numeroAnimales <= 0 || diasProduccion <= 0) {
-        alert('Por favor ingresa valores válidos para todos los campos.');
-        return;
-    }
-    
-    // Mostrar loading
-    resultadoDiv.style.display = 'block';
-    resultadoDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Calculando...</div>';
-    
-    // Obtener detalles de la fórmula
-    fetch(`/api/mezcla_detalle/${formulaId}`)
-        .then(r => r.json())
-        .then(data => {
-            if (data.success && data.mezcla && data.ingredientes) {
-                mostrarCalculoIngredientes(data, consumoDiario, numeroAnimales, diasProduccion);
-            } else {
-                throw new Error('No se pudieron obtener los detalles de la fórmula');
-            }
-        })
-        .catch(error => {
-            resultadoDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error.message}</div>`;
-        });
-}
-
-function mostrarCalculoIngredientes(data, consumoDiario, numeroAnimales, diasProduccion) {
-    const resultadoDiv = document.getElementById('resultadoIngredientes');
-    const mezcla = data.mezcla;
-    const ingredientes = data.ingredientes;
-    
-    // Calcular totales
-    const consumoTotalDiario = consumoDiario * numeroAnimales;
-    const consumoTotalPeriodo = consumoTotalDiario * diasProduccion;
-    
-    let tablaIngredientes = '';
-    let costoTotal = 0;
-    
-    ingredientes.forEach(ing => {
-        const porcentaje = parseFloat(ing.porcentaje) || 0;
-        const precio = parseFloat(ing.precio) || 0;
-        
-        const cantidadDiaria = (consumoTotalDiario * porcentaje) / 100;
-        const cantidadTotal = (consumoTotalPeriodo * porcentaje) / 100;
-        const costoIngrediente = cantidadTotal * precio;
-        
-        costoTotal += costoIngrediente;
-        
-        tablaIngredientes += `
-            <tr>
-                <td><strong>${ing.nombre}</strong></td>
-                <td class="text-center">${porcentaje.toFixed(2)}%</td>
-                <td class="text-end">${cantidadDiaria.toFixed(3)} kg</td>
-                <td class="text-end">${cantidadTotal.toFixed(2)} kg</td>
-                <td class="text-end">$${precio.toFixed(2)}</td>
-                <td class="text-end"><strong>$${costoIngrediente.toFixed(2)}</strong></td>
-            </tr>
-        `;
-    });
-    
-    const costoPorKg = consumoTotalPeriodo > 0 ? costoTotal / consumoTotalPeriodo : 0;
-    const costoPorAnimalDia = numeroAnimales > 0 ? (costoTotal / numeroAnimales) / diasProduccion : 0;
-    
-    resultadoDiv.innerHTML = `
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h6 class="mb-0"><i class="fas fa-calculator me-2"></i>Cálculo de Ingredientes - ${mezcla.nombre}</h6>
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <div class="text-center p-2 bg-light rounded">
-                            <small class="text-muted">Consumo Diario Total</small>
-                            <div class="h5 mb-0">${consumoTotalDiario.toFixed(1)} kg</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="text-center p-2 bg-light rounded">
-                            <small class="text-muted">Consumo Total Período</small>
-                            <div class="h5 mb-0">${consumoTotalPeriodo.toFixed(1)} kg</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="text-center p-2 bg-light rounded">
-                            <small class="text-muted">Costo por kg</small>
-                            <div class="h5 mb-0">$${costoPorKg.toFixed(3)}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="text-center p-2 bg-success text-white rounded">
-                            <small>Costo Total</small>
-                            <div class="h5 mb-0">$${costoTotal.toFixed(2)}</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="table-responsive">
-                    <table class="table table-striped table-sm">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Ingrediente</th>
-                                <th class="text-center">%</th>
-                                <th class="text-end">kg/día</th>
-                                <th class="text-end">Total kg</th>
-                                <th class="text-end">Precio/kg</th>
-                                <th class="text-end">Costo Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tablaIngredientes}
-                        </tbody>
-                        <tfoot class="table-secondary">
-                            <tr>
-                                <th colspan="5" class="text-end">TOTAL:</th>
-                                <th class="text-end">$${costoTotal.toFixed(2)}</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                
-                <div class="alert alert-info mt-3">
-                    <h6><i class="fas fa-info-circle me-2"></i>Resumen del Cálculo</h6>
-                    <ul class="mb-0">
-                        <li><strong>Animales:</strong> ${numeroAnimales} animales</li>
-                        <li><strong>Período:</strong> ${diasProduccion} días</li>
-                        <li><strong>Consumo por animal:</strong> ${consumoDiario} kg/día</li>
-                        <li><strong>Costo por animal/día:</strong> $${costoPorAnimalDia.toFixed(3)}</li>
-                        <li><strong>Costo total del período:</strong> $${costoTotal.toFixed(2)}</li>
-                    </ul>
-                </div>
-            </div>
+    const ingredienteDiv = document.createElement('div');
+    ingredienteDiv.className = 'row mb-3 ingrediente-costo';
+    ingredienteDiv.innerHTML = `
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Nombre del ingrediente" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" class="form-control" placeholder="Cantidad (kg)" step="0.01" min="0" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" class="form-control" placeholder="Precio/kg" step="0.01" min="0" required>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarIngredienteCosto(this)">
+                <i class="fas fa-trash"></i>
+            </button>
         </div>
     `;
+    
+    container.appendChild(ingredienteDiv);
 }
 
-// ==== Reporte Comparativo Mejorado ====
-function abrirReporteComparativo() {
-    const modal = new bootstrap.Modal(document.getElementById('reporteComparativoModal'));
-    const selA = document.getElementById('selectFormulaA');
-    const selB = document.getElementById('selectFormulaB');
-    const out = document.getElementById('resultadoComparativo');
-    
-    selA.innerHTML = '<option value="">Cargando...</option>';
-    selB.innerHTML = '<option value="">Cargando...</option>';
-    out.style.display = 'none';
-    out.innerHTML = '';
-
-    fetch('/api/mezclas_usuario')
-        .then(r => r.json())
-        .then(data => {
-            if (!Array.isArray(data) && data.success && Array.isArray(data.mezclas)) {
-                data = data.mezclas;
-            }
-            const options = ['<option value="">Seleccionar fórmula...</option>']
-                .concat((data || []).map(m => `<option value="${m.id}">${m.nombre}</option>`));
-            selA.innerHTML = options.join('');
-            selB.innerHTML = options.join('');
-        })
-        .catch(() => {
-            selA.innerHTML = '<option value="">Error al cargar</option>';
-            selB.innerHTML = '<option value="">Error al cargar</option>';
-        });
-
-    modal.show();
+function eliminarIngredienteCosto(btn) {
+    btn.closest('.ingrediente-costo').remove();
 }
 
-function generarReporteComparativo() {
-    const formulaA = document.getElementById('selectFormulaA').value;
-    const formulaB = document.getElementById('selectFormulaB').value;
-    const consumoAnalisis = parseFloat(document.getElementById('consumoAnalisis').value) || 3.0;
-    const incluirCostos = document.getElementById('incluirCostos').checked;
-    const mostrarPorcentajes = document.getElementById('mostrarPorcentajes').checked;
-    const out = document.getElementById('resultadoComparativo');
+function analizarCostosModal() {
+    const ingredientesDiv = document.querySelectorAll('.ingrediente-costo');
+    const ingredientes = [];
     
-    if (!formulaA || !formulaB || formulaA === formulaB) {
-        alert('Selecciona dos fórmulas distintas.');
-        return;
-    }
-    
-    // Obtener nutrientes seleccionados
-    const nutrientesSeleccionados = [];
-    document.querySelectorAll('.nutrientes-selection input[type="checkbox"]:checked').forEach(checkbox => {
-        nutrientesSeleccionados.push({
-            id: checkbox.id,
-            nombre: checkbox.nextElementSibling.textContent
-        });
-    });
-    
-    if (nutrientesSeleccionados.length === 0) {
-        alert('Selecciona al menos un nutriente para comparar.');
-        return;
-    }
-    
-    // Mostrar loading
-    out.style.display = 'block';
-    out.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Generando comparación...</div>';
-    
-    // Obtener detalles de ambas fórmulas
-    Promise.all([
-        fetch(`/api/mezcla_detalle/${formulaA}`).then(r => r.json()),
-        fetch(`/api/mezcla_detalle/${formulaB}`).then(r => r.json())
-    ])
-    .then(([dataA, dataB]) => {
-        if (dataA.success && dataB.success) {
-            mostrarComparacionDetallada(dataA, dataB, nutrientesSeleccionados, consumoAnalisis, incluirCostos, mostrarPorcentajes);
-        } else {
-            throw new Error('No se pudieron obtener los detalles de las fórmulas');
-        }
-    })
-    .catch(error => {
-        out.innerHTML = `<div class="alert alert-danger">❌ Error: ${error.message}</div>`;
-    });
-}
-
-function mostrarComparacionDetallada(dataA, dataB, nutrientesSeleccionados, consumoAnalisis, incluirCostos, mostrarPorcentajes) {
-    const out = document.getElementById('resultadoComparativo');
-    const mezclA = dataA.mezcla;
-    const mezclB = dataB.mezcla;
-    
-    // Calcular aportes nutricionales
-    const aportesA = calcularAportesNutricionales(dataA.ingredientes);
-    const aportesB = calcularAportesNutricionales(dataB.ingredientes);
-    
-    let tablaComparacion = '';
-    let resumenDiferencias = [];
-    
-    nutrientesSeleccionados.forEach(nutriente => {
-        const valorA = aportesA[nutriente.id] || 0;
-        const valorB = aportesB[nutriente.id] || 0;
-        const diferencia = valorB - valorA;
-        const diferenciaPorcentual = valorA > 0 ? ((diferencia / valorA) * 100) : 0;
+    ingredientesDiv.forEach(div => {
+        const inputs = div.querySelectorAll('input');
+        const nombre = inputs[0].value;
+        const cantidad = parseFloat(inputs[1].value);
+        const precio = parseFloat(inputs[2].value);
         
-        // Calcular aportes diarios
-        const aporteA = (valorA * consumoAnalisis) / 100;
-        const aporteB = (valorB * consumoAnalisis) / 100;
-        const diferenciaAporte = aporteB - aporteA;
-        
-        const colorDiferencia = diferencia > 0 ? 'text-success' : diferencia < 0 ? 'text-danger' : 'text-muted';
-        
-        tablaComparacion += `
-            <tr>
-                <td><strong>${nutriente.nombre}</strong></td>
-                <td class="text-end">${valorA.toFixed(3)}</td>
-                <td class="text-end">${valorB.toFixed(3)}</td>
-                <td class="text-end ${colorDiferencia}">
-                    ${diferencia > 0 ? '+' : ''}${diferencia.toFixed(3)}
-                    ${mostrarPorcentajes ? ` (${diferenciaPorcentual > 0 ? '+' : ''}${diferenciaPorcentual.toFixed(1)}%)` : ''}
-                </td>
-                <td class="text-end">${aporteA.toFixed(4)}</td>
-                <td class="text-end">${aporteB.toFixed(4)}</td>
-                <td class="text-end ${colorDiferencia}">
-                    ${diferenciaAporte > 0 ? '+' : ''}${diferenciaAporte.toFixed(4)}
-                </td>
-            </tr>
-        `;
-        
-        if (Math.abs(diferenciaPorcentual) > 5) {
-            resumenDiferencias.push({
-                nutriente: nutriente.nombre,
-                diferencia: diferenciaPorcentual,
-                significativa: Math.abs(diferenciaPorcentual) > 10
+        if (nombre && !isNaN(cantidad) && !isNaN(precio)) {
+            ingredientes.push({
+                nombre: nombre,
+                cantidad: cantidad,
+                precio_kg: precio
             });
         }
     });
     
-    // Análisis de costos si está habilitado
-    let seccionCostos = '';
-    if (incluirCostos) {
-        const costoA = calcularCostoFormula(dataA.ingredientes);
-        const costoB = calcularCostoFormula(dataB.ingredientes);
-        const diferenciaCosto = costoB - costoA;
-        const diferenciaCostoPorcentual = costoA > 0 ? ((diferenciaCosto / costoA) * 100) : 0;
-        const costoAnimalDiaA = costoA * consumoAnalisis;
-        const costoAnimalDiaB = costoB * consumoAnalisis;
-        
-        seccionCostos = `
-            <div class="card mt-3">
-                <div class="card-header bg-warning text-dark">
-                    <h6 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Análisis de Costos</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="text-center p-2 bg-light rounded">
-                                <small class="text-muted">${mezclA.nombre}</small>
-                                <div class="h6 mb-0">$${costoA.toFixed(3)}/kg</div>
-                                <small>$${costoAnimalDiaA.toFixed(3)}/animal/día</small>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="text-center p-2 bg-light rounded">
-                                <small class="text-muted">${mezclB.nombre}</small>
-                                <div class="h6 mb-0">$${costoB.toFixed(3)}/kg</div>
-                                <small>$${costoAnimalDiaB.toFixed(3)}/animal/día</small>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="text-center p-2 ${diferenciaCosto > 0 ? 'bg-danger' : diferenciaCosto < 0 ? 'bg-success' : 'bg-secondary'} text-white rounded">
-                                <small>Diferencia</small>
-                                <div class="h6 mb-0">${diferenciaCosto > 0 ? '+' : ''}$${diferenciaCosto.toFixed(3)}/kg</div>
-                                <small>${diferenciaCostoPorcentual > 0 ? '+' : ''}${diferenciaCostoPorcentual.toFixed(1)}%</small>
-                            </div>
-                        </div>
+    if (ingredientes.length === 0) {
+        const resultado = document.getElementById('resultadoAnalisisCostosModal');
+        resultado.className = 'alert alert-warning';
+        resultado.innerHTML = 'Por favor agregue al menos un ingrediente válido';
+        resultado.classList.remove('d-none');
+        return;
+    }
+    
+    fetch('/api/analizar_costos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredientes: ingredientes })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultado = document.getElementById('resultadoAnalisisCostosModal');
+        if (data.success) {
+            let html = `
+                <div class="alert alert-success">
+                    <h6><strong>Análisis de Costos</strong></h6>
+                    <p><strong>Costo Total:</strong> $${data.costo_total}</p>
+                    <p><strong>Ingrediente más caro:</strong> ${data.ingrediente_mas_caro.nombre} ($${data.ingrediente_mas_caro.costo_total})</p>
+                    
+                    <h6 class="mt-3">Desglose por Ingrediente:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Ingrediente</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio/kg</th>
+                                    <th>Costo Total</th>
+                                    <th>% del Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            data.analisis.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td>${item.cantidad} kg</td>
+                        <td>$${item.precio_kg}</td>
+                        <td>$${item.costo_total}</td>
+                        <td>${item.porcentaje}%</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </div>
-        `;
-    }
+            `;
+            
+            resultado.innerHTML = html;
+        } else {
+            resultado.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${data.error}</div>`;
+        }
+        resultado.classList.remove('d-none');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const resultado = document.getElementById('resultadoAnalisisCostosModal');
+        resultado.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${error.message}</div>`;
+        resultado.classList.remove('d-none');
+    });
+}
+
+function agregarIngredienteValidacion() {
+    const container = document.getElementById('ingredientesValidacionModal');
     
-    // Generar resumen de diferencias significativas
-    let resumenSignificativo = '';
-    if (resumenDiferencias.length > 0) {
-        const diferenciasSignificativas = resumenDiferencias.filter(d => d.significativa);
-        const diferenciasModeratas = resumenDiferencias.filter(d => !d.significativa);
-        
-        resumenSignificativo = `
-            <div class="alert alert-info mt-3">
-                <h6><i class="fas fa-exclamation-triangle me-2"></i>Diferencias Nutricionales Destacadas</h6>
-                ${diferenciasSignificativas.length > 0 ? `
-                    <p><strong>Diferencias significativas (>10%):</strong></p>
-                    <ul>
-                        ${diferenciasSignificativas.map(d => 
-                            `<li>${d.nutriente}: ${d.diferencia > 0 ? '+' : ''}${d.diferencia.toFixed(1)}%</li>`
-                        ).join('')}
-                    </ul>
-                ` : ''}
-                ${diferenciasModeratas.length > 0 ? `
-                    <p><strong>Diferencias moderadas (5-10%):</strong></p>
-                    <ul>
-                        ${diferenciasModeratas.map(d => 
-                            `<li>${d.nutriente}: ${d.diferencia > 0 ? '+' : ''}${d.diferencia.toFixed(1)}%</li>`
-                        ).join('')}
-                    </ul>
-                ` : ''}
-            </div>
-        `;
-    }
-    
-    out.innerHTML = `
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h6 class="mb-0"><i class="fas fa-balance-scale me-2"></i>Comparación: ${mezclA.nombre} vs ${mezclB.nombre}</h6>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-sm">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Nutriente</th>
-                                <th class="text-end">${mezclA.nombre}</th>
-                                <th class="text-end">${mezclB.nombre}</th>
-                                <th class="text-end">Diferencia</th>
-                                <th class="text-end">Aporte A (${consumoAnalisis}kg)</th>
-                                <th class="text-end">Aporte B (${consumoAnalisis}kg)</th>
-                                <th class="text-end">Dif. Aporte</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tablaComparacion}
-                        </tbody>
-                    </table>
-                </div>
-                ${resumenSignificativo}
-            </div>
+    const ingredienteDiv = document.createElement('div');
+    ingredienteDiv.className = 'row mb-3 ingrediente-validacion';
+    ingredienteDiv.innerHTML = `
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Nombre del ingrediente" required>
         </div>
-        ${seccionCostos}
+        <div class="col-md-4">
+            <input type="number" class="form-control" placeholder="Porcentaje (%)" step="0.01" min="0" max="100" required>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarIngredienteValidacion(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
     `;
+    
+    container.appendChild(ingredienteDiv);
 }
 
-function calcularAportesNutricionales(ingredientes) {
-    const aportes = {
-        proteina_bruta: 0,
-        energia_metabolizable: 0,
-        fibra_bruta: 0,
-        grasa_bruta: 0,
-        cenizas: 0,
-        calcio: 0,
-        fosforo: 0,
-        lisina: 0,
-        metionina: 0
-    };
+function eliminarIngredienteValidacion(btn) {
+    btn.closest('.ingrediente-validacion').remove();
+}
+
+function validarFormulaModal() {
+    const ingredientesDiv = document.querySelectorAll('.ingrediente-validacion');
+    const ingredientes = [];
     
-    ingredientes.forEach(ing => {
-        const porcentaje = parseFloat(ing.porcentaje) || 0;
-        const factor = porcentaje / 100;
+    ingredientesDiv.forEach(div => {
+        const inputs = div.querySelectorAll('input');
+        const nombre = inputs[0].value;
+        const porcentaje = parseFloat(inputs[1].value);
         
-        aportes.proteina_bruta += (parseFloat(ing.proteina_bruta) || 0) * factor;
-        aportes.energia_metabolizable += (parseFloat(ing.energia_metabolizable) || 0) * factor;
-        aportes.fibra_bruta += (parseFloat(ing.fibra_bruta) || 0) * factor;
-        aportes.grasa_bruta += (parseFloat(ing.grasa_bruta) || 0) * factor;
-        aportes.cenizas += (parseFloat(ing.cenizas) || 0) * factor;
-        aportes.calcio += (parseFloat(ing.calcio) || 0) * factor;
-        aportes.fosforo += (parseFloat(ing.fosforo) || 0) * factor;
-        aportes.lisina += (parseFloat(ing.lisina) || 0) * factor;
-        aportes.metionina += (parseFloat(ing.metionina) || 0) * factor;
+        if (nombre && !isNaN(porcentaje)) {
+            ingredientes.push({
+                nombre: nombre,
+                porcentaje: porcentaje
+            });
+        }
     });
     
-    return aportes;
-}
-
-function calcularCostoFormula(ingredientes) {
-    let costoTotal = 0;
-    ingredientes.forEach(ing => {
-        const porcentaje = parseFloat(ing.porcentaje) || 0;
-        const precio = parseFloat(ing.precio) || 0;
-        costoTotal += (porcentaje / 100) * precio;
+    if (ingredientes.length === 0) {
+        const resultado = document.getElementById('resultadoValidacionModal');
+        resultado.className = 'alert alert-warning';
+        resultado.innerHTML = 'Por favor agregue al menos un ingrediente válido';
+        resultado.classList.remove('d-none');
+        return;
+    }
+    
+    fetch('/api/validar_formula', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredientes: ingredientes })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultado = document.getElementById('resultadoValidacionModal');
+        if (data.success) {
+            let alertClass = 'alert-success';
+            if (data.estado === 'error') alertClass = 'alert-danger';
+            else if (data.estado === 'advertencia') alertClass = 'alert-warning';
+            
+            let html = `
+                <div class="alert ${alertClass}">
+                    <h6><strong>Resultado de Validación</strong></h6>
+                    <p><strong>Estado:</strong> ${data.estado.toUpperCase()}</p>
+                    <p><strong>Total de ingredientes:</strong> ${data.total_ingredientes}</p>
+                    <p><strong>Suma de porcentajes:</strong> ${data.total_porcentaje}%</p>
+            `;
+            
+            if (data.validaciones.length > 0) {
+                html += '<h6 class="mt-3">Validaciones:</h6><ul>';
+                data.validaciones.forEach(validacion => {
+                    html += `<li>${validacion}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            if (data.errores.length > 0) {
+                html += '<h6 class="mt-3 text-danger">Errores:</h6><ul>';
+                data.errores.forEach(error => {
+                    html += `<li class="text-danger">${error}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            if (data.advertencias.length > 0) {
+                html += '<h6 class="mt-3 text-warning">Advertencias:</h6><ul>';
+                data.advertencias.forEach(advertencia => {
+                    html += `<li class="text-warning">${advertencia}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            html += '</div>';
+            resultado.innerHTML = html;
+        } else {
+            resultado.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${data.error}</div>`;
+        }
+        resultado.classList.remove('d-none');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const resultado = document.getElementById('resultadoValidacionModal');
+        resultado.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${error.message}</div>`;
+        resultado.classList.remove('d-none');
     });
-    return costoTotal;
 }
 </script>
-
-<!-- Script para calculadora de aportes mejorada -->
-<script src="{{ url_for('static', filename='js/calculadora-aportes-mejorada.js') }}"></script>
-
 {% endblock %}

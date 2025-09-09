@@ -28,13 +28,13 @@ def login():
                 'rol': 'user',
                 'tipo_plan': 'profesional'
             },
-            'avanzado@test.com': {
+            'personal@test.com': {
                 'id': 3,
-                'nombre': 'Usuario Avanzado',
-                'email': 'avanzado@test.com',
+                'nombre': 'Usuario Personal',
+                'email': 'personal@test.com',
                 'password': 'test123',
                 'rol': 'user',
-                'tipo_plan': 'avanzado'
+                'tipo_plan': 'personal'
             },
             'basico@test.com': {
                 'id': 4,

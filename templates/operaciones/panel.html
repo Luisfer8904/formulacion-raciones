@@ -23,7 +23,12 @@
                     <li><a class="dropdown-item" href="{{ url_for('ingredientes_bp.nuevo_ingrediente') }}">
                         <i class="fas fa-seedling me-2"></i>Nuevo Ingrediente
                     </a></li>
-                    <!-- Generador de Reportes removido - funcionalidad movida a Herramientas -->
+                    <!-- Temporalmente oculto para presentación -->
+                    <!--
+                    <li><a class="dropdown-item" href="{{ url_for('reportes_mejorado_bp.reportes') }}">
+                        <i class="fas fa-chart-line me-2"></i>Generar Reporte
+                    </a></li>
+                    -->
                 </ul>
             </div>
         </div>
@@ -135,7 +140,21 @@
                         </a>
                     </div>
 
-                    <!-- Generador de Reportes removido - funcionalidad movida a Herramientas -->
+                    <!-- Temporalmente oculto para presentación -->
+                    <!--
+                    <div class="col-md-6">
+                        <a href="{{ url_for('reportes_mejorado_bp.reportes') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-warning">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Generador de Reportes</h6>
+                                <p class="mb-0">Análisis y comparaciones detalladas</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
+                    -->
 
                     <div class="col-md-6">
                         <a href="{{ url_for('mezclas_bp.ver_mezclas') }}" class="nav-card-modern">
@@ -152,7 +171,7 @@
 
                     <!-- Herramientas - Disponible para todos los planes -->
                     {% set user_plan = session.get('tipo_plan', 'basico') %}
-                    {% if user_plan in ['basico', 'avanzado', 'profesional', 'institucional'] %}
+                    {% if user_plan in ['basico', 'personal', 'profesional'] %}
                     <div class="col-md-6">
                         <a href="{{ url_for('herramientas_bp.herramientas') }}" class="nav-card-modern">
                             <div class="nav-card-icon-modern bg-secondary">
@@ -160,14 +179,28 @@
                             </div>
                             <div class="nav-card-content">
                                 <h6>Herramientas</h6>
-                                <p class="mb-0">Calculadoras, convertidores y reportes comparativos</p>
+                                <p class="mb-0">Calculadoras y convertidores nutricionales</p>
                             </div>
                             <i class="fas fa-arrow-right nav-card-arrow"></i>
                         </a>
                     </div>
                     {% endif %}
 
-                    
+                    <!-- Reportes - Disponible para personal y profesional -->
+                    {% if user_plan in ['personal', 'profesional'] %}
+                    <div class="col-md-6">
+                        <a href="{{ url_for('reportes_mejorado_bp.reportes') }}" class="nav-card-modern">
+                            <div class="nav-card-icon-modern bg-warning">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="nav-card-content">
+                                <h6>Generador de Reportes</h6>
+                                <p class="mb-0">Análisis y comparaciones detalladas</p>
+                            </div>
+                            <i class="fas fa-arrow-right nav-card-arrow"></i>
+                        </a>
+                    </div>
+                    {% endif %}
 
                     <!-- Planificador de Producción - Solo para profesional -->
                     {% if user_plan == 'profesional' %}
