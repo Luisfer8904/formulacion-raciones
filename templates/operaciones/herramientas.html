@@ -381,6 +381,33 @@
         transform: translateY(0);
     }
 }
+
+/* Estilos para el modal del reporte comparativo */
+.formula-info {
+    background: #f8f9fa;
+    border-radius: 4px;
+    padding: 0.5rem;
+    border-left: 3px solid #007bff;
+}
+
+.stat-card {
+    padding: 1rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+}
 </style>
 
 <script>
@@ -454,7 +481,7 @@ function abrirConversorAvanzado() {
 }
 
 function abrirReporteComparativo() {
-    window.location.href = '/reporte_comparativo';
+    abrirReporteComparativoModal();
 }
 
 function abrirEstimadorIngredientes() {
@@ -665,5 +692,8 @@ function mostrarNotificacion(mensaje, tipo) {
 
 <!-- Script para calculadora de aportes mejorada -->
 <script src="{{ url_for('static', filename='js/calculadora-aportes-mejorada.js') }}"></script>
+
+<!-- Script para reporte comparativo modal -->
+<script src="{{ url_for('static', filename='js/reporte-comparativo-modal.js') }}"></script>
 
 {% endblock %}

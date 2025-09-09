@@ -51,7 +51,8 @@ def obtener_formulas_usuario():
                 'tipo_animales': formula.get('tipo_animales', ''),
                 'etapa_produccion': formula.get('etapa_produccion', ''),
                 'fecha_creacion': formula['fecha_creacion'].isoformat() if formula['fecha_creacion'] else None,
-                'total_ingredientes': int(formula['total_ingredientes']) if formula['total_ingredientes'] else 0
+                'total_ingredientes': int(formula['total_ingredientes']) if formula['total_ingredientes'] else 0,
+                'num_ingredientes': int(formula['total_ingredientes']) if formula['total_ingredientes'] else 0  # Para compatibilidad con frontend
             })
         
         cursor.close()
@@ -129,7 +130,7 @@ def obtener_composicion_formula(formula_id):
         
         # Obtener ingredientes de la fórmula
         cursor.execute("""
-            SELECT mi.porcentaje, i.nombre as ingrediente_nombre, i.ms,
+            SELECT mi.inclusion as porcentaje, i.nombre as ingrediente_nombre, i.ms,
                    mi.ingrediente_id
             FROM mezcla_ingredientes mi
             JOIN ingredientes i ON mi.ingrediente_id = i.id
@@ -243,7 +244,7 @@ def comparar_formulas():
             
             # Obtener ingredientes de la fórmula
             cursor.execute("""
-                SELECT mi.porcentaje, i.nombre as ingrediente_nombre, i.ms,
+                SELECT mi.inclusion as porcentaje, i.nombre as ingrediente_nombre, i.ms,
                        mi.ingrediente_id
                 FROM mezcla_ingredientes mi
                 JOIN ingredientes i ON mi.ingrediente_id = i.id

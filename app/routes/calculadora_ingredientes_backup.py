@@ -56,12 +56,12 @@ def obtener_formulas_ingredientes():
             }
             
             cursor.execute("""
-                SELECT mi.porcentaje, i.nombre as ingrediente_nombre, 
+                SELECT mi.inclusion as porcentaje, i.nombre as ingrediente_nombre,
                        i.precio, i.ms, mi.ingrediente_id
                 FROM mezcla_ingredientes mi
                 JOIN ingredientes i ON mi.ingrediente_id = i.id
                 WHERE mi.mezcla_id = %s
-                ORDER BY mi.porcentaje DESC
+                ORDER BY mi.inclusion DESC
             """, (formula['id'],))
             
             ingredientes_raw = cursor.fetchall()
@@ -138,7 +138,7 @@ def calcular_necesidades():
             
             # Obtener ingredientes de la fórmula
             cursor.execute("""
-                SELECT mi.porcentaje, i.nombre as ingrediente_nombre, 
+                SELECT mi.inclusion as porcentaje, i.nombre as ingrediente_nombre,
                        i.precio, i.ms, mi.ingrediente_id, i.id
                 FROM mezcla_ingredientes mi
                 JOIN ingredientes i ON mi.ingrediente_id = i.id
