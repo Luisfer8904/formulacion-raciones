@@ -228,6 +228,7 @@
         </div>
     </div>
 </div>
+=======
 
 <!-- Modal para mejorar plan -->
 <div class="modal fade" id="modalMejorarPlan" tabindex="-1" aria-labelledby="modalMejorarPlanLabel" aria-hidden="true">
@@ -443,92 +444,9 @@ function confirmarCancelacion() {
         btnConfirmar.innerHTML = textoOriginal;
     });
 }
-
-// Nuevas funciones para gestión de datos
-function descargarPlantilla() {
-    // Deshabilitar botón mientras se procesa
-    const btn = event.target;
-    const textoOriginal = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando...';
-    
-    // Crear enlace de descarga
-    const link = document.createElement('a');
-    link.href = '/descargar_plantilla_nutrientes_ingredientes';
-    link.download = 'plantilla_nutrientes_ingredientes.xlsx';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // Restaurar botón después de un breve delay
-    setTimeout(() => {
-        btn.disabled = false;
-        btn.innerHTML = textoOriginal;
-    }, 2000);
-}
-
-function cargarDatos() {
-    const fileInput = document.getElementById('archivoExcel');
-    const file = fileInput.files[0];
-    
-    if (!file) {
-        alert('Por favor selecciona un archivo Excel.');
-        return;
-    }
-    
-    // Validar tipo de archivo
-    const allowedTypes = [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel'
-    ];
-    
-    if (!allowedTypes.includes(file.type)) {
-        alert('Por favor selecciona un archivo Excel válido (.xlsx o .xls).');
-        return;
-    }
-    
-    // Deshabilitar botón mientras se procesa
-    const btn = event.target;
-    const textoOriginal = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cargando...';
-    
-    // Crear FormData y enviar archivo
-    const formData = new FormData();
-    formData.append('archivo', file);
-    
-    fetch('/cargar_nutrientes_ingredientes', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(`✅ Datos cargados exitosamente!\n\n` +
-                  `Nutrientes procesados: ${data.nutrientes_procesados || 0}\n` +
-                  `Ingredientes procesados: ${data.ingredientes_procesados || 0}\n` +
-                  `Relaciones nutriente-ingrediente: ${data.relaciones_procesadas || 0}`);
-            
-            // Limpiar el input de archivo
-            fileInput.value = '';
-        } else {
-            alert('❌ Error al cargar los datos: ' + (data.error || 'Error desconocido'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Error al cargar el archivo. Por favor, inténtalo de nuevo.');
-    })
-    .finally(() => {
-        // Restaurar botón
-        btn.disabled = false;
-        btn.innerHTML = textoOriginal;
-    });
-}
 </script>
 
 {% endblock %}
-
 <style>
     .formulador-header {
         background: linear-gradient(135deg, #2c3e50, #34495e);
@@ -561,4 +479,15 @@ function cargarDatos() {
         background-color: #f8f9fa;
         opacity: 1;
     }
-    button
+    button[type="submit"] {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+    }
+    .badge {
+        font-size: 0.875em;
+    }
+</style>

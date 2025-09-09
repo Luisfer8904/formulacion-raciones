@@ -1,90 +1,45 @@
-# VERIFICACIÓN Y CORRECCIÓN DEL SISTEMA - FEEDPRO
+# TODO: Implementar Carga de Nutrientes e Ingredientes
 
-## PROBLEMA IDENTIFICADO
-❌ **Error al cargar composición** en el reporte comparativo de fórmulas
+## Pasos a completar:
 
-## PLAN DE VERIFICACIÓN Y CORRECCIÓN
+### ✅ Análisis y Planificación
+- [x] Analizar estructura actual del sistema
+- [x] Identificar archivos relevantes
+- [x] Crear plan detallado
+- [x] Obtener aprobación del usuario
 
-### 1. INVESTIGAR EL ERROR DE COMPOSICIÓN
-- [ ] Revisar el código del reporte comparativo
-- [ ] Verificar la conexión a la base de datos
-- [ ] Comprobar la estructura de las tablas de ingredientes y nutrientes
-- [ ] Identificar el origen del error en la carga de composición
+### 🔄 Implementación
 
-### 2. VERIFICAR BASE DE DATOS
-- [ ] Comprobar conectividad a MySQL
-- [ ] Verificar estructura de tablas críticas
-- [ ] Validar datos de ingredientes y composición nutricional
+#### 1. Modificar página de opciones
+- [x] Agregar nueva sección "Gestión de Datos" en opciones.html
+- [x] Incluir botones para descargar plantilla y cargar archivo
+- [x] Agregar estilos CSS necesarios
+- [x] Agregar funciones JavaScript para manejo de eventos
 
-### 3. REVISAR RUTAS Y FUNCIONALIDAD
-- [ ] Verificar ruta de reporte comparativo
-- [ ] Comprobar JavaScript del frontend
-- [ ] Validar APIs de carga de datos
+#### 2. Crear nuevas rutas en usuarios.py
+- [x] Ruta `/descargar_plantilla_nutrientes_ingredientes` - Generar y descargar plantilla Excel
+- [x] Ruta `/cargar_nutrientes_ingredientes` - Procesar archivo Excel cargado
+- [x] Funciones de utilidad para manejo de Excel
+- [x] Funciones auxiliares para conversión segura de datos
 
-### 4. CORREGIR ERRORES ENCONTRADOS
-- [ ] Implementar correcciones necesarias
-- [ ] Probar funcionalidad corregida
-- [ ] Verificar que no se rompan otras funciones
+#### 3. Implementar funcionalidades
+- [x] Función para generar plantilla Excel con estructura correcta
+- [x] Función para procesar archivo Excel y validar datos
+- [x] Función para guardar nutrientes e ingredientes en base de datos
+- [x] Manejo de errores y validaciones
+- [x] Soporte para actualización de datos existentes
+- [x] Validación de estructura de archivo Excel
 
-### 5. PRUEBAS FINALES
-- [ ] Probar reporte comparativo completo
-- [ ] Verificar otras funcionalidades críticas
-- [ ] Confirmar que el sistema funciona correctamente
+#### 4. Testing y validación
+- [ ] Verificar descarga de plantilla
+- [ ] Probar carga de datos desde Excel
+- [ ] Validar que los datos se guarden correctamente
+- [ ] Probar manejo de errores
 
-## ESTADO ACTUAL
-✅ **PROBLEMA IDENTIFICADO Y CORREGIDO**
+### 📋 Estructura de la plantilla Excel:
+- Hoja 1: Nutrientes (nombre, unidad, tipo)
+- Hoja 2: Ingredientes (nombre, tipo, comentario, precio, ms)
+- Hoja 3: Ingredientes_Nutrientes (ingrediente_nombre, nutriente_nombre, valor)
 
-### PROBLEMA ENCONTRADO
-- El código del reporte comparativo buscaba la columna `porcentaje` en la tabla `mezcla_ingredientes`
-- La columna real se llama `inclusion`
-- Esto causaba el error "Error al cargar composición"
-
-### CORRECCIÓN APLICADA
-- [x] Corregido el query SQL en `app/routes/reporte_comparativo.py`
-- [x] Corregido el query SQL en `app/routes/calculadora_ingredientes.py`
-- [x] Corregido el query SQL en `app/routes/calculadora_ingredientes_backup.py`
-- [x] Cambiado `mi.porcentaje` por `mi.inclusion as porcentaje` en todas las funciones
-- [x] Mantenido el alias `porcentaje` para compatibilidad con el resto del código
-- [x] Probado exitosamente el cálculo de composición nutricional
-
-### VERIFICACIÓN COMPLETADA
-- [x] ✅ Estructura de base de datos verificada
-- [x] ✅ Problema identificado: columna `inclusion` vs `porcentaje`
-- [x] ✅ Corrección aplicada en todos los archivos afectados
-- [x] ✅ Prueba exitosa con datos reales (mezcla ID 69, usuario 3)
-- [x] ✅ Cálculo de composición nutricional funcionando correctamente
-
-### PRÓXIMOS PASOS
-- [x] Probar la funcionalidad corregida ✅
-- [x] Verificar que el sistema inicie correctamente ✅
-- [x] Comprobar que las rutas respondan adecuadamente ✅
-- [x] Confirmar que no hay errores críticos ✅
-
-## RESUMEN FINAL ✅
-
-### PROBLEMA RESUELTO
-❌ **Error original**: "Error al cargar composición" en el reporte comparativo de fórmulas
-✅ **Causa identificada**: Inconsistencia en nombres de columnas de base de datos
-✅ **Solución aplicada**: Corrección de queries SQL en múltiples archivos
-
-### ARCHIVOS CORREGIDOS
-1. `app/routes/reporte_comparativo.py` - Función principal del reporte comparativo
-2. `app/routes/calculadora_ingredientes.py` - Calculadora de necesidades de ingredientes  
-3. `app/routes/calculadora_ingredientes_backup.py` - Archivo de respaldo
-
-### CAMBIOS REALIZADOS
-- Cambiado `mi.porcentaje` → `mi.inclusion as porcentaje` en todas las consultas SQL
-- Mantenido el alias `porcentaje` para compatibilidad con el código existente
-- Corregido también `ORDER BY mi.porcentaje` → `ORDER BY mi.inclusion`
-
-### VERIFICACIONES COMPLETADAS
-- ✅ Estructura de base de datos analizada
-- ✅ Datos de prueba verificados (mezcla ID 69, usuario 3)
-- ✅ Cálculo de composición nutricional probado exitosamente
-- ✅ Sistema Flask iniciado sin errores
-- ✅ 16 blueprints registrados correctamente
-- ✅ Rutas críticas respondiendo adecuadamente
-- ✅ No se encontraron errores adicionales
-
-## ESTADO: COMPLETADO ✅
-**El sistema FeedPro está funcionando correctamente. El error de composición ha sido resuelto.**
+### 🔧 Dependencias necesarias:
+- openpyxl (para manejo de archivos Excel)

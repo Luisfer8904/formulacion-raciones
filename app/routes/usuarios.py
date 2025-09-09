@@ -1,11 +1,30 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, send_file
 from app.db import get_db_connection
 from typing import Any
 from datetime import datetime
 import os
 import time
+import io
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils import get_column_letter
 
 usuarios_bp = Blueprint('usuarios_bp', __name__)
+
+def safe_str(value):
+    """Convierte un valor de Excel a string de manera segura"""
+    if value is None:
+        return ''
+    return str(value).strip()
+
+def safe_float(value):
+    """Convierte un valor de Excel a float de manera segura"""
+    if value is None:
+        return 0.0
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return 0.0
 
 @usuarios_bp.route('/health')
 def health_check():
@@ -1024,3 +1043,428 @@ def api_usuarios():
     except Exception as e:
         print(f"❌ Error en API usuarios: {e}")
         return jsonify({'error': 'Error al obtener usuarios'}), 500
+
+# ==========================================
+# RUTAS PARA GESTIÓN DE DATOS (EXCEL)
+# ==========================================
+
+@usuarios_bp.route('/descargar_plantilla_nutrientes_ingredientes')
+def descargar_plantilla_nutrientes_ingredientes():
+    """Generar y descargar plantilla Excel para nutrientes e ingredientes"""
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para descargar la plantilla.', 'error')
+        return redirect(url_for('auth_bp.login'))
+    
+    try:
+        # Crear workbook
+        wb = Workbook()
+        
+        # Eliminar hoja por defecto
+        if wb.active:
+            wb.remove(wb.active)
+        
+        # === HOJA 1: NUTRIENTES ===
+        ws_nutrientes = wb.create_sheet("Nutrientes")
+        
+        # Headers para nutrientes
+        headers_nutrientes = ['nombre', 'unidad', 'tipo']
+        ws_nutrientes.append(headers_nutrientes)
+        
+        # Estilo para headers
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+        header_alignment = Alignment(horizontal="center", vertical="center")
+        
+        for col_num, header in enumerate(headers_nutrientes, 1):
+            cell = ws_nutrientes.cell(row=1, column=col_num)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_alignment
+        
+        # Ejemplos de nutrientes
+        ejemplos_nutrientes = [
+            ['Proteína Bruta', '%', 'Macronutriente'],
+            ['Energía Metabolizable', 'kcal/kg', 'Energía'],
+            ['Fibra Bruta', '%', 'Macronutriente'],
+            ['Calcio', '%', 'Mineral'],
+            ['Fósforo', '%', 'Mineral'],
+            ['Lisina', '%', 'Aminoácido'],
+            ['Metionina', '%', 'Aminoácido']
+        ]
+        
+        for ejemplo in ejemplos_nutrientes:
+            ws_nutrientes.append(ejemplo)
+        
+        # Ajustar ancho de columnas
+        for col_num in range(1, len(headers_nutrientes) + 1):
+            ws_nutrientes.column_dimensions[get_column_letter(col_num)].width = 20
+        
+        # === HOJA 2: INGREDIENTES ===
+        ws_ingredientes = wb.create_sheet("Ingredientes")
+        
+        # Headers para ingredientes
+        headers_ingredientes = ['nombre', 'tipo', 'comentario', 'precio', 'ms']
+        ws_ingredientes.append(headers_ingredientes)
+        
+        # Aplicar estilo a headers
+        for col_num, header in enumerate(headers_ingredientes, 1):
+            cell = ws_ingredientes.cell(row=1, column=col_num)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_alignment
+        
+        # Ejemplos de ingredientes
+        ejemplos_ingredientes = [
+            ['Maíz amarillo', 'Cereal', 'Cereal energético', 350.00, 88.0],
+            ['Soya integral', 'Oleaginosa', 'Fuente de proteína', 450.00, 90.0],
+            ['Harina de pescado', 'Proteína animal', 'Alta calidad proteica', 1200.00, 92.0],
+            ['Carbonato de calcio', 'Mineral', 'Fuente de calcio', 80.00, 99.0],
+            ['Fosfato dicálcico', 'Mineral', 'Fuente de fósforo y calcio', 250.00, 95.0]
+        ]
+        
+        for ejemplo in ejemplos_ingredientes:
+            ws_ingredientes.append(ejemplo)
+        
+        # Ajustar ancho de columnas
+        for col_num in range(1, len(headers_ingredientes) + 1):
+            ws_ingredientes.column_dimensions[get_column_letter(col_num)].width = 20
+        
+        # === HOJA 3: INGREDIENTES_NUTRIENTES ===
+        ws_relaciones = wb.create_sheet("Ingredientes_Nutrientes")
+        
+        # Headers para relaciones
+        headers_relaciones = ['ingrediente_nombre', 'nutriente_nombre', 'valor']
+        ws_relaciones.append(headers_relaciones)
+        
+        # Aplicar estilo a headers
+        for col_num, header in enumerate(headers_relaciones, 1):
+            cell = ws_relaciones.cell(row=1, column=col_num)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_alignment
+        
+        # Ejemplos de relaciones
+        ejemplos_relaciones = [
+            ['Maíz amarillo', 'Proteína Bruta', 8.5],
+            ['Maíz amarillo', 'Energía Metabolizable', 3350],
+            ['Maíz amarillo', 'Fibra Bruta', 2.2],
+            ['Soya integral', 'Proteína Bruta', 37.0],
+            ['Soya integral', 'Energía Metabolizable', 3300],
+            ['Harina de pescado', 'Proteína Bruta', 65.0],
+            ['Harina de pescado', 'Lisina', 5.2],
+            ['Carbonato de calcio', 'Calcio', 38.0],
+            ['Fosfato dicálcico', 'Calcio', 23.0],
+            ['Fosfato dicálcico', 'Fósforo', 18.0]
+        ]
+        
+        for ejemplo in ejemplos_relaciones:
+            ws_relaciones.append(ejemplo)
+        
+        # Ajustar ancho de columnas
+        for col_num in range(1, len(headers_relaciones) + 1):
+            ws_relaciones.column_dimensions[get_column_letter(col_num)].width = 25
+        
+        # === HOJA 4: INSTRUCCIONES ===
+        ws_instrucciones = wb.create_sheet("Instrucciones")
+        
+        instrucciones = [
+            ["INSTRUCCIONES PARA USO DE LA PLANTILLA"],
+            [""],
+            ["1. HOJA NUTRIENTES:"],
+            ["   - nombre: Nombre del nutriente (ej: Proteína Bruta)"],
+            ["   - unidad: Unidad de medida (ej: %, kcal/kg, ppm)"],
+            ["   - tipo: Categoría (Macronutriente, Mineral, Aminoácido, Vitamina, Energía)"],
+            [""],
+            ["2. HOJA INGREDIENTES:"],
+            ["   - nombre: Nombre del ingrediente (ej: Maíz amarillo)"],
+            ["   - tipo: Categoría (Cereal, Oleaginosa, Proteína animal, Mineral, etc.)"],
+            ["   - comentario: Descripción opcional"],
+            ["   - precio: Precio por unidad de medida"],
+            ["   - ms: Materia seca (%)"],
+            [""],
+            ["3. HOJA INGREDIENTES_NUTRIENTES:"],
+            ["   - ingrediente_nombre: Debe coincidir exactamente con un nombre de la hoja Ingredientes"],
+            ["   - nutriente_nombre: Debe coincidir exactamente con un nombre de la hoja Nutrientes"],
+            ["   - valor: Valor numérico del nutriente en el ingrediente"],
+            [""],
+            ["NOTAS IMPORTANTES:"],
+            ["- Los nombres deben coincidir exactamente (mayúsculas/minúsculas)"],
+            ["- No dejar celdas vacías en las columnas obligatorias"],
+            ["- Los valores numéricos deben usar punto (.) como separador decimal"],
+            ["- Eliminar las filas de ejemplo antes de cargar sus propios datos"],
+            ["- Puede agregar tantas filas como necesite"]
+        ]
+        
+        for instruccion in instrucciones:
+            ws_instrucciones.append(instruccion)
+        
+        # Estilo especial para el título
+        title_cell = ws_instrucciones.cell(row=1, column=1)
+        title_cell.font = Font(bold=True, size=14, color="FFFFFF")
+        title_cell.fill = PatternFill(start_color="D32F2F", end_color="D32F2F", fill_type="solid")
+        title_cell.alignment = Alignment(horizontal="center", vertical="center")
+        
+        # Ajustar ancho de columna
+        ws_instrucciones.column_dimensions['A'].width = 80
+        
+        # Guardar en memoria
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        # Registrar actividad
+        registrar_actividad(session['user_id'], 'Descargó plantilla de nutrientes e ingredientes', 'datos')
+        
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name='plantilla_nutrientes_ingredientes.xlsx'
+        )
+        
+    except Exception as e:
+        print(f"❌ Error al generar plantilla: {e}")
+        flash('Error al generar la plantilla. Inténtalo de nuevo.', 'error')
+        return redirect(url_for('usuarios_bp.opciones'))
+
+@usuarios_bp.route('/cargar_nutrientes_ingredientes', methods=['POST'])
+def cargar_nutrientes_ingredientes():
+    """Procesar archivo Excel con nutrientes e ingredientes"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'No autorizado'}), 401
+    
+    try:
+        # Verificar que se haya enviado un archivo
+        if 'archivo' not in request.files:
+            return jsonify({'error': 'No se ha seleccionado ningún archivo'}), 400
+        
+        file = request.files['archivo']
+        if file.filename == '':
+            return jsonify({'error': 'No se ha seleccionado ningún archivo'}), 400
+        
+        # Verificar extensión del archivo
+        filename = file.filename or ''
+        if not filename.lower().endswith(('.xlsx', '.xls')):
+            return jsonify({'error': 'El archivo debe ser un Excel (.xlsx o .xls)'}), 400
+        
+        # Leer el archivo Excel
+        from openpyxl import load_workbook
+        
+        # Guardar el archivo temporalmente para poder leerlo
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx') as tmp_file:
+            file.save(tmp_file.name)
+            wb = load_workbook(tmp_file.name)
+        
+        # Verificar que existan las hojas necesarias
+        required_sheets = ['Nutrientes', 'Ingredientes', 'Ingredientes_Nutrientes']
+        missing_sheets = [sheet for sheet in required_sheets if sheet not in wb.sheetnames]
+        
+        if missing_sheets:
+            return jsonify({
+                'error': f'Faltan las siguientes hojas en el archivo: {", ".join(missing_sheets)}'
+            }), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        nutrientes_procesados = 0
+        ingredientes_procesados = 0
+        relaciones_procesadas = 0
+        
+        # === PROCESAR NUTRIENTES ===
+        ws_nutrientes = wb['Nutrientes']
+        
+        # Obtener headers (primera fila)
+        headers_nutrientes = [cell.value for cell in ws_nutrientes[1]]
+        
+        # Verificar headers requeridos
+        required_headers_nutrientes = ['nombre', 'unidad', 'tipo']
+        if not all(header in headers_nutrientes for header in required_headers_nutrientes):
+            return jsonify({
+                'error': f'La hoja Nutrientes debe tener las columnas: {", ".join(required_headers_nutrientes)}'
+            }), 400
+        
+        # Procesar filas de nutrientes (desde la fila 2)
+        for row in ws_nutrientes.iter_rows(min_row=2, values_only=True):
+            if not any(row):  # Saltar filas vacías
+                continue
+            
+            # Crear diccionario con los datos de la fila
+            row_data = dict(zip(headers_nutrientes, row))
+            
+            nombre = safe_str(row_data.get('nombre'))
+            unidad = safe_str(row_data.get('unidad'))
+            tipo = safe_str(row_data.get('tipo'))
+            
+            if not nombre or not unidad or not tipo:
+                continue  # Saltar filas incompletas
+            
+            # Verificar si el nutriente ya existe
+            cursor.execute("""
+                SELECT id FROM nutrientes 
+                WHERE nombre = %s AND usuario_id = %s
+            """, (nombre, session['user_id']))
+            
+            existing = cursor.fetchone()
+            
+            if existing:
+                # Actualizar nutriente existente
+                cursor.execute("""
+                    UPDATE nutrientes 
+                    SET unidad = %s, tipo = %s
+                    WHERE id = %s
+                """, (unidad, tipo, existing['id']))
+            else:
+                # Crear nuevo nutriente
+                cursor.execute("""
+                    INSERT INTO nutrientes (nombre, unidad, tipo, usuario_id)
+                    VALUES (%s, %s, %s, %s)
+                """, (nombre, unidad, tipo, session['user_id']))
+            
+            nutrientes_procesados += 1
+        
+        # === PROCESAR INGREDIENTES ===
+        ws_ingredientes = wb['Ingredientes']
+        
+        # Obtener headers
+        headers_ingredientes = [cell.value for cell in ws_ingredientes[1]]
+        
+        # Verificar headers requeridos
+        required_headers_ingredientes = ['nombre', 'tipo', 'precio', 'ms']
+        if not all(header in headers_ingredientes for header in required_headers_ingredientes):
+            return jsonify({
+                'error': f'La hoja Ingredientes debe tener las columnas: {", ".join(required_headers_ingredientes)}'
+            }), 400
+        
+        # Procesar filas de ingredientes
+        for row in ws_ingredientes.iter_rows(min_row=2, values_only=True):
+            if not any(row):  # Saltar filas vacías
+                continue
+            
+            # Crear diccionario con los datos de la fila
+            row_data = dict(zip(headers_ingredientes, row))
+            
+            nombre = safe_str(row_data.get('nombre'))
+            tipo = safe_str(row_data.get('tipo'))
+            comentario = safe_str(row_data.get('comentario'))
+            precio = safe_float(row_data.get('precio', 0))
+            ms = safe_float(row_data.get('ms', 100))
+            
+            if not nombre or not tipo:
+                continue  # Saltar filas incompletas
+            
+            # Verificar si el ingrediente ya existe
+            cursor.execute("""
+                SELECT id FROM ingredientes 
+                WHERE nombre = %s AND usuario_id = %s
+            """, (nombre, session['user_id']))
+            
+            existing = cursor.fetchone()
+            
+            if existing:
+                # Actualizar ingrediente existente
+                cursor.execute("""
+                    UPDATE ingredientes 
+                    SET tipo = %s, comentario = %s, precio = %s, ms = %s
+                    WHERE id = %s
+                """, (tipo, comentario, precio, ms, existing['id']))
+            else:
+                # Crear nuevo ingrediente
+                cursor.execute("""
+                    INSERT INTO ingredientes (nombre, tipo, comentario, precio, ms, usuario_id)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, (nombre, tipo, comentario, precio, ms, session['user_id']))
+            
+            ingredientes_procesados += 1
+        
+        # === PROCESAR RELACIONES INGREDIENTES_NUTRIENTES ===
+        ws_relaciones = wb['Ingredientes_Nutrientes']
+        
+        # Obtener headers
+        headers_relaciones = [cell.value for cell in ws_relaciones[1]]
+        
+        # Verificar headers requeridos
+        required_headers_relaciones = ['ingrediente_nombre', 'nutriente_nombre', 'valor']
+        if not all(header in headers_relaciones for header in required_headers_relaciones):
+            return jsonify({
+                'error': f'La hoja Ingredientes_Nutrientes debe tener las columnas: {", ".join(required_headers_relaciones)}'
+            }), 400
+        
+        # Procesar filas de relaciones
+        for row in ws_relaciones.iter_rows(min_row=2, values_only=True):
+            if not any(row):  # Saltar filas vacías
+                continue
+            
+            # Crear diccionario con los datos de la fila
+            row_data = dict(zip(headers_relaciones, row))
+            
+            ingrediente_nombre = safe_str(row_data.get('ingrediente_nombre'))
+            nutriente_nombre = safe_str(row_data.get('nutriente_nombre'))
+            valor = safe_float(row_data.get('valor', 0))
+            
+            if not ingrediente_nombre or not nutriente_nombre:
+                continue  # Saltar filas incompletas
+            
+            # Buscar IDs del ingrediente y nutriente
+            cursor.execute("""
+                SELECT id FROM ingredientes 
+                WHERE nombre = %s AND usuario_id = %s
+            """, (ingrediente_nombre, session['user_id']))
+            ingrediente = cursor.fetchone()
+            
+            cursor.execute("""
+                SELECT id FROM nutrientes 
+                WHERE nombre = %s AND usuario_id = %s
+            """, (nutriente_nombre, session['user_id']))
+            nutriente = cursor.fetchone()
+            
+            if not ingrediente or not nutriente:
+                continue  # Saltar si no se encuentran los elementos
+            
+            # Verificar si la relación ya existe
+            cursor.execute("""
+                SELECT id FROM ingredientes_nutrientes 
+                WHERE ingrediente_id = %s AND nutriente_id = %s
+            """, (ingrediente['id'], nutriente['id']))
+            
+            existing_relation = cursor.fetchone()
+            
+            if existing_relation:
+                # Actualizar relación existente
+                cursor.execute("""
+                    UPDATE ingredientes_nutrientes 
+                    SET valor = %s
+                    WHERE id = %s
+                """, (valor, existing_relation['id']))
+            else:
+                # Crear nueva relación
+                cursor.execute("""
+                    INSERT INTO ingredientes_nutrientes (ingrediente_id, nutriente_id, valor)
+                    VALUES (%s, %s, %s)
+                """, (ingrediente['id'], nutriente['id'], valor))
+            
+            relaciones_procesadas += 1
+        
+        # Confirmar cambios
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        # Registrar actividad
+        registrar_actividad(
+            session['user_id'], 
+            f'Cargó datos desde Excel: {nutrientes_procesados} nutrientes, {ingredientes_procesados} ingredientes, {relaciones_procesadas} relaciones', 
+            'datos'
+        )
+        
+        return jsonify({
+            'success': True,
+            'nutrientes_procesados': nutrientes_procesados,
+            'ingredientes_procesados': ingredientes_procesados,
+            'relaciones_procesadas': relaciones_procesadas
+        })
+        
+    except Exception as e:
+        print(f"❌ Error al procesar archivo Excel: {e}")
+        return jsonify({'error': f'Error al procesar el archivo: {str(e)}'}), 500
