@@ -504,57 +504,6 @@ function abrirCalculadora() {
 function abrirConversor() {
     const modalHtml = `
         <div class="modal fade" id="conversorModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title"><i class="fas fa-exchange-alt me-2"></i>Conversor de Unidades</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Valor a Convertir</label>
-                            <input type="number" class="form-control" id="valorConversorModal" step="0.000001" required>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">De</label>
-                                <select class="form-select" id="unidadOrigenModal" required>
-                                    <option value="kg">Kilogramos (kg)</option>
-                                    <option value="g">Gramos (g)</option>
-                                    <option value="lb">Libras (lb)</option>
-                                    <option value="oz">Onzas (oz)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">A</label>
-                                <select class="form-select" id="unidadDestinoModal" required>
-                                    <option value="kg">Kilogramos (kg)</option>
-                                    <option value="g">Gramos (g)</option>
-                                    <option value="lb">Libras (lb)</option>
-                                    <option value="oz">Onzas (oz)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="resultadoConversorModal" class="alert d-none mt-3"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" onclick="convertirUnidadesModal()">Convertir</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    const existingModal = document.getElementById('conversorModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    const modal = new bootstrap.Modal(document.getElementById('conversorModal'));
-    modal.show();
-}
 
 function abrirCalculadoraAportes() {
     // Usar la nueva calculadora mejorada
