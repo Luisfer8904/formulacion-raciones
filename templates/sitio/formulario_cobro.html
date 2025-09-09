@@ -121,28 +121,14 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="card border-2" id="card-personal">
-                                            <div class="card-body text-center p-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="plan" id="plan_personal" value="personal">
-                                                    <label class="form-check-label w-100" for="plan_personal">
-                                                        <h6 class="fw-bold text-primary">Personal</h6>
-                                                        <p class="h5 fw-bold mb-1">$24<small class="text-muted">/mes</small></p>
-                                                        <p class="text-muted small mb-0">Herramientas + Reportes</p>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
                                         <div class="card border-2" id="card-profesional">
                                             <div class="card-body text-center p-3">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="plan" id="plan_profesional" value="profesional">
                                                     <label class="form-check-label w-100" for="plan_profesional">
                                                         <h6 class="fw-bold text-warning">Profesional</h6>
-                                                        <p class="h5 fw-bold mb-1">$56<small class="text-muted">/mes</small></p>
-                                                        <p class="text-muted small mb-0">Todo + Gestión Producción</p>
+                                                        <p class="h5 fw-bold mb-1">$24<small class="text-muted">/mes</small></p>
+                                                        <p class="text-muted small mb-0">Herramientas + Reportes</p>
                                                     </label>
                                                 </div>
                                             </div>
@@ -335,12 +321,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Aplicar click handlers a las tarjetas de planes
     const cardBasico = document.getElementById('card-basico');
-    const cardPersonal = document.getElementById('card-personal');
     const cardProfesional = document.getElementById('card-profesional');
     const cardInstitucional = document.getElementById('card-institucional');
     
     if (cardBasico) makeCardClickable(cardBasico, 'plan_basico');
-    if (cardPersonal) makeCardClickable(cardPersonal, 'plan_personal');
     if (cardProfesional) makeCardClickable(cardProfesional, 'plan_profesional');
     if (cardInstitucional) makeCardClickable(cardInstitucional, 'plan_institucional');
     
@@ -360,10 +344,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (plan === 'basico') {
                 paymentUrl = 'https://pay.n1co.shop/pl/ZqV92FvYR';
-            } else if (plan === 'personal') {
-                paymentUrl = 'https://pay.n1co.shop/pl/qrkDBfKLE';
             } else if (plan === 'profesional') {
-                paymentUrl = 'https://pay.n1co.shop/pl/kDzVKfPjN';
+                paymentUrl = 'https://pay.n1co.shop/pl/qrkDBfKLE';
             } else if (plan === 'institucional') {
                 // Para plan institucional, solo enviar solicitud sin abrir pasarela de pagos
                 fetch('/procesar_solicitud', {
