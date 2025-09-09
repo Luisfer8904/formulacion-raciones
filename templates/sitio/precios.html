@@ -10,12 +10,12 @@
         </div>
 
         <div class="row g-4 justify-content-center">
-            <!-- Plan Personal (antes Básico) -->
-            <div class="col-lg-6 col-md-6">
+            <!-- Plan Básico -->
+            <div class="col-lg-4 col-md-6">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <h3 class="card-title fw-bold">Personal</h3>
+                            <h3 class="card-title fw-bold">Básico</h3>
                             <p class="text-muted">Ideal para pequeños productores</p>
                             <div class="price-display mb-3">
                                 <span class="display-4 fw-bold" style="color: #2196F3;">$12</span>
@@ -30,7 +30,7 @@
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
-                                Herramientas completas
+                                Herramientas básicas
                             </li>
                             <li class="mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
@@ -51,7 +51,7 @@
                         </ul>
 
                         <div class="text-center">
-                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='personal') }}" class="btn btn-outline-primary btn-lg w-100" style="border-radius: 50px; font-weight: 600; text-decoration: none;">
+                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='basico') }}" class="btn btn-outline-primary btn-lg w-100" style="border-radius: 50px; font-weight: 600; text-decoration: none;">
                                 Empezar prueba gratis (14 días)
                             </a>
                         </div>
@@ -59,8 +59,8 @@
                 </div>
             </div>
 
-            <!-- Plan Profesional (antes Institucional) -->
-            <div class="col-lg-6 col-md-6">
+            <!-- Plan Profesional -->
+            <div class="col-lg-4 col-md-6">
                 <div class="card h-100 border-0 shadow-lg position-relative" style="border: 2px solid #FF9800 !important;">
                     <div class="position-absolute top-0 start-50 translate-middle">
                         <span class="badge px-3 py-2" style="background: #FF9800; color: white; border-radius: 20px; font-size: 0.8rem;">
@@ -71,11 +71,60 @@
                     <div class="card-body p-4 pt-5">
                         <div class="text-center mb-4">
                             <h3 class="card-title fw-bold">Profesional</h3>
+                            <p class="text-muted">Para operaciones medianas</p>
+                            <div class="price-display mb-3">
+                                <span class="display-4 fw-bold" style="color: #FF9800;">$24</span>
+                                <span class="text-muted">/mes</span>
+                            </div>
+                        </div>
+
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Todo lo del plan Básico
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Formulaciones ilimitadas
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Herramientas avanzadas
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Reportes detallados
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Soporte prioritario
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Hasta 5 usuarios
+                            </li>
+                        </ul>
+
+                        <div class="text-center">
+                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='profesional') }}" class="btn btn-lg w-100" style="background: linear-gradient(45deg, #FF9800, #FFB74D); color: white; border: none; border-radius: 50px; font-weight: 600; text-decoration: none;">
+                                Empezar prueba gratis (14 días)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plan Institucional -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <h3 class="card-title fw-bold">Institucional</h3>
                             <p class="text-muted">Para grandes operaciones</p>
                             <div class="price-display mb-3">
-                                <span class="display-4 fw-bold" style="color: #FF9800;">Precio</span>
+                                <span class="display-4 fw-bold" style="color: #28a745;">Precio</span>
                                 <br>
-                                <span class="display-6 fw-bold" style="color: #FF9800;">a convenir</span>
+                                <span class="display-6 fw-bold" style="color: #28a745;">a convenir</span>
                                 <br>
                                 <span class="text-muted small">Según necesidades</span>
                             </div>
@@ -113,8 +162,8 @@
                         </ul>
 
                         <div class="text-center">
-                            <a href="{{ url_for('usuarios_bp.formulario_cobro', plan='profesional') }}" class="btn btn-lg w-100" style="background: linear-gradient(45deg, #FF9800, #FFB74D); color: white; border: none; border-radius: 50px; font-weight: 600; text-decoration: none;">
-                                Contactar ventas
+                            <a href="mailto:ventas@feedpro.com" class="btn btn-outline-success btn-lg w-100" style="border-radius: 50px; font-weight: 600; text-decoration: none;">
+                                Contactar representante de ventas
                             </a>
                         </div>
                     </div>

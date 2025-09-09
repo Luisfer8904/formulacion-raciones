@@ -113,8 +113,7 @@ def procesar_solicitud():
             # Mapear precios de planes
             precios_planes = {
                 'basico': '$12/mes',
-                'personal': '$24/mes', 
-                'profesional': '$56/mes',
+                'profesional': '$24/mes',
                 'institucional': 'Precio personalizado'
             }
             precio_plan = precios_planes.get(plan, 'No especificado')
