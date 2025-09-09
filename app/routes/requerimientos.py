@@ -16,7 +16,9 @@ def requerimientos():
 
         # Obtener datos de la tabla requerimientos filtrados por usuario_id
         cursor.execute("""
-            SELECT id, nombre, COALESCE(especie, tipo_especie) as especie, tipo_especie, comentario
+            SELECT id, nombre, 
+                   COALESCE(tipo_especie, especie, 'Sin especificar') as especie, 
+                   COALESCE(comentario, '') as comentario
             FROM requerimientos
             WHERE usuario_id = %s
             ORDER BY nombre ASC
@@ -46,7 +48,9 @@ def ver_conjuntos_requerimientos():
         cursor = conn.cursor(dictionary=True)
         # Selecciona todos los requerimientos registrados en la base de datos (sin filtrar por usuario)
         cursor.execute("""
-            SELECT id, nombre, COALESCE(especie, tipo_especie) as especie, tipo_especie, comentario
+            SELECT id, nombre, 
+                   COALESCE(tipo_especie, especie, 'Sin especificar') as especie, 
+                   COALESCE(comentario, '') as comentario
             FROM requerimientos
         """)
         requerimientos = cursor.fetchall()
