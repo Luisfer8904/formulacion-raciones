@@ -549,16 +549,23 @@ function agregarFilaDesdeDatos(ing, index) {
     });
   }
 
-  // NUEVO: Obtener límites guardados
-  const limiteMin = typeof ing.limite_min !== "undefined" ? ing.limite_min : 0;
-  const limiteMax = typeof ing.limite_max !== "undefined" ? ing.limite_max : 100;
-
   fila.innerHTML = `
       <td>
           <select class="form-select form-select-sm select-ingrediente" name="ingrediente_${index}" onchange="agregarFila(this)">
               ${opcionesSelect}
           </select>
       </td>
+      <td><input type="number" class="form-control form-control-sm" name="inclusion_${index}" value="${inclusion}" oninput="actualizarValores(this)"></td>
+      <td><input type="number" class="form-control form-control-sm" name="min_${index}" step="0.0001"></td>
+      <td><input type="number" class="form-control form-control-sm" name="max_${index}" step="0.0001"></td>
+      <td><input type="number" class="form-control form-control-sm" name="peso_bachada_${index}" value="${formatearPeso(pesoBachada, false)}" readonly></td>
+      <td><input type="number" class="form-control form-control-sm" name="costo_ingrediente_${index}" value="${formatearPrecio(precioIngrediente, false)}" readonly></td>
+      <td><input type="number" class="form-control form-control-sm" name="valor_${index}" value="${formatearPrecio(valorTotal, false)}" readonly></td>
+      <td>
+          <button type="button" class="btn btn-sm btn-danger" onclick="eliminarFila(this)">✖</button>
+          <button type="button" class="btn btn-sm btn-info" onclick="mostrarInfo(this)">ℹ️</button>
+      </td>
+  `;
 
   tabla.appendChild(fila);
 }
@@ -643,17 +650,11 @@ function guardarMezcla() {
     const select = fila.querySelector('select');
     const inclusionInput = fila.querySelector('input[name^="inclusion_"]');
     const inclusion = parseFloat(inclusionInput?.value || 0);
-    const limiteMinInput = fila.querySelector('input[name^="min_"]');  // NUEVO
-    const limiteMaxInput = fila.querySelector('input[name^="max_"]');  // NUEVO
-    const limiteMin = parseFloat(limiteMinInput?.value || 0);  // NUEVO
-    const limiteMax = parseFloat(limiteMaxInput?.value || 100);  // NUEVO
 
     if (select && select.value && inclusion > 0) {
       ingredientes.push({
         ingrediente_id: parseInt(select.value),
-        inclusion: inclusion,
-        limite_min: limiteMin,  // NUEVO
-        limite_max: limiteMax   // NUEVO
+        inclusion: inclusion
       });
     }
   });
@@ -739,16 +740,10 @@ function confirmarGuardarComo() {
     const select = fila.querySelector('select');
     const inclusionInput = fila.querySelector('input[name^="inclusion_"]');
     const inclusion = parseFloat(inclusionInput?.value || 0);
-    const limiteMinInput = fila.querySelector('input[name^="min_"]');  // NUEVO
-    const limiteMaxInput = fila.querySelector('input[name^="max_"]');  // NUEVO
-    const limiteMin = parseFloat(limiteMinInput?.value || 0);  // NUEVO
-    const limiteMax = parseFloat(limiteMaxInput?.value || 100);  // NUEVO
     if (select && select.value && inclusion > 0) {
       ingredientes.push({
         ingrediente_id: parseInt(select.value),
-        inclusion: inclusion,
-        limite_min: limiteMin,  // NUEVO
-        limite_max: limiteMax   // NUEVO
+        inclusion: inclusion
       });
     }
   });

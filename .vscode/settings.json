@@ -1,0 +1,74 @@
+{
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/__pycache__/**": true,
+    "**/*.pyc": true,
+    "**/venv/**": true,
+    "**/env/**": true,
+    "**/.env/**": true,
+    "**/otros_archivos/**": true,
+    "**/*.log": true,
+    "**/cookies.txt": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/venv": true,
+    "**/env": true,
+    "**/otros_archivos": true,
+    "**/*.log": true
+  },
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/*.log": true
+  },
+  "editor.maxTokenizationLineLength": 2500,
+  "editor.largeFileOptimizations": true,
+  "extensions.autoUpdate": false,
+  "git.enabled": true,
+  "git.autorefresh": false,
+  "python.defaultInterpreterPath": "./venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "emmet.includeLanguages": {
+    "jinja-html": "html"
+  },
+  "files.associations": {
+    "*.html": "jinja-html"
+  },
+  "editor.suggest.maxVisibleSuggestions": 5,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": false
+  },
+  "typescript.suggest.enabled": false,
+  "javascript.suggest.enabled": true,
+  "html.suggest.html5": true,
+  "css.validate": true,
+  "javascript.validate.enable": true,
+  "editor.semanticHighlighting.enabled": false,
+  "editor.bracketPairColorization.enabled": false,
+  "editor.guides.bracketPairs": false,
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+  "editor.minimap.enabled": false,
+  "breadcrumbs.enabled": false,
+  "editor.folding": false,
+  "editor.glyphMargin": false,
+  "editor.hover.enabled": false,
+  "editor.lightbulb.enabled": "off",
+  "editor.occurrencesHighlight": "off",
+  "editor.renderWhitespace": "none",
+  "editor.selectionHighlight": false,
+  "workbench.editor.decorations.badges": false,
+  "workbench.editor.decorations.colors": false,
+  "git.decorations.enabled": false
+}
