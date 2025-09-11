@@ -10,9 +10,16 @@ function agregarFilaDesdeDatosConLimites(ing, index) {
   const inclusion = typeof ing.inclusion !== "undefined" ? ing.inclusion : 0;
   const pesoBachada = (inclusion * tamanoBachada) / 100;
   
-  // NUEVO: Obtener límites guardados
-  const limiteMin = typeof ing.limite_min !== "undefined" ? ing.limite_min : 0;
-  const limiteMax = typeof ing.limite_max !== "undefined" ? ing.limite_max : 100;
+  // CORREGIDO: Solo usar límites si están definidos y no son los valores por defecto problemáticos
+  let limiteMin = "";
+  let limiteMax = "";
+  
+  if (typeof ing.limite_min !== "undefined" && ing.limite_min !== null && ing.limite_min !== 0) {
+    limiteMin = ing.limite_min;
+  }
+  if (typeof ing.limite_max !== "undefined" && ing.limite_max !== null && ing.limite_max !== 100) {
+    limiteMax = ing.limite_max;
+  }
 
   // Buscar el ingrediente en los minerales disponibles
   const ingrediente = typeof window.mineralesTemplate !== 'undefined' ? 
@@ -154,16 +161,37 @@ function recopilarIngredientesConLimites() {
     const inclusion = parseFloat(inclusionInput?.value || 0);
     const limiteMinInput = fila.querySelector('input[name^="min_"]');
     const limiteMaxInput = fila.querySelector('input[name^="max_"]');
-    const limiteMin = parseFloat(limiteMinInput?.value || 0);
-    const limiteMax = parseFloat(limiteMaxInput?.value || 100);
+    
+    // CORREGIDO: Solo incluir límites si tienen valores específicos (no vacíos)
+    const limiteMinValue = limiteMinInput?.value;
+    const limiteMaxValue = limiteMaxInput?.value;
+    
+    let limiteMin = null;
+    let limiteMax = null;
+    
+    // Solo asignar si hay un valor específico diferente de vacío
+    if (limiteMinValue && limiteMinValue !== "" && !isNaN(parseFloat(limiteMinValue))) {
+      limiteMin = parseFloat(limiteMinValue);
+    }
+    if (limiteMaxValue && limiteMaxValue !== "" && !isNaN(parseFloat(limiteMaxValue))) {
+      limiteMax = parseFloat(limiteMaxValue);
+    }
 
     if (select && select.value && inclusion > 0) {
-      ingredientes.push({
+      const ingrediente = {
         ingrediente_id: parseInt(select.value),
-        inclusion: inclusion,
-        limite_min: limiteMin,
-        limite_max: limiteMax
-      });
+        inclusion: inclusion
+      };
+      
+      // Solo agregar límites si tienen valores específicos
+      if (limiteMin !== null) {
+        ingrediente.limite_min = limiteMin;
+      }
+      if (limiteMax !== null) {
+        ingrediente.limite_max = limiteMax;
+      }
+      
+      ingredientes.push(ingrediente);
     }
   });
   

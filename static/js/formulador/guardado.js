@@ -16,19 +16,28 @@ function guardarMezcla() {
     const select = fila.querySelector('select');
     const inclusionInput = fila.querySelector('input[name^="inclusion_"]');
     const inclusion = parseFloat(inclusionInput?.value || 0);
-    // NUEVO: Capturar límites de ingredientes
+    // CORREGIDO: Capturar límites solo si tienen valores específicos
     const limiteMinInput = fila.querySelector('input[name^="min_"]');
     const limiteMaxInput = fila.querySelector('input[name^="max_"]');
-    const limiteMin = parseFloat(limiteMinInput?.value || 0);
-    const limiteMax = parseFloat(limiteMaxInput?.value || 100);
-
+    
     if (select && select.value && inclusion > 0) {
-      ingredientes.push({
+      const ingrediente = {
         ingrediente_id: parseInt(select.value),
-        inclusion: inclusion,
-        limite_min: limiteMin,  // NUEVO
-        limite_max: limiteMax   // NUEVO
-      });
+        inclusion: inclusion
+      };
+      
+      // Solo agregar límites si tienen valores específicos (no vacíos)
+      const limiteMinValue = limiteMinInput?.value;
+      const limiteMaxValue = limiteMaxInput?.value;
+      
+      if (limiteMinValue && limiteMinValue !== "" && !isNaN(parseFloat(limiteMinValue))) {
+        ingrediente.limite_min = parseFloat(limiteMinValue);
+      }
+      if (limiteMaxValue && limiteMaxValue !== "" && !isNaN(parseFloat(limiteMaxValue))) {
+        ingrediente.limite_max = parseFloat(limiteMaxValue);
+      }
+      
+      ingredientes.push(ingrediente);
     }
   });
 
@@ -113,28 +122,38 @@ function confirmarGuardarComo() {
     const select = fila.querySelector('select');
     const inclusionInput = fila.querySelector('input[name^="inclusion_"]');
     const inclusion = parseFloat(inclusionInput?.value || 0);
-    // NUEVO: Capturar límites de ingredientes
+    // CORREGIDO: Capturar límites solo si tienen valores específicos
     const limiteMinInput = fila.querySelector('input[name^="min_"]');
     const limiteMaxInput = fila.querySelector('input[name^="max_"]');
-    const limiteMin = parseFloat(limiteMinInput?.value || 0);
-    const limiteMax = parseFloat(limiteMaxInput?.value || 100);
+    
     if (select && select.value && inclusion > 0) {
-      ingredientes.push({
+      const ingrediente = {
         ingrediente_id: parseInt(select.value),
-        inclusion: inclusion,
-        limite_min: limiteMin,  // NUEVO
-        limite_max: limiteMax   // NUEVO
-      });
+        inclusion: inclusion
+      };
+      
+      // Solo agregar límites si tienen valores específicos (no vacíos)
+      const limiteMinValue = limiteMinInput?.value;
+      const limiteMaxValue = limiteMaxInput?.value;
+      
+      if (limiteMinValue && limiteMinValue !== "" && !isNaN(parseFloat(limiteMinValue))) {
+        ingrediente.limite_min = parseFloat(limiteMinValue);
+      }
+      if (limiteMaxValue && limiteMaxValue !== "" && !isNaN(parseFloat(limiteMaxValue))) {
+        ingrediente.limite_max = parseFloat(limiteMaxValue);
+      }
+      
+      ingredientes.push(ingrediente);
     }
   });
 
-  // Capturar nutrientes seleccionados
+  // Capturar nutrientes seleccionados (CORREGIDO: usar nutriente_id para consistencia)
   const nutrientesSeleccionados = [];
   document.querySelectorAll('#tabla-nutrientes tr').forEach(row => {
     const select = row.querySelector('select');
     if (select && select.value) {
       nutrientesSeleccionados.push({
-        id: parseInt(select.value)
+        nutriente_id: parseInt(select.value)
       });
     }
   });
