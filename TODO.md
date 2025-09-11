@@ -17,10 +17,14 @@
 - [x] Actualizar en GitHub (Commit: 90669e9)
 
 ## ✅ Completado
-- [x] Corregir botón "ACCIONES" visible en impresión
+- [x] Corregir botón "ACCIONES" visible en hoja de impresión
   - [x] Agregar reglas CSS más específicas para ocultar todos los botones
   - [x] Usar selectores amplios para elementos de acción
   - [x] Asegurar que no aparezcan elementos de UI en impresión
+  - [x] Agregar fondo sólido y z-index para evitar superposiciones
+  - [x] Implementar JavaScript para limpiar elementos flotantes
+  - [x] Ocultar elementos con posición fija/absoluta no deseados
+  - [x] Mejorar estilos de botones no-print con fondo y sombra
 
 ## ⏳ Pendiente
 - [ ] Probar la impresión en diferentes navegadores
