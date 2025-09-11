@@ -14,6 +14,15 @@
             .page-break { page-break-before: always; }
             .section-header { margin-top: 0; }
             
+            /* Ocultar todos los elementos de acciones y botones */
+            .btn-action-container { display: none !important; }
+            .btn { display: none !important; }
+            .dropdown { display: none !important; }
+            .dropdown-menu { display: none !important; }
+            button { display: none !important; }
+            [class*="action"] { display: none !important; }
+            [class*="btn"] { display: none !important; }
+            
             /* Estilos específicos para la tabla de ingredientes */
             .ingredientes-table {
                 font-size: 11px !important;
@@ -40,10 +49,6 @@
             .valor-numerico {
                 text-align: right !important;
                 font-weight: 500 !important;
-            }
-            
-            .btn-action-container {
-                display: none !important;
             }
         }
         

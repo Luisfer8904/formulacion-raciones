@@ -13,8 +13,14 @@
   - [x] Ocultar columna de acciones en impresión con `no-print`
   - [x] Mejorar contraste y legibilidad con colores y bordes
 
-## 🔄 En Progreso
-- [ ] Actualizar en GitHub
+## ✅ Completado
+- [x] Actualizar en GitHub (Commit: 90669e9)
+
+## ✅ Completado
+- [x] Corregir botón "ACCIONES" visible en impresión
+  - [x] Agregar reglas CSS más específicas para ocultar todos los botones
+  - [x] Usar selectores amplios para elementos de acción
+  - [x] Asegurar que no aparezcan elementos de UI en impresión
 
 ## ⏳ Pendiente
 - [ ] Probar la impresión en diferentes navegadores
