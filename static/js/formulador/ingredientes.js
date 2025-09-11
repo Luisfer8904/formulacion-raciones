@@ -234,6 +234,10 @@ function agregarFilaDesdeDatos(ing, index) {
   const tamanoBachada = parseFloat(document.getElementById('tamano-bachada').value) || 100;
   const inclusion = typeof ing.inclusion !== "undefined" ? ing.inclusion : 0;
   const pesoBachada = (inclusion * tamanoBachada) / 100;
+  
+  // NUEVO: Obtener límites guardados
+  const limiteMin = typeof ing.limite_min !== "undefined" ? ing.limite_min : 0;
+  const limiteMax = typeof ing.limite_max !== "undefined" ? ing.limite_max : 100;
 
   // Buscar el ingrediente en los minerales disponibles
   const ingrediente = typeof window.mineralesTemplate !== 'undefined' ? 
@@ -270,8 +274,8 @@ function agregarFilaDesdeDatos(ing, index) {
           </select>
       </td>
       <td><input type="number" class="form-control form-control-sm" name="inclusion_${index}" value="${formatearInclusion(inclusion)}" step="0.0001" oninput="actualizarValores(this)"></td>
-      <td><input type="number" class="form-control form-control-sm" name="min_${index}" step="0.0001"></td>
-      <td><input type="number" class="form-control form-control-sm" name="max_${index}" step="0.0001"></td>
+      <td><input type="number" class="form-control form-control-sm" name="min_${index}" value="${limiteMin}" step="0.0001"></td>
+      <td><input type="number" class="form-control form-control-sm" name="max_${index}" value="${limiteMax}" step="0.0001"></td>
       <td><input type="number" class="form-control form-control-sm" name="peso_bachada_${index}" value="${formatearPeso(pesoBachada, false)}" readonly></td>
       <td><input type="number" class="form-control form-control-sm" name="costo_ingrediente_${index}" value="${formatearPrecio(precioIngrediente, false)}" readonly></td>
       <td><input type="number" class="form-control form-control-sm" name="valor_${index}" value="${formatearPrecio(valorTotal, false)}" readonly></td>

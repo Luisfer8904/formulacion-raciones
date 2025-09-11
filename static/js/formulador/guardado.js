@@ -16,11 +16,18 @@ function guardarMezcla() {
     const select = fila.querySelector('select');
     const inclusionInput = fila.querySelector('input[name^="inclusion_"]');
     const inclusion = parseFloat(inclusionInput?.value || 0);
+    // NUEVO: Capturar límites de ingredientes
+    const limiteMinInput = fila.querySelector('input[name^="min_"]');
+    const limiteMaxInput = fila.querySelector('input[name^="max_"]');
+    const limiteMin = parseFloat(limiteMinInput?.value || 0);
+    const limiteMax = parseFloat(limiteMaxInput?.value || 100);
 
     if (select && select.value && inclusion > 0) {
       ingredientes.push({
         ingrediente_id: parseInt(select.value),
-        inclusion: inclusion
+        inclusion: inclusion,
+        limite_min: limiteMin,  // NUEVO
+        limite_max: limiteMax   // NUEVO
       });
     }
   });
@@ -106,10 +113,17 @@ function confirmarGuardarComo() {
     const select = fila.querySelector('select');
     const inclusionInput = fila.querySelector('input[name^="inclusion_"]');
     const inclusion = parseFloat(inclusionInput?.value || 0);
+    // NUEVO: Capturar límites de ingredientes
+    const limiteMinInput = fila.querySelector('input[name^="min_"]');
+    const limiteMaxInput = fila.querySelector('input[name^="max_"]');
+    const limiteMin = parseFloat(limiteMinInput?.value || 0);
+    const limiteMax = parseFloat(limiteMaxInput?.value || 100);
     if (select && select.value && inclusion > 0) {
       ingredientes.push({
         ingrediente_id: parseInt(select.value),
-        inclusion: inclusion
+        inclusion: inclusion,
+        limite_min: limiteMin,  // NUEVO
+        limite_max: limiteMax   // NUEVO
       });
     }
   });
