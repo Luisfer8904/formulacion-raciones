@@ -1,47 +1,45 @@
-# TODO - Corrección de Hoja de Impresión
+# TODO: Implementar Carga de Nutrientes e Ingredientes
 
-## ✅ Completado
-- [x] Analizar el problema de legibilidad en la tabla de ingredientes
-- [x] Identificar que los nombres se muestran en `<select>` muy pequeños
-- [x] Crear plan de mejora para la hoja de impresión
-- [x] Modificar `templates/operaciones/hoja_impresion.html`
-  - [x] Cambiar `<select>` por texto plano más legible con `<strong>`
-  - [x] Aumentar tamaño de fuente para nombres de ingredientes (14px pantalla, 13px impresión)
-  - [x] Mejorar estilos CSS para impresión con clases específicas
-  - [x] Optimizar ancho de columnas con porcentajes fijos
-  - [x] Agregar formateo numérico con 2 decimales
-  - [x] Ocultar columna de acciones en impresión con `no-print`
-  - [x] Mejorar contraste y legibilidad con colores y bordes
+## Pasos a completar:
 
-## ✅ Completado
-- [x] Actualizar en GitHub (Commit: 90669e9)
+### ✅ Análisis y Planificación
+- [x] Analizar estructura actual del sistema
+- [x] Identificar archivos relevantes
+- [x] Crear plan detallado
+- [x] Obtener aprobación del usuario
 
-## ✅ Completado
-- [x] Corregir botón "ACCIONES" visible en hoja de impresión
-  - [x] Agregar reglas CSS más específicas para ocultar todos los botones
-  - [x] Usar selectores amplios para elementos de acción
-  - [x] Asegurar que no aparezcan elementos de UI en impresión
-  - [x] Agregar fondo sólido y z-index para evitar superposiciones
-  - [x] Implementar JavaScript para limpiar elementos flotantes
-  - [x] Ocultar elementos con posición fija/absoluta no deseados
-  - [x] Mejorar estilos de botones no-print con fondo y sombra
+### 🔄 Implementación
 
-## ⏳ Pendiente
-- [ ] Probar la impresión en diferentes navegadores
-- [ ] Verificar que no se afecten otras funcionalidades
+#### 1. Modificar página de opciones
+- [x] Agregar nueva sección "Gestión de Datos" en opciones.html
+- [x] Incluir botones para descargar plantilla y cargar archivo
+- [x] Agregar estilos CSS necesarios
+- [x] Agregar funciones JavaScript para manejo de eventos
 
-## 📋 Cambios Realizados
+#### 2. Crear nuevas rutas en usuarios.py
+- [x] Ruta `/descargar_plantilla_nutrientes_ingredientes` - Generar y descargar plantilla Excel
+- [x] Ruta `/cargar_nutrientes_ingredientes` - Procesar archivo Excel cargado
+- [x] Funciones de utilidad para manejo de Excel
+- [x] Funciones auxiliares para conversión segura de datos
 
-### Mejoras en la tabla de ingredientes:
-1. **Nombres más legibles**: Cambié los `<select>` pequeños por texto `<strong>` con mayor tamaño
-2. **Mejor formateo**: Los valores numéricos ahora usan formato con 2 decimales
-3. **Estilos optimizados**: 
-   - Pantalla: 14px para nombres, fondo gris claro, borde verde
-   - Impresión: 13px para nombres, padding optimizado
-4. **Ancho de columnas**: Definidos con porcentajes para mejor distribución
-5. **Ocultación inteligente**: Columna de acciones oculta en impresión
+#### 3. Implementar funcionalidades
+- [x] Función para generar plantilla Excel con estructura correcta
+- [x] Función para procesar archivo Excel y validar datos
+- [x] Función para guardar nutrientes e ingredientes en base de datos
+- [x] Manejo de errores y validaciones
+- [x] Soporte para actualización de datos existentes
+- [x] Validación de estructura de archivo Excel
 
-### Mejoras en la tabla de nutrientes:
-- Aplicados los mismos principios de legibilidad
-- Formateo condicional para valores opcionales
-- Mejor alineación de contenido
+#### 4. Testing y validación
+- [ ] Verificar descarga de plantilla
+- [ ] Probar carga de datos desde Excel
+- [ ] Validar que los datos se guarden correctamente
+- [ ] Probar manejo de errores
+
+### 📋 Estructura de la plantilla Excel:
+- Hoja 1: Nutrientes (nombre, unidad, tipo)
+- Hoja 2: Ingredientes (nombre, tipo, comentario, precio, ms)
+- Hoja 3: Ingredientes_Nutrientes (ingrediente_nombre, nutriente_nombre, valor)
+
+### 🔧 Dependencias necesarias:
+- openpyxl (para manejo de archivos Excel)
