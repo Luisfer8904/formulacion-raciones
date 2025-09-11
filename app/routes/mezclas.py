@@ -101,7 +101,7 @@ def cargar_mezcla(mezcla_id):
         flash('Mezcla no encontrada.', 'warning')
         return redirect(url_for('mezclas_bp.lista_mezclas'))
 
-    # Obtener ingredientes de la mezcla (ACTUALIZADO: incluir límites)
+    # Obtener ingredientes de la mezcla
     cursor.execute("""
         SELECT mi.*, i.nombre AS nombre_ingrediente, i.precio, i.ms
         FROM mezcla_ingredientes mi
@@ -109,7 +109,7 @@ def cargar_mezcla(mezcla_id):
         WHERE mi.mezcla_id = %s
     """, (mezcla_id,))
     ingredientes_mezcla = cursor.fetchall()
-    print("🧪 Ingredientes mezcla con límites:", ingredientes_mezcla)
+    print("🧪 Ingredientes mezcla:", ingredientes_mezcla)
 
     # Obtener todos los ingredientes del usuario para el select
     cursor.execute("SELECT id, nombre, comentario, ms, precio FROM ingredientes WHERE usuario_id = %s", (session['user_id'],))
@@ -238,23 +238,16 @@ def guardar_mezcla():
         for ing in ingredientes:
             ingrediente_id = ing.get('ingrediente_id')
             inclusion = ing.get('inclusion')
-            limite_min = ing.get('limite_min')  # CORREGIDO: No usar valores por defecto
-            limite_max = ing.get('limite_max')  # CORREGIDO: No usar valores por defecto
 
             if ingrediente_id is not None and inclusion is not None:
                 # Validar que los valores no sean None antes de convertir
                 ingrediente_id_int = safe_int(ingrediente_id)
                 inclusion_float = safe_float(inclusion)
-                
-                # CORREGIDO: Solo convertir límites si existen, sino usar NULL
-                limite_min_value = safe_float(limite_min) if limite_min is not None else None
-                limite_max_value = safe_float(limite_max) if limite_max is not None else None
-                
                 if ingrediente_id_int > 0 and inclusion_float >= 0:
                     cursor.execute("""
-                        INSERT INTO mezcla_ingredientes (mezcla_id, ingrediente_id, inclusion, limite_min, limite_max)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """, (safe_int(mezcla_id), ingrediente_id_int, inclusion_float, limite_min_value, limite_max_value))
+                        INSERT INTO mezcla_ingredientes (mezcla_id, ingrediente_id, inclusion)
+                        VALUES (%s, %s, %s)
+                    """, (safe_int(mezcla_id), ingrediente_id_int, inclusion_float))
 
         # Eliminar registros antiguos de nutrientes para la mezcla (si existieran)
         cursor.execute("DELETE FROM mezcla_ingredientes_nutrientes WHERE mezcla_id = %s", (safe_int(mezcla_id),))
@@ -316,18 +309,12 @@ def guardar_mezcla_como():
         for ing in ingredientes:
             ingrediente_id = ing.get('ingrediente_id')
             inclusion = ing.get('inclusion')
-            limite_min = ing.get('limite_min')  # CORREGIDO: No usar valores por defecto
-            limite_max = ing.get('limite_max')  # CORREGIDO: No usar valores por defecto
 
             if ingrediente_id is not None and inclusion is not None:
-                # CORREGIDO: Solo convertir límites si existen, sino usar NULL
-                limite_min_value = safe_float(limite_min) if limite_min is not None else None
-                limite_max_value = safe_float(limite_max) if limite_max is not None else None
-                
                 cursor.execute("""
-                    INSERT INTO mezcla_ingredientes (mezcla_id, ingrediente_id, inclusion, limite_min, limite_max)
-                    VALUES (%s, %s, %s, %s, %s)
-                """, (safe_int(nueva_mezcla_id), safe_int(ingrediente_id), safe_float(inclusion), limite_min_value, limite_max_value))
+                    INSERT INTO mezcla_ingredientes (mezcla_id, ingrediente_id, inclusion)
+                    VALUES (%s, %s, %s)
+                """, (safe_int(nueva_mezcla_id), safe_int(ingrediente_id), safe_float(inclusion)))
 
         # Guardar nutrientes asociados
         nutrientes = data.get('nutrientes', [])
@@ -443,23 +430,16 @@ def actualizar_mezcla():
         for ing in ingredientes:
             ingrediente_id = ing.get('ingrediente_id')
             inclusion = ing.get('inclusion')
-            limite_min = ing.get('limite_min')  # CORREGIDO: No usar valores por defecto
-            limite_max = ing.get('limite_max')  # CORREGIDO: No usar valores por defecto
 
             if ingrediente_id is not None and inclusion is not None:
                 # Validar que los valores no sean None antes de convertir
                 ingrediente_id_int = safe_int(ingrediente_id)
                 inclusion_float = safe_float(inclusion)
-                
-                # CORREGIDO: Solo convertir límites si existen, sino usar NULL
-                limite_min_value = safe_float(limite_min) if limite_min is not None else None
-                limite_max_value = safe_float(limite_max) if limite_max is not None else None
-                
                 if ingrediente_id_int > 0 and inclusion_float >= 0:
                     cursor.execute("""
-                        INSERT INTO mezcla_ingredientes (mezcla_id, ingrediente_id, inclusion, limite_min, limite_max)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """, (safe_int(mezcla_id), ingrediente_id_int, inclusion_float, limite_min_value, limite_max_value))
+                        INSERT INTO mezcla_ingredientes (mezcla_id, ingrediente_id, inclusion)
+                        VALUES (%s, %s, %s)
+                    """, (safe_int(mezcla_id), ingrediente_id_int, inclusion_float))
 
         # Insertar nuevos nutrientes
         for nutriente_id in nutrientes:

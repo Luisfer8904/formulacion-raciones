@@ -1,4 +1,4 @@
-# Python
+# Archivos de Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -21,92 +21,29 @@ wheels/
 *.egg
 MANIFEST
 
-# PyInstaller
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
+# Entornos virtuales
 venv/
+env/
 ENV/
 env.bak/
 venv.bak/
 
-# Spyder project settings
-.spyderproject
-.spyproject
+# Variables de entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# IDEs
-.vscode/
+# Archivos de configuración de IDE
+.vscode/launch.json
+.vscode/tasks.json
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# Archivos del sistema
 .DS_Store
 .DS_Store?
 ._*
@@ -115,15 +52,50 @@ dmypy.json
 ehthumbs.db
 Thumbs.db
 
-# Database
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos temporales
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Archivos de base de datos
 *.db
 *.sqlite
 *.sqlite3
 
-# Logs
-*.log
-logs/
+# Archivos de backup
+*.bak
+*.backup
+*~
 
-# Temporary files
-*.tmp
-*.temp
+# Archivos específicos del proyecto
+cookies.txt
+otros_archivos/
+*.pyc
+
+# Archivos grandes que pueden causar problemas de rendimiento
+static/js/formulador_optimizado.js
+static/js/formulador_backup.js
+
+# Cache de Node.js (si se usa)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de certificados
+*.pem
+*.key
+*.crt
+
+# Archivos de configuración sensibles
+config.ini
+settings.ini
+local_settings.py
