@@ -13,6 +13,38 @@
             body { font-size: 12px; }
             .page-break { page-break-before: always; }
             .section-header { margin-top: 0; }
+            
+            /* Estilos específicos para la tabla de ingredientes */
+            .ingredientes-table {
+                font-size: 11px !important;
+            }
+            
+            .ingredientes-table .ingrediente-nombre {
+                font-size: 13px !important;
+                font-weight: 600 !important;
+                color: #2c3e50 !important;
+                padding: 8px !important;
+                line-height: 1.3 !important;
+            }
+            
+            .ingredientes-table td {
+                padding: 6px 4px !important;
+                vertical-align: middle !important;
+            }
+            
+            .ingredientes-table th {
+                font-size: 10px !important;
+                padding: 6px 4px !important;
+            }
+            
+            .valor-numerico {
+                text-align: right !important;
+                font-weight: 500 !important;
+            }
+            
+            .btn-action-container {
+                display: none !important;
+            }
         }
         
         .page-break {
@@ -77,6 +109,27 @@
             text-transform: uppercase;
             font-size: 11px;
             letter-spacing: 0.5px;
+        }
+        
+        /* Estilos para mejorar legibilidad en pantalla */
+        .ingredientes-table .ingrediente-nombre {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #7CB342;
+        }
+        
+        .ingredientes-table td {
+            vertical-align: middle;
+            padding: 8px;
+        }
+        
+        .valor-numerico {
+            text-align: right;
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
         }
         
         .btn-action-container {
@@ -224,34 +277,32 @@
         <div class="info-section">
             <h5 class="section-title section-header"><i class="fas fa-seedling me-2"></i>Ingredientes Disponibles</h5>
             <div class="table-responsive">
-                <table class="table table-bordered table-sm">
+                <table class="table table-bordered table-sm ingredientes-table">
                     <thead>
                         <tr>
-                            <th>Ingrediente</th>
-                            <th>Inclusión (%)</th>
-                            <th>Límite Mín. (%)</th>
-                            <th>Límite Máx. (%)</th>
-                            <th>Peso en Bachada ({{ config_usuario.unidad_medida }})</th>
-                            <th>Costo Ingrediente ({{ config_usuario.moneda|simbolo_moneda }}/{{ config_usuario.unidad_medida }})</th>
-                            <th>Valor Total ({{ config_usuario.moneda|simbolo_moneda }})</th>
-                            <th>Acciones</th>
+                            <th style="width: 25%;">Ingrediente</th>
+                            <th style="width: 12%;">Inclusión (%)</th>
+                            <th style="width: 12%;">Límite Mín. (%)</th>
+                            <th style="width: 12%;">Límite Máx. (%)</th>
+                            <th style="width: 15%;">Peso en Bachada ({{ config_usuario.unidad_medida }})</th>
+                            <th style="width: 12%;">Costo Ingrediente ({{ config_usuario.moneda|simbolo_moneda }}/{{ config_usuario.unidad_medida }})</th>
+                            <th style="width: 12%;">Valor Total ({{ config_usuario.moneda|simbolo_moneda }})</th>
+                            <th class="no-print" style="width: 8%;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for ingrediente in ingredientes %}
                         <tr>
-                            <td>
-                                <select class="form-select form-select-sm" disabled>
-                                    <option selected>{{ ingrediente.nombre }}</option>
-                                </select>
+                            <td class="ingrediente-nombre">
+                                <strong>{{ ingrediente.nombre }}</strong>
                             </td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ ingrediente.inclusion }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="-" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="-" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ ingrediente.peso }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ ingrediente.precio }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ ingrediente.valor_total }}" readonly></td>
-                            <td>
+                            <td class="valor-numerico">{{ "%.2f"|format(ingrediente.inclusion|float) }}%</td>
+                            <td class="valor-numerico">-</td>
+                            <td class="valor-numerico">-</td>
+                            <td class="valor-numerico">{{ "%.2f"|format(ingrediente.peso|float) }}</td>
+                            <td class="valor-numerico">{{ "%.2f"|format(ingrediente.precio|float) }}</td>
+                            <td class="valor-numerico">{{ "%.2f"|format(ingrediente.valor_total|float) }}</td>
+                            <td class="no-print">
                                 <div class="btn-action-container">
                                     <button type="button" class="btn-action btn-action-danger" disabled>
                                         <i class="fas fa-times"></i>
@@ -275,34 +326,32 @@
         <div class="info-section">
             <h5 class="section-title section-header"><i class="fas fa-pills me-2"></i>Nutrientes y Requerimientos</h5>
             <div class="table-responsive">
-                <table class="table table-bordered table-sm">
+                <table class="table table-bordered table-sm nutrientes-table">
                     <thead>
                         <tr>
-                            <th>Nutriente</th>
-                            <th>Unidad</th>
-                            <th>Sugerido</th>
-                            <th>Mínimo</th>
-                            <th>Máximo</th>
-                            <th>Resultado TC</th>
-                            <th>Resultado BS</th>
-                            <th>Acciones</th>
+                            <th style="width: 20%;">Nutriente</th>
+                            <th style="width: 10%;">Unidad</th>
+                            <th style="width: 12%;">Sugerido</th>
+                            <th style="width: 12%;">Mínimo</th>
+                            <th style="width: 12%;">Máximo</th>
+                            <th style="width: 12%;">Resultado TC</th>
+                            <th style="width: 12%;">Resultado BS</th>
+                            <th class="no-print" style="width: 10%;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for nutriente in nutrientes %}
                         <tr>
-                            <td>
-                                <select class="form-select form-select-sm" disabled>
-                                    <option selected>{{ nutriente.nombre }}</option>
-                                </select>
+                            <td class="ingrediente-nombre">
+                                <strong>{{ nutriente.nombre }}</strong>
                             </td>
-                            <td><input type="text" class="form-control form-control-sm" value="{{ nutriente.unidad }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ nutriente.sugerido }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ nutriente.minimo }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ nutriente.maximo }}" readonly></td>
+                            <td class="text-center">{{ nutriente.unidad }}</td>
+                            <td class="valor-numerico">{{ "%.2f"|format(nutriente.sugerido|float) if nutriente.sugerido else '-' }}</td>
+                            <td class="valor-numerico">{{ "%.2f"|format(nutriente.minimo|float) if nutriente.minimo else '-' }}</td>
+                            <td class="valor-numerico">{{ "%.2f"|format(nutriente.maximo|float) if nutriente.maximo else '-' }}</td>
                             <td class="text-end"><span class="badge bg-primary">{{ nutriente.resultado_tc }}</span></td>
                             <td class="text-end"><span class="badge bg-secondary">{{ nutriente.resultado_bs }}</span></td>
-                            <td class="text-center">
+                            <td class="text-center no-print">
                                 <div class="btn-action-container">
                                     <button type="button" class="btn-action btn-action-danger" disabled>
                                         <i class="fas fa-times"></i>
