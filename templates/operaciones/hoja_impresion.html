@@ -13,6 +13,21 @@
             body { font-size: 12px; }
             .page-break { page-break-before: always; }
             .section-header { margin-top: 0; }
+            
+            /* Mejorar nombres de ingredientes en impresión */
+            .ingrediente-nombre {
+                font-size: 14px !important;
+                font-weight: 600 !important;
+                padding: 8px !important;
+            }
+            
+            /* Ocultar cualquier elemento flotante */
+            .btn-action-container,
+            .floating-actions,
+            [style*="position: fixed"],
+            [style*="position: absolute"] {
+                display: none !important;
+            }
         }
         
         .page-break {
@@ -79,36 +94,12 @@
             letter-spacing: 0.5px;
         }
         
-        .btn-action-container {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-action {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            padding: 0;
-            border-radius: 4px;
-            font-size: 12px;
-            border: 1px solid transparent;
-            opacity: 0.6;
-        }
-        
-        .btn-action-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            color: #fff;
-        }
-        
-        .btn-action-info {
-            background-color: #17a2b8;
-            border-color: #17a2b8;
-            color: #fff;
+        /* Mejorar legibilidad de nombres */
+        .ingrediente-nombre {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            padding: 10px;
         }
         
         .summary-cards {
@@ -227,40 +218,27 @@
                 <table class="table table-bordered table-sm">
                     <thead>
                         <tr>
-                            <th>Ingrediente</th>
+                            <th style="width: 30%;">Ingrediente</th>
                             <th>Inclusión (%)</th>
                             <th>Límite Mín. (%)</th>
                             <th>Límite Máx. (%)</th>
                             <th>Peso en Bachada ({{ config_usuario.unidad_medida }})</th>
                             <th>Costo Ingrediente ({{ config_usuario.moneda|simbolo_moneda }}/{{ config_usuario.unidad_medida }})</th>
                             <th>Valor Total ({{ config_usuario.moneda|simbolo_moneda }})</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for ingrediente in ingredientes %}
                         <tr>
-                            <td>
-                                <select class="form-select form-select-sm" disabled>
-                                    <option selected>{{ ingrediente.nombre }}</option>
-                                </select>
+                            <td class="ingrediente-nombre">
+                                <strong>{{ ingrediente.nombre }}</strong>
                             </td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ ingrediente.inclusion }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="-" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="-" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ ingrediente.peso }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ ingrediente.precio }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ ingrediente.valor_total }}" readonly></td>
-                            <td>
-                                <div class="btn-action-container">
-                                    <button type="button" class="btn-action btn-action-danger" disabled>
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <button type="button" class="btn-action btn-action-info" disabled>
-                                        <i class="fas fa-info"></i>
-                                    </button>
-                                </div>
-                            </td>
+                            <td class="text-end">{{ "%.2f"|format(ingrediente.inclusion|float) }}%</td>
+                            <td class="text-center">-</td>
+                            <td class="text-center">-</td>
+                            <td class="text-end">{{ "%.2f"|format(ingrediente.peso|float) }}</td>
+                            <td class="text-end">{{ "%.2f"|format(ingrediente.precio|float) }}</td>
+                            <td class="text-end">{{ "%.2f"|format(ingrediente.valor_total|float) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -278,37 +256,27 @@
                 <table class="table table-bordered table-sm">
                     <thead>
                         <tr>
-                            <th>Nutriente</th>
+                            <th style="width: 25%;">Nutriente</th>
                             <th>Unidad</th>
                             <th>Sugerido</th>
                             <th>Mínimo</th>
                             <th>Máximo</th>
                             <th>Resultado TC</th>
                             <th>Resultado BS</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for nutriente in nutrientes %}
                         <tr>
-                            <td>
-                                <select class="form-select form-select-sm" disabled>
-                                    <option selected>{{ nutriente.nombre }}</option>
-                                </select>
+                            <td class="ingrediente-nombre">
+                                <strong>{{ nutriente.nombre }}</strong>
                             </td>
-                            <td><input type="text" class="form-control form-control-sm" value="{{ nutriente.unidad }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ nutriente.sugerido }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ nutriente.minimo }}" readonly></td>
-                            <td><input type="number" class="form-control form-control-sm" value="{{ nutriente.maximo }}" readonly></td>
+                            <td class="text-center">{{ nutriente.unidad }}</td>
+                            <td class="text-end">{{ "%.2f"|format(nutriente.sugerido|float) if nutriente.sugerido else '-' }}</td>
+                            <td class="text-end">{{ "%.2f"|format(nutriente.minimo|float) if nutriente.minimo else '-' }}</td>
+                            <td class="text-end">{{ "%.2f"|format(nutriente.maximo|float) if nutriente.maximo else '-' }}</td>
                             <td class="text-end"><span class="badge bg-primary">{{ nutriente.resultado_tc }}</span></td>
                             <td class="text-end"><span class="badge bg-secondary">{{ nutriente.resultado_bs }}</span></td>
-                            <td class="text-center">
-                                <div class="btn-action-container">
-                                    <button type="button" class="btn-action btn-action-danger" disabled>
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
