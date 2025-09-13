@@ -248,15 +248,30 @@ class NotificacionesOptimizacion {
      */
     procesarRespuestaOptimizacion(respuesta) {
         if (respuesta.exito && respuesta.notificacion) {
-            // Mostrar modal detallado para éxito
+            // Determinar tipo de toast basado en si es aproximada
+            let tipoToast = 'exito';
+            let tituloToast = '✅ Optimización Exitosa';
+            
+            if (respuesta.aproximada) {
+                // Es una optimización aproximada
+                if (respuesta.notificacion.tipo === 'aproximada_buena') {
+                    tipoToast = 'warning';
+                    tituloToast = '⚠️ Optimización Aproximada';
+                } else if (respuesta.notificacion.tipo === 'aproximada_limitada') {
+                    tipoToast = 'warning';
+                    tituloToast = '⚠️ Aproximación Limitada';
+                }
+            }
+            
+            // Mostrar modal detallado
             this.mostrarModal(respuesta.notificacion);
             
             // También mostrar toast rápido
             this.mostrarToast(
-                '✅ Optimización Exitosa',
-                `Costo: $${respuesta.costo_total}`,
-                'exito',
-                3000
+                tituloToast,
+                `Costo: $${respuesta.costo_total}${respuesta.aproximada ? ' (Aproximado)' : ''}`,
+                tipoToast,
+                respuesta.aproximada ? 5000 : 3000
             );
         } else if (respuesta.error) {
             // Mostrar notificación de error

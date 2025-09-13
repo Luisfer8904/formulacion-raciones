@@ -565,7 +565,21 @@ def optimizar_formulacion():
     
     # Seleccionar el mejor resultado
     if not mejores_resultados:
-        print("❌ Ninguna optimización fue exitosa")
+        print("❌ Ninguna optimización estricta fue exitosa")
+        print("🔄 Intentando optimización aproximada...")
+        
+        # Intentar optimización aproximada
+        resultado_aproximado = optimizacion_aproximada(
+            ingredientes, requerimientos, tipo_optimizacion, 
+            costos, bounds_ingredientes, matriz_nutrientes
+        )
+        
+        if resultado_aproximado['exito']:
+            print("✅ Optimización aproximada exitosa")
+            return jsonify(resultado_aproximado)
+        
+        # Si incluso la optimización aproximada falla, hacer análisis detallado
+        print("❌ Incluso la optimización aproximada falló")
         
         # Analizar posibles causas del fallo
         causas_posibles = []
@@ -706,7 +720,7 @@ def optimizar_formulacion():
         # Generar diagnóstico específico
         diagnostico = {
             'tipo': 'optimizacion_fallida_detallada',
-            'mensaje': 'No se pudo encontrar una solución factible. Análisis detallado:',
+            'mensaje': 'No se pudo encontrar una solución factible ni aproximada. Análisis detallado:',
             'aportes_actuales': aportes_actuales,
             'nutrientes_sin_aporte': nutrientes_sin_aporte,
             'nutrientes_deficientes': nutrientes_deficientes,
@@ -765,7 +779,7 @@ def optimizar_formulacion():
         print(f"   Causas principales: {len(diagnostico['causas_principales'])}")
         
         return jsonify({
-            'error': 'No se pudo encontrar una solución factible',
+            'error': 'No se pudo encontrar una solución factible ni aproximada',
             'validacion': diagnostico
         }), 400
     
@@ -885,3 +899,399 @@ def optimizar_formulacion():
             ]
         }
     })
+
+
+def optimizacion_aproximada(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes):
+    """
+    Función de optimización aproximada que siempre devuelve una solución
+    manteniendo la suma de ingredientes en 100%
+    """
+    print("\n" + "="*60)
+    print("🔄 INICIANDO OPTIMIZACIÓN APROXIMADA")
+    print("="*60)
+    
+    # Niveles de tolerancia progresiva
+    niveles_tolerancia = [0.05, 0.10, 0.20, 0.50]  # 5%, 10%, 20%, 50%
+    
+    for nivel_idx, tolerancia in enumerate(niveles_tolerancia):
+        print(f"\n🎯 Intentando optimización con tolerancia: {tolerancia*100:.0f}%")
+        
+        # Intentar optimización con penalizaciones en lugar de restricciones estrictas
+        resultado = optimizar_con_penalizaciones(
+            ingredientes, requerimientos, tipo_optimizacion, 
+            costos, bounds_ingredientes, matriz_nutrientes, tolerancia
+        )
+        
+        if resultado['exito']:
+            print(f"✅ Optimización aproximada exitosa con tolerancia {tolerancia*100:.0f}%")
+            return resultado
+    
+    # Si todas las tolerancias fallan, usar distribución inteligente
+    print("\n🔄 Usando distribución inteligente como último recurso")
+    return distribucion_inteligente(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes)
+
+
+def optimizar_con_penalizaciones(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes, tolerancia):
+    """
+    Optimización usando penalizaciones graduales en lugar de restricciones estrictas
+    """
+    try:
+        # Función objetivo con penalizaciones
+        def objetivo_con_penalizaciones(x):
+            # Costo base
+            costo_base = np.dot(costos, x)
+            
+            # Penalizaciones por desviaciones nutricionales
+            penalizacion_total = 0.0
+            
+            for i, req in enumerate(requerimientos):
+                aporte_actual = np.dot(matriz_nutrientes[i], x) / 100
+                req_min = req.get('min')
+                req_max = req.get('max')
+                
+                # Penalización por no cumplir mínimo
+                if req_min and req_min != '' and float(req_min) > 0:
+                    req_min_val = float(req_min)
+                    if aporte_actual < req_min_val:
+                        deficit = req_min_val - aporte_actual
+                        # Penalización cuadrática escalada por tolerancia
+                        penalizacion = (deficit / req_min_val) ** 2 * 1000 / tolerancia
+                        penalizacion_total += penalizacion
+                
+                # Penalización por exceder máximo
+                if req_max and req_max != '' and float(req_max) > 0:
+                    req_max_val = float(req_max)
+                    if aporte_actual > req_max_val:
+                        exceso = aporte_actual - req_max_val
+                        # Penalización cuadrática escalada por tolerancia
+                        penalizacion = (exceso / req_max_val) ** 2 * 1000 / tolerancia
+                        penalizacion_total += penalizacion
+            
+            return costo_base + penalizacion_total
+        
+        # Solo restricción de suma = 100%
+        restriccion_suma = {'type': 'eq', 'fun': lambda x: np.sum(x) - 100}
+        
+        # Puntos iniciales múltiples
+        puntos_iniciales = generar_puntos_iniciales(bounds_ingredientes, costos)
+        
+        mejor_resultado = None
+        mejor_costo = float('inf')
+        
+        for idx, x0 in enumerate(puntos_iniciales):
+            resultado = minimize(
+                objetivo_con_penalizaciones,
+                x0,
+                method='SLSQP',
+                bounds=bounds_ingredientes,
+                constraints=[restriccion_suma],
+                options={'disp': False, 'maxiter': 3000, 'ftol': 1e-12}
+            )
+            
+            if resultado.success and resultado.fun < mejor_costo:
+                mejor_resultado = resultado
+                mejor_costo = resultado.fun
+        
+        if mejor_resultado and mejor_resultado.success:
+            # Verificar calidad de la aproximación
+            metricas = calcular_metricas_aproximacion(
+                mejor_resultado.x, ingredientes, requerimientos, 
+                tipo_optimizacion, matriz_nutrientes
+            )
+            
+            # Si la aproximación es aceptable, devolverla
+            if metricas['calidad_general'] >= (1 - tolerancia):
+                return formatear_resultado_aproximado(
+                    mejor_resultado, ingredientes, costos, metricas, 
+                    f"Aproximada (tolerancia {tolerancia*100:.0f}%)"
+                )
+        
+        return {'exito': False}
+        
+    except Exception as e:
+        print(f"❌ Error en optimización con penalizaciones: {e}")
+        return {'exito': False}
+
+
+def generar_puntos_iniciales(bounds_ingredientes, costos):
+    """
+    Genera múltiples puntos iniciales inteligentes para la optimización
+    """
+    puntos = []
+    n_ingredientes = len(bounds_ingredientes)
+    
+    # Punto 1: Distribución uniforme
+    x0_uniforme = np.array([100.0 / n_ingredientes] * n_ingredientes)
+    puntos.append(ajustar_a_bounds(x0_uniforme, bounds_ingredientes))
+    
+    # Punto 2: Priorizar ingredientes de menor costo
+    if any(c > 0 for c in costos):
+        costos_ordenados = sorted(enumerate(costos), key=lambda x: x[1] if x[1] > 0 else float('inf'))
+        x0_costo = np.zeros(n_ingredientes)
+        
+        # Asignar más peso a ingredientes baratos
+        peso_total = 0
+        for i, (idx, costo) in enumerate(costos_ordenados[:min(3, len(costos_ordenados))]):
+            peso = max(bounds_ingredientes[idx][0], 30.0 / (i + 1))
+            x0_costo[idx] = min(peso, bounds_ingredientes[idx][1])
+            peso_total += x0_costo[idx]
+        
+        # Completar hasta 100%
+        if peso_total < 100:
+            resto = 100 - peso_total
+            for idx in range(n_ingredientes):
+                if x0_costo[idx] == 0:
+                    disponible = bounds_ingredientes[idx][1] - x0_costo[idx]
+                    if disponible > 0:
+                        agregar = min(resto, disponible)
+                        x0_costo[idx] += agregar
+                        resto -= agregar
+                        if resto <= 0:
+                            break
+        
+        puntos.append(ajustar_a_bounds(x0_costo, bounds_ingredientes))
+    
+    # Punto 3: Usar límites mínimos como base
+    x0_minimos = np.array([bound[0] for bound in bounds_ingredientes])
+    suma_minimos = np.sum(x0_minimos)
+    
+    if suma_minimos < 100:
+        # Distribuir el resto proporcionalmente
+        resto = 100 - suma_minimos
+        capacidades = np.array([bound[1] - bound[0] for bound in bounds_ingredientes])
+        capacidad_total = np.sum(capacidades)
+        
+        if capacidad_total > 0:
+            for i in range(n_ingredientes):
+                if capacidades[i] > 0:
+                    proporcion = capacidades[i] / capacidad_total
+                    agregar = min(resto * proporcion, capacidades[i])
+                    x0_minimos[i] += agregar
+    
+    puntos.append(ajustar_a_bounds(x0_minimos, bounds_ingredientes))
+    
+    return puntos
+
+
+def ajustar_a_bounds(x, bounds_ingredientes):
+    """
+    Ajusta un vector de inclusiones para que respete los bounds y sume 100%
+    """
+    x_ajustado = np.copy(x)
+    
+    # Aplicar bounds
+    for i, (min_val, max_val) in enumerate(bounds_ingredientes):
+        x_ajustado[i] = max(min_val, min(max_val, x_ajustado[i]))
+    
+    # Normalizar para que sume 100
+    suma_actual = np.sum(x_ajustado)
+    if suma_actual > 0:
+        x_ajustado = x_ajustado * (100.0 / suma_actual)
+        
+        # Verificar bounds después de normalizar
+        for i, (min_val, max_val) in enumerate(bounds_ingredientes):
+            if x_ajustado[i] < min_val:
+                x_ajustado[i] = min_val
+            elif x_ajustado[i] > max_val:
+                x_ajustado[i] = max_val
+    
+    return x_ajustado
+
+
+def distribucion_inteligente(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes):
+    """
+    Último recurso: distribución inteligente que siempre funciona
+    """
+    print("🎯 Aplicando distribución inteligente")
+    
+    n_ingredientes = len(ingredientes)
+    
+    # Comenzar con límites mínimos
+    x_final = np.array([bound[0] for bound in bounds_ingredientes])
+    suma_actual = np.sum(x_final)
+    
+    # Distribuir el resto priorizando ingredientes de menor costo y mejor aporte nutricional
+    resto = 100 - suma_actual
+    
+    if resto > 0:
+        # Calcular puntuaciones para cada ingrediente
+        puntuaciones = []
+        
+        for i, ing in enumerate(ingredientes):
+            # Factor costo (menor costo = mejor puntuación)
+            costo = costos[i] if costos[i] > 0 else 1.0
+            factor_costo = 1.0 / costo
+            
+            # Factor nutricional (cuántos nutrientes aporta significativamente)
+            factor_nutricional = 0
+            for j, req in enumerate(requerimientos):
+                if matriz_nutrientes[j][i] > 0:
+                    factor_nutricional += 1
+            
+            # Capacidad disponible
+            capacidad = bounds_ingredientes[i][1] - x_final[i]
+            
+            puntuacion = factor_costo * (1 + factor_nutricional) * min(capacidad, resto)
+            puntuaciones.append((i, puntuacion, capacidad))
+        
+        # Ordenar por puntuación descendente
+        puntuaciones.sort(key=lambda x: x[1], reverse=True)
+        
+        # Distribuir el resto
+        for idx, puntuacion, capacidad in puntuaciones:
+            if resto <= 0:
+                break
+            
+            agregar = min(resto, capacidad)
+            x_final[idx] += agregar
+            resto -= agregar
+    
+    # Asegurar que suma exactamente 100%
+    suma_final = np.sum(x_final)
+    if abs(suma_final - 100) > 0.001:
+        x_final = x_final * (100.0 / suma_final)
+    
+    # Calcular métricas
+    metricas = calcular_metricas_aproximacion(
+        x_final, ingredientes, requerimientos, tipo_optimizacion, matriz_nutrientes
+    )
+    
+    return formatear_resultado_aproximado(
+        type('obj', (object,), {'x': x_final, 'success': True})(),
+        ingredientes, costos, metricas, "Distribución Inteligente"
+    )
+
+
+def calcular_metricas_aproximacion(x, ingredientes, requerimientos, tipo_optimizacion, matriz_nutrientes):
+    """
+    Calcula métricas de qué tan buena es la aproximación
+    """
+    metricas = {
+        'nutrientes_cumplidos': 0,
+        'nutrientes_totales': len(requerimientos),
+        'desviaciones': [],
+        'calidad_general': 0.0,
+        'aportes_actuales': {}
+    }
+    
+    cumplimientos = []
+    
+    for i, req in enumerate(requerimientos):
+        aporte_actual = np.dot(matriz_nutrientes[i], x) / 100
+        req_min = req.get('min')
+        req_max = req.get('max')
+        
+        metricas['aportes_actuales'][req['nombre']] = aporte_actual
+        
+        cumple_min = True
+        cumple_max = True
+        desviacion_relativa = 0.0
+        
+        # Verificar mínimo
+        if req_min and req_min != '' and float(req_min) > 0:
+            req_min_val = float(req_min)
+            if aporte_actual < req_min_val:
+                cumple_min = False
+                desviacion_relativa += abs(aporte_actual - req_min_val) / req_min_val
+        
+        # Verificar máximo
+        if req_max and req_max != '' and float(req_max) > 0:
+            req_max_val = float(req_max)
+            if aporte_actual > req_max_val:
+                cumple_max = False
+                desviacion_relativa += abs(aporte_actual - req_max_val) / req_max_val
+        
+        if cumple_min and cumple_max:
+            metricas['nutrientes_cumplidos'] += 1
+            cumplimientos.append(1.0)
+        else:
+            # Calcular qué tan cerca está (0 = muy lejos, 1 = perfecto)
+            cercania = max(0.0, 1.0 - desviacion_relativa)
+            cumplimientos.append(cercania)
+        
+        metricas['desviaciones'].append({
+            'nutriente': req['nombre'],
+            'aporte_actual': aporte_actual,
+            'requerimiento_min': req_min,
+            'requerimiento_max': req_max,
+            'cumple': cumple_min and cumple_max,
+            'desviacion_relativa': desviacion_relativa
+        })
+    
+    # Calidad general como promedio de cumplimientos
+    metricas['calidad_general'] = np.mean(cumplimientos) if cumplimientos else 0.0
+    
+    return metricas
+
+
+def formatear_resultado_aproximado(resultado, ingredientes, costos, metricas, metodo):
+    """
+    Formatea el resultado de optimización aproximada
+    """
+    resultado_lista = []
+    costo_total = 0
+    
+    for i, inclusion in enumerate(resultado.x):
+        costo_ingrediente = inclusion * costos[i] / 100
+        costo_total += costo_ingrediente
+        
+        resultado_lista.append({
+            'ingrediente': ingredientes[i]['nombre'],
+            'inclusion': formatear_inclusion(inclusion),
+            'peso': formatear_inclusion(inclusion),
+            'valor': round(costo_ingrediente, 2)
+        })
+    
+    # Verificar suma
+    suma_final = sum(r['inclusion'] for r in resultado_lista)
+    
+    # Determinar tipo de notificación basado en calidad
+    if metricas['calidad_general'] >= 0.95:
+        tipo_notificacion = 'exito'
+        titulo = '✅ Optimización Exitosa (Aproximada)'
+        mensaje = f'Se encontró una excelente aproximación con costo de ${costo_total:.2f}'
+    elif metricas['calidad_general'] >= 0.80:
+        tipo_notificacion = 'aproximada_buena'
+        titulo = '⚠️ Optimización Aproximada (Buena)'
+        mensaje = f'Se encontró una buena aproximación con costo de ${costo_total:.2f}'
+    else:
+        tipo_notificacion = 'aproximada_limitada'
+        titulo = '⚠️ Optimización Aproximada (Limitada)'
+        mensaje = f'Se encontró una aproximación limitada con costo de ${costo_total:.2f}'
+    
+    # Generar sugerencias específicas
+    sugerencias = [
+        f'Calidad de aproximación: {metricas["calidad_general"]*100:.1f}%',
+        f'Nutrientes cumplidos: {metricas["nutrientes_cumplidos"]}/{metricas["nutrientes_totales"]}',
+        f'Método utilizado: {metodo}'
+    ]
+    
+    # Agregar sugerencias específicas para nutrientes no cumplidos
+    nutrientes_problematicos = [d for d in metricas['desviaciones'] if not d['cumple']]
+    if nutrientes_problematicos:
+        sugerencias.append('Nutrientes con desviaciones:')
+        for nutriente in nutrientes_problematicos[:3]:  # Mostrar solo los primeros 3
+            sugerencias.append(f"  • {nutriente['nutriente']}: {nutriente['aporte_actual']:.4f}")
+    
+    return {
+        'exito': True,
+        'aproximada': True,
+        'resultado': resultado_lista,
+        'costo_total': round(costo_total, 2),
+        'mensaje': 'Optimización aproximada completada',
+        'metricas_aproximacion': metricas,
+        'notificacion': {
+            'tipo': tipo_notificacion,
+            'titulo': titulo,
+            'mensaje': mensaje,
+            'detalles': {
+                'metodo_usado': metodo,
+                'costo_total': round(costo_total, 2),
+                'calidad_aproximacion': f"{metricas['calidad_general']*100:.1f}%",
+                'nutrientes_cumplidos': f"{metricas['nutrientes_cumplidos']}/{metricas['nutrientes_totales']}",
+                'suma_verificada': round(suma_final, 2),
+                'es_aproximacion': True
+            },
+            'sugerencias': sugerencias
+        }
+    }

@@ -210,6 +210,22 @@
     border-bottom-color: #ffc107;
 }
 
+.notification-aproximada_buena .notification-title {
+    color: #17a2b8;
+}
+
+.notification-aproximada_buena .notification-header {
+    border-bottom-color: #17a2b8;
+}
+
+.notification-aproximada_limitada .notification-title {
+    color: #fd7e14;
+}
+
+.notification-aproximada_limitada .notification-header {
+    border-bottom-color: #fd7e14;
+}
+
 /* Notificaciones toast (esquina superior derecha) */
 .toast-container {
     position: fixed;
