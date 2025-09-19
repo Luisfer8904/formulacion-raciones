@@ -310,12 +310,19 @@ class NotificacionesOptimizacion {
             'limites_minimos_excesivos': '🚫',
             'limites_inconsistentes': '⚖️',
             'optimizacion_fallida': '❌',
-            'optimizacion_fallida_detallada': '🔬'
+            'optimizacion_fallida_detallada': '🔬',
+            'factibilidad_imposible': '🚨'
         };
 
         // Si es análisis detallado, usar modal especializado
         if (validacion.tipo === 'optimizacion_fallida_detallada') {
             this.mostrarAnalisisDetallado(validacion);
+            return;
+        }
+
+        // Si es problema de factibilidad, usar modal especializado
+        if (validacion.tipo === 'factibilidad_imposible') {
+            this.mostrarAnalisisFactibilidad(validacion);
             return;
         }
 
@@ -587,6 +594,287 @@ class NotificacionesOptimizacion {
         // Activar la tab seleccionada
         container.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
         container.querySelector(`#tab-${tabName}`).classList.add('active');
+    }
+
+    /**
+     * Mostrar análisis de factibilidad (problemas detectados antes de optimizar)
+     * @param {Object} validacion - Datos de validación de factibilidad
+     */
+    mostrarAnalisisFactibilidad(validacion) {
+        console.log('🚨 Mostrando análisis de factibilidad:', validacion);
+        
+        // Crear overlay si no existe
+        let overlay = document.getElementById('notification-overlay');
+        if (!overlay) {
+            overlay = this.crearOverlay();
+        }
+
+        // Crear contenido especializado para factibilidad
+        const modal = overlay.querySelector('.notification-modal');
+        modal.innerHTML = this.generarAnalisisFactibilidad(validacion);
+
+        // Mostrar modal
+        overlay.classList.add('show');
+
+        // Agregar event listeners específicos
+        this.agregarEventListenersFactibilidad(overlay);
+    }
+
+    /**
+     * Generar HTML para análisis de factibilidad
+     * @param {Object} validacion - Datos de validación
+     */
+    generarAnalisisFactibilidad(validacion) {
+        return `
+            <div class="notification-header notification-error">
+                <h3 class="notification-title">🚨 Formulación No Factible</h3>
+                <button class="notification-close" onclick="notificaciones.cerrarModal()">×</button>
+            </div>
+            <div class="notification-body analisis-factibilidad">
+                <div class="factibilidad-resumen">
+                    <div class="resumen-item critico">
+                        <span class="resumen-numero">${validacion.nutrientes_imposibles?.length || 0}</span>
+                        <span class="resumen-label">Nutrientes Imposibles</span>
+                    </div>
+                    <div class="resumen-item advertencia">
+                        <span class="resumen-numero">${validacion.nutrientes_dificiles?.length || 0}</span>
+                        <span class="resumen-label">Nutrientes Difíciles</span>
+                    </div>
+                    <div class="resumen-item exito">
+                        <span class="resumen-numero">${validacion.detalles?.nutrientes_factibles || 0}</span>
+                        <span class="resumen-label">Nutrientes Factibles</span>
+                    </div>
+                </div>
+                
+                <div class="factibilidad-tabs">
+                    <button class="tab-btn active" data-tab="problemas">🚨 Problemas Críticos</button>
+                    <button class="tab-btn" data-tab="soluciones">💡 Soluciones</button>
+                    <button class="tab-btn" data-tab="detalles">📊 Detalles Técnicos</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div id="tab-problemas" class="tab-panel active">
+                        ${this.generarTabProblemas(validacion)}
+                    </div>
+                    <div id="tab-soluciones" class="tab-panel">
+                        ${this.generarTabSoluciones(validacion)}
+                    </div>
+                    <div id="tab-detalles" class="tab-panel">
+                        ${this.generarTabDetallesFactibilidad(validacion)}
+                    </div>
+                </div>
+            </div>
+            <div class="notification-footer">
+                <button class="notification-btn notification-btn-primary" onclick="notificaciones.cerrarModal()">
+                    Entendido
+                </button>
+            </div>
+        `;
+    }
+
+    /**
+     * Generar tab de problemas críticos
+     */
+    generarTabProblemas(validacion) {
+        let html = '<div class="problemas-criticos">';
+        
+        if (validacion.problemas_criticos && validacion.problemas_criticos.length > 0) {
+            html += '<h4>🚨 Problemas que Impiden la Optimización</h4>';
+            
+            validacion.problemas_criticos.forEach((problema, index) => {
+                const tipoClass = problema.tipo === 'nutriente_sin_fuente' ? 'sin-fuente' : 'insuficiente';
+                
+                html += `
+                    <div class="problema-item ${tipoClass}">
+                        <div class="problema-header">
+                            <h5>${problema.nutriente}</h5>
+                            <span class="problema-tipo">${problema.tipo === 'nutriente_sin_fuente' ? 'SIN FUENTE' : 'INSUFICIENTE'}</span>
+                        </div>
+                        <div class="problema-descripcion">
+                            ${problema.mensaje}
+                        </div>
+                        <div class="problema-valores">
+                            <div class="valor-requerido">
+                                <label>Requerimiento:</label>
+                                <span>${problema.requerimiento.toFixed(4)}</span>
+                            </div>
+                            ${problema.aporte_maximo !== undefined ? `
+                                <div class="valor-maximo">
+                                    <label>Aporte Máximo Posible:</label>
+                                    <span>${problema.aporte_maximo.toFixed(4)}</span>
+                                </div>
+                                <div class="valor-deficit">
+                                    <label>Déficit:</label>
+                                    <span class="deficit">${problema.deficit.toFixed(4)} (${problema.porcentaje_deficit.toFixed(1)}%)</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${problema.ingredientes_actuales && problema.ingredientes_actuales.length > 0 ? `
+                            <div class="ingredientes-disponibles">
+                                <label>Ingredientes que aportan este nutriente:</label>
+                                <ul>
+                                    ${problema.ingredientes_actuales.slice(0, 3).map(ing => 
+                                        `<li>${ing.nombre}: ${ing.aporte_unitario.toFixed(2)} (máx: ${ing.limite_max}%)</li>`
+                                    ).join('')}
+                                    ${problema.ingredientes_actuales.length > 3 ? 
+                                        `<li><em>... y ${problema.ingredientes_actuales.length - 3} más</em></li>` : ''}
+                                </ul>
+                            </div>
+                        ` : '<div class="sin-ingredientes">❌ Ningún ingrediente disponible aporta este nutriente</div>'}
+                    </div>
+                `;
+            });
+        } else {
+            html += '<div class="sin-problemas">✅ No se detectaron problemas críticos</div>';
+        }
+        
+        html += '</div>';
+        return html;
+    }
+
+    /**
+     * Generar tab de soluciones
+     */
+    generarTabSoluciones(validacion) {
+        let html = '<div class="soluciones-factibilidad">';
+        
+        if (validacion.sugerencias_especificas && validacion.sugerencias_especificas.length > 0) {
+            html += '<h4>💡 Soluciones Recomendadas</h4>';
+            html += '<div class="sugerencias-prioritarias">';
+            
+            validacion.sugerencias_especificas.forEach((sugerencia, index) => {
+                let tipoSugerencia = 'general';
+                let icono = '💡';
+                
+                if (sugerencia.includes('Agregue ingredientes')) {
+                    tipoSugerencia = 'agregar-ingredientes';
+                    icono = '🔍';
+                } else if (sugerencia.includes('Necesita ingredientes')) {
+                    tipoSugerencia = 'cambiar-ingredientes';
+                    icono = '⚠️';
+                } else if (sugerencia.includes('Mejores fuentes')) {
+                    tipoSugerencia = 'optimizar-existentes';
+                    icono = '📈';
+                }
+                
+                html += `
+                    <div class="sugerencia-item ${tipoSugerencia}">
+                        <div class="sugerencia-icono">${icono}</div>
+                        <div class="sugerencia-texto">${sugerencia}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+        }
+        
+        // Agregar pasos de acción
+        html += `
+            <div class="pasos-accion">
+                <h4>🎯 Pasos Recomendados</h4>
+                <ol class="lista-pasos">
+                    <li><strong>Revise los ingredientes disponibles:</strong> Verifique que tiene ingredientes que aporten los nutrientes requeridos</li>
+                    <li><strong>Consulte tablas nutricionales:</strong> Busque ingredientes ricos en los nutrientes faltantes</li>
+                    <li><strong>Ajuste los requerimientos:</strong> Si es necesario, modifique los valores mínimos a niveles alcanzables</li>
+                    <li><strong>Aumente límites máximos:</strong> Permita mayor inclusión de ingredientes ricos en nutrientes deficientes</li>
+                    <li><strong>Vuelva a intentar:</strong> Una vez realizados los cambios, ejecute la optimización nuevamente</li>
+                </ol>
+            </div>
+        `;
+        
+        html += '</div>';
+        return html;
+    }
+
+    /**
+     * Generar tab de detalles técnicos de factibilidad
+     */
+    generarTabDetallesFactibilidad(validacion) {
+        let html = '<div class="detalles-factibilidad">';
+        
+        if (validacion.detalles) {
+            html += `
+                <div class="estadisticas-factibilidad">
+                    <h4>📊 Estadísticas de Factibilidad</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-valor">${validacion.detalles.total_nutrientes}</span>
+                            <span class="stat-label">Total Nutrientes</span>
+                        </div>
+                        <div class="stat-item critico">
+                            <span class="stat-valor">${validacion.detalles.nutrientes_imposibles}</span>
+                            <span class="stat-label">Imposibles</span>
+                        </div>
+                        <div class="stat-item advertencia">
+                            <span class="stat-valor">${validacion.detalles.nutrientes_dificiles}</span>
+                            <span class="stat-label">Difíciles</span>
+                        </div>
+                        <div class="stat-item exito">
+                            <span class="stat-valor">${validacion.detalles.nutrientes_factibles}</span>
+                            <span class="stat-label">Factibles</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Mostrar análisis detallado por nutriente si está disponible
+        if (validacion.problemas_criticos && validacion.problemas_criticos.length > 0) {
+            html += '<div class="analisis-detallado-nutrientes">';
+            html += '<h4>🔬 Análisis Detallado por Nutriente</h4>';
+            
+            validacion.problemas_criticos.forEach(problema => {
+                html += `
+                    <div class="nutriente-detalle">
+                        <h5>${problema.nutriente}</h5>
+                        <div class="detalle-grid">
+                            <div class="detalle-item">
+                                <label>Tipo de Problema:</label>
+                                <span class="problema-badge ${problema.tipo}">${problema.tipo.replace('_', ' ').toUpperCase()}</span>
+                            </div>
+                            <div class="detalle-item">
+                                <label>Requerimiento:</label>
+                                <span>${problema.requerimiento.toFixed(4)}</span>
+                            </div>
+                            ${problema.aporte_maximo !== undefined ? `
+                                <div class="detalle-item">
+                                    <label>Aporte Máximo:</label>
+                                    <span>${problema.aporte_maximo.toFixed(4)}</span>
+                                </div>
+                                <div class="detalle-item">
+                                    <label>% de Cumplimiento:</label>
+                                    <span>${((problema.aporte_maximo / problema.requerimiento) * 100).toFixed(1)}%</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="solucion-especifica">
+                            <strong>Solución:</strong> ${problema.solucion}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+        }
+        
+        html += '</div>';
+        return html;
+    }
+
+    /**
+     * Agregar event listeners específicos para análisis de factibilidad
+     */
+    agregarEventListenersFactibilidad(overlay) {
+        // Event listeners básicos
+        this.agregarEventListeners(overlay);
+
+        // Event listeners para tabs
+        overlay.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabName = e.target.dataset.tab;
+                this.cambiarTab(overlay, tabName);
+            });
+        });
     }
 }
 

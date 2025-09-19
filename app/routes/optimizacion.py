@@ -270,6 +270,25 @@ def optimizar_formulacion():
             }
         }), 400
 
+    # NUEVA VALIDACIÓN: Análisis de factibilidad temprana
+    print("\n" + "="*60)
+    print("PASO 0: ANÁLISIS DE FACTIBILIDAD NUTRICIONAL")
+    print("="*60)
+    
+    validacion_factibilidad = validar_factibilidad_nutricional(ingredientes, requerimientos, tipo_optimizacion)
+    if not validacion_factibilidad['factible']:
+        print("❌ Problema de factibilidad detectado tempranamente")
+        return jsonify({
+            'error': 'Formulación no factible',
+            'validacion': validacion_factibilidad['diagnostico']
+        }), 400
+    else:
+        print("✅ Análisis de factibilidad: Formulación teóricamente posible")
+        if validacion_factibilidad.get('advertencias'):
+            print("⚠️ Advertencias detectadas:")
+            for advertencia in validacion_factibilidad['advertencias']:
+                print(f"   - {advertencia}")
+
     # Validar que los ingredientes tengan estructura de nutrientes (pero pueden tener valores 0)
     for ing in ingredientes:
         nutrientes = ing.get('aporte')
@@ -1295,3 +1314,203 @@ def formatear_resultado_aproximado(resultado, ingredientes, costos, metricas, me
             'sugerencias': sugerencias
         }
     }
+
+
+def validar_factibilidad_nutricional(ingredientes, requerimientos, tipo_optimizacion):
+    """
+    Valida si es teóricamente posible cumplir los requerimientos nutricionales
+    con los ingredientes disponibles antes de intentar la optimización.
+    
+    Returns:
+        dict: {
+            'factible': bool,
+            'diagnostico': dict,
+            'advertencias': list
+        }
+    """
+    print("🔍 Iniciando análisis de factibilidad nutricional...")
+    
+    # Construir matriz de aportes nutricionales
+    matriz_aportes = {}
+    for req in requerimientos:
+        nombre_nutriente = req['nombre']
+        aportes_ingredientes = []
+        
+        for ing in ingredientes:
+            nutrientes = ing.get('aporte', {})
+            ms = float(ing.get('ms', 100))
+            
+            # Obtener valor base del nutriente
+            if isinstance(nutrientes.get(nombre_nutriente), dict):
+                valor_base = float(nutrientes.get(nombre_nutriente, {}).get('valor', 0))
+            else:
+                valor_base = float(nutrientes.get(nombre_nutriente, 0))
+            
+            # Aplicar cálculo según el tipo de optimización
+            if tipo_optimizacion == 'base_seca':
+                valor_final = valor_base * (ms / 100)
+            else:
+                valor_final = valor_base
+            
+            aportes_ingredientes.append({
+                'ingrediente': ing['nombre'],
+                'aporte': valor_final,
+                'limite_max': float(ing.get('limite_max', 100))
+            })
+        
+        matriz_aportes[nombre_nutriente] = aportes_ingredientes
+    
+    # Análisis de factibilidad
+    problemas_criticos = []
+    advertencias = []
+    nutrientes_imposibles = []
+    nutrientes_dificiles = []
+    
+    for req in requerimientos:
+        nombre_nutriente = req['nombre']
+        req_min = req.get('min')
+        req_max = req.get('max')
+        
+        if not req_min or req_min == '' or float(req_min) <= 0:
+            continue  # Skip nutrientes sin requerimiento mínimo
+        
+        req_min_val = float(req_min)
+        aportes = matriz_aportes[nombre_nutriente]
+        
+        # Calcular aporte máximo teórico (todos los ingredientes al máximo)
+        aporte_maximo_teorico = 0
+        ingredientes_que_aportan = []
+        
+        for aporte_info in aportes:
+            if aporte_info['aporte'] > 0:
+                contribucion_maxima = (aporte_info['limite_max'] / 100) * aporte_info['aporte']
+                aporte_maximo_teorico += contribucion_maxima
+                ingredientes_que_aportan.append({
+                    'nombre': aporte_info['ingrediente'],
+                    'aporte_unitario': aporte_info['aporte'],
+                    'limite_max': aporte_info['limite_max'],
+                    'contribucion_maxima': contribucion_maxima
+                })
+        
+        print(f"🧪 {nombre_nutriente}:")
+        print(f"   Requerimiento mínimo: {req_min_val}")
+        print(f"   Aporte máximo teórico: {aporte_maximo_teorico:.4f}")
+        print(f"   Ingredientes que aportan: {len(ingredientes_que_aportan)}")
+        
+        # Verificar si es imposible
+        if len(ingredientes_que_aportan) == 0:
+            problemas_criticos.append({
+                'tipo': 'nutriente_sin_fuente',
+                'nutriente': nombre_nutriente,
+                'requerimiento': req_min_val,
+                'mensaje': f'Ningún ingrediente aporta {nombre_nutriente}',
+                'solucion': f'Agregue ingredientes que contengan {nombre_nutriente}'
+            })
+            nutrientes_imposibles.append(nombre_nutriente)
+            
+        elif aporte_maximo_teorico < req_min_val:
+            deficit = req_min_val - aporte_maximo_teorico
+            porcentaje_deficit = (deficit / req_min_val) * 100
+            
+            problemas_criticos.append({
+                'tipo': 'nutriente_insuficiente',
+                'nutriente': nombre_nutriente,
+                'requerimiento': req_min_val,
+                'aporte_maximo': aporte_maximo_teorico,
+                'deficit': deficit,
+                'porcentaje_deficit': porcentaje_deficit,
+                'mensaje': f'Aporte máximo de {nombre_nutriente} ({aporte_maximo_teorico:.4f}) es menor al requerimiento ({req_min_val})',
+                'solucion': f'Necesita ingredientes con mayor contenido de {nombre_nutriente} o ajustar el requerimiento',
+                'ingredientes_actuales': ingredientes_que_aportan
+            })
+            nutrientes_imposibles.append(nombre_nutriente)
+            
+        elif aporte_maximo_teorico < req_min_val * 1.2:  # Margen de seguridad del 20%
+            advertencias.append({
+                'tipo': 'nutriente_ajustado',
+                'nutriente': nombre_nutriente,
+                'mensaje': f'{nombre_nutriente} puede ser difícil de alcanzar (margen estrecho)',
+                'requerimiento': req_min_val,
+                'aporte_maximo': aporte_maximo_teorico,
+                'margen': aporte_maximo_teorico - req_min_val
+            })
+            nutrientes_dificiles.append(nombre_nutriente)
+    
+    # Determinar factibilidad general
+    factible = len(problemas_criticos) == 0
+    
+    if not factible:
+        # Generar diagnóstico detallado para problemas críticos
+        diagnostico = {
+            'tipo': 'factibilidad_imposible',
+            'mensaje': f'La formulación no es factible: {len(nutrientes_imposibles)} nutriente(s) no pueden alcanzar sus requerimientos',
+            'problemas_criticos': problemas_criticos,
+            'nutrientes_imposibles': nutrientes_imposibles,
+            'nutrientes_dificiles': nutrientes_dificiles,
+            'sugerencias_especificas': generar_sugerencias_factibilidad(problemas_criticos),
+            'detalles': {
+                'total_nutrientes': len(requerimientos),
+                'nutrientes_imposibles': len(nutrientes_imposibles),
+                'nutrientes_dificiles': len(nutrientes_dificiles),
+                'nutrientes_factibles': len(requerimientos) - len(nutrientes_imposibles) - len(nutrientes_dificiles)
+            }
+        }
+        
+        return {
+            'factible': False,
+            'diagnostico': diagnostico
+        }
+    
+    # Si es factible pero hay advertencias
+    resultado = {'factible': True}
+    if advertencias:
+        resultado['advertencias'] = [adv['mensaje'] for adv in advertencias]
+    
+    return resultado
+
+
+def generar_sugerencias_factibilidad(problemas_criticos):
+    """
+    Genera sugerencias específicas basadas en los problemas de factibilidad detectados
+    """
+    sugerencias = []
+    
+    # Agrupar problemas por tipo
+    nutrientes_sin_fuente = [p for p in problemas_criticos if p['tipo'] == 'nutriente_sin_fuente']
+    nutrientes_insuficientes = [p for p in problemas_criticos if p['tipo'] == 'nutriente_insuficiente']
+    
+    # Sugerencias para nutrientes sin fuente
+    if nutrientes_sin_fuente:
+        nutrientes_nombres = [p['nutriente'] for p in nutrientes_sin_fuente]
+        sugerencias.extend([
+            f"🔍 Agregue ingredientes que contengan: {', '.join(nutrientes_nombres)}",
+            "📚 Consulte tablas nutricionales para encontrar fuentes de estos nutrientes",
+            "🔄 Considere usar premezclas o suplementos específicos"
+        ])
+    
+    # Sugerencias para nutrientes insuficientes
+    if nutrientes_insuficientes:
+        for problema in nutrientes_insuficientes:
+            nutriente = problema['nutriente']
+            deficit_porcentaje = problema['porcentaje_deficit']
+            
+            if deficit_porcentaje > 50:
+                sugerencias.append(f"⚠️ {nutriente}: Necesita ingredientes con MUCHO mayor contenido (déficit: {deficit_porcentaje:.1f}%)")
+            else:
+                sugerencias.append(f"📈 {nutriente}: Aumente la inclusión de ingredientes ricos en este nutriente (déficit: {deficit_porcentaje:.1f}%)")
+            
+            # Sugerencias específicas basadas en ingredientes actuales
+            if problema.get('ingredientes_actuales'):
+                mejores_fuentes = sorted(problema['ingredientes_actuales'], 
+                                       key=lambda x: x['aporte_unitario'], reverse=True)[:2]
+                nombres_mejores = [f"{ing['nombre']} ({ing['aporte_unitario']:.2f})" for ing in mejores_fuentes]
+                sugerencias.append(f"💡 Mejores fuentes actuales de {nutriente}: {', '.join(nombres_mejores)}")
+    
+    # Sugerencias generales
+    sugerencias.extend([
+        "🎯 Revise si los requerimientos nutricionales son realistas para los ingredientes disponibles",
+        "🔧 Considere ajustar los límites máximos de ingredientes ricos en nutrientes deficientes",
+        "📊 Verifique los valores nutricionales de sus ingredientes en la base de datos"
+    ])
+    
+    return sugerencias

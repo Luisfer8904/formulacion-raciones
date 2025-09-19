@@ -649,6 +649,432 @@
     top: 10px;
 }
 
+/* Estilos específicos para análisis de factibilidad */
+.analisis-factibilidad .factibilidad-resumen {
+    display: flex;
+    justify-content: space-around;
+    background: #f8f9fa;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.factibilidad-resumen .resumen-item {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    min-width: 120px;
+}
+
+.factibilidad-resumen .resumen-item.critico {
+    background: #f8d7da;
+    border: 1px solid #dc3545;
+}
+
+.factibilidad-resumen .resumen-item.advertencia {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+}
+
+.factibilidad-resumen .resumen-item.exito {
+    background: #d4edda;
+    border: 1px solid #28a745;
+}
+
+.resumen-numero {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.resumen-item.critico .resumen-numero {
+    color: #dc3545;
+}
+
+.resumen-item.advertencia .resumen-numero {
+    color: #856404;
+}
+
+.resumen-item.exito .resumen-numero {
+    color: #28a745;
+}
+
+.resumen-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+.factibilidad-tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.analisis-factibilidad .tab-btn {
+    flex: 1;
+    padding: 15px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6c757d;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+}
+
+.analisis-factibilidad .tab-btn:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.analisis-factibilidad .tab-btn.active {
+    color: #dc3545;
+    background: white;
+    border-bottom-color: #dc3545;
+}
+
+/* Estilos para problemas críticos */
+.problemas-criticos .problema-item {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.problema-item.sin-fuente {
+    border-left: 4px solid #dc3545;
+    background: #fff5f5;
+}
+
+.problema-item.insuficiente {
+    border-left: 4px solid #fd7e14;
+    background: #fff8f0;
+}
+
+.problema-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.problema-header h5 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.2rem;
+}
+
+.problema-tipo {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #dc3545;
+    color: white;
+}
+
+.problema-descripcion {
+    color: #6c757d;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.problema-valores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.valor-requerido,
+.valor-maximo,
+.valor-deficit {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.valor-requerido {
+    background: #e7f3ff;
+    color: #0056b3;
+}
+
+.valor-maximo {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+.valor-deficit {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.valor-deficit .deficit {
+    font-weight: bold;
+}
+
+.ingredientes-disponibles {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.ingredientes-disponibles label {
+    font-weight: 500;
+    color: #495057;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.ingredientes-disponibles ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ingredientes-disponibles li {
+    padding: 4px 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Estilos para soluciones */
+.soluciones-factibilidad .sugerencias-prioritarias {
+    margin-bottom: 25px;
+}
+
+.sugerencia-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sugerencia-item.agregar-ingredientes {
+    border-left: 4px solid #007bff;
+}
+
+.sugerencia-item.cambiar-ingredientes {
+    border-left: 4px solid #ffc107;
+}
+
+.sugerencia-item.optimizar-existentes {
+    border-left: 4px solid #28a745;
+}
+
+.sugerencia-icono {
+    font-size: 1.2rem;
+    margin-top: 2px;
+}
+
+.sugerencia-texto {
+    flex: 1;
+    color: #495057;
+    line-height: 1.4;
+}
+
+.pasos-accion {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #17a2b8;
+}
+
+.pasos-accion h4 {
+    color: #17a2b8;
+    margin: 0 0 15px 0;
+}
+
+.lista-pasos {
+    padding-left: 20px;
+    color: #495057;
+}
+
+.lista-pasos li {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.lista-pasos strong {
+    color: #495057;
+}
+
+/* Estilos para detalles técnicos de factibilidad */
+.estadisticas-factibilidad {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.estadisticas-factibilidad h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+
+.stat-item.critico {
+    background: #f8d7da;
+    border-color: #dc3545;
+}
+
+.stat-item.advertencia {
+    background: #fff3cd;
+    border-color: #ffc107;
+}
+
+.stat-item.exito {
+    background: #d4edda;
+    border-color: #28a745;
+}
+
+.stat-valor {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-item.critico .stat-valor {
+    color: #dc3545;
+}
+
+.stat-item.advertencia .stat-valor {
+    color: #856404;
+}
+
+.stat-item.exito .stat-valor {
+    color: #28a745;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.analisis-detallado-nutrientes {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.analisis-detallado-nutrientes h4 {
+    margin: 0 0 20px 0;
+    color: #495057;
+}
+
+.nutriente-detalle {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.nutriente-detalle h5 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.detalle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.detalle-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.detalle-item label {
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.detalle-item span {
+    font-weight: 600;
+    color: #495057;
+}
+
+.problema-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.problema-badge.nutriente_sin_fuente {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.problema-badge.nutriente_insuficiente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.solucion-especifica {
+    background: #e7f3ff;
+    padding: 12px;
+    border-radius: 6px;
+    color: #0056b3;
+    line-height: 1.4;
+}
+
+/* Responsive para factibilidad */
+@media (max-width: 768px) {
+    .factibilidad-resumen {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .resumen-item {
+        min-width: auto;
+    }
+
+    .problema-valores,
+    .detalle-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .problema-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .notification-modal {
