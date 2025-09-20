@@ -922,15 +922,14 @@ def optimizar_formulacion():
 
 def optimizacion_aproximada(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes):
     """
-    Función de optimización aproximada que siempre devuelve una solución
-    manteniendo la suma de ingredientes en 100%
+    Función de optimización aproximada - SOLO DEVUELVE SOLUCIONES DE CALIDAD ACEPTABLE
     """
     print("\n" + "="*60)
     print("🔄 INICIANDO OPTIMIZACIÓN APROXIMADA")
     print("="*60)
     
-    # Niveles de tolerancia progresiva
-    niveles_tolerancia = [0.05, 0.10, 0.20, 0.50]  # 5%, 10%, 20%, 50%
+    # Niveles de tolerancia más estrictos - solo intentar aproximaciones de calidad alta
+    niveles_tolerancia = [0.05, 0.10, 0.15]  # 5%, 10%, 15% - eliminamos tolerancias muy altas
     
     for nivel_idx, tolerancia in enumerate(niveles_tolerancia):
         print(f"\n🎯 Intentando optimización con tolerancia: {tolerancia*100:.0f}%")
@@ -945,9 +944,16 @@ def optimizacion_aproximada(ingredientes, requerimientos, tipo_optimizacion, cos
             print(f"✅ Optimización aproximada exitosa con tolerancia {tolerancia*100:.0f}%")
             return resultado
     
-    # Si todas las tolerancias fallan, usar distribución inteligente
-    print("\n🔄 Usando distribución inteligente como último recurso")
-    return distribucion_inteligente(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes)
+    # Si todas las tolerancias fallan, intentar distribución inteligente UNA VEZ
+    print("\n🔄 Intentando distribución inteligente como último recurso")
+    resultado_inteligente = distribucion_inteligente(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes)
+    
+    if resultado_inteligente['exito']:
+        return resultado_inteligente
+    
+    # Si incluso la distribución inteligente falla, NO devolver nada - dejar que el sistema principal maneje el error
+    print("❌ Todas las aproximaciones fallaron - calidad insuficiente")
+    return {'exito': False}
 
 
 def optimizar_con_penalizaciones(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes, tolerancia):
@@ -1018,12 +1024,17 @@ def optimizar_con_penalizaciones(ingredientes, requerimientos, tipo_optimizacion
                 tipo_optimizacion, matriz_nutrientes
             )
             
-            # Si la aproximación es aceptable, devolverla
-            if metricas['calidad_general'] >= (1 - tolerancia):
+            print(f"🔍 Calidad de aproximación obtenida: {metricas['calidad_general']*100:.1f}%")
+            print(f"🔍 Tolerancia requerida: {(1-tolerancia)*100:.1f}%")
+            
+            # CRITERIO MÁS ESTRICTO: Solo aceptar aproximaciones de calidad alta
+            if metricas['calidad_general'] >= 0.70:  # Mínimo 70% de calidad
                 return formatear_resultado_aproximado(
                     mejor_resultado, ingredientes, costos, metricas, 
                     f"Aproximada (tolerancia {tolerancia*100:.0f}%)"
                 )
+            else:
+                print(f"❌ Aproximación rechazada por baja calidad: {metricas['calidad_general']*100:.1f}%")
         
         return {'exito': False}
         
@@ -1119,7 +1130,7 @@ def ajustar_a_bounds(x, bounds_ingredientes):
 
 def distribucion_inteligente(ingredientes, requerimientos, tipo_optimizacion, costos, bounds_ingredientes, matriz_nutrientes):
     """
-    Último recurso: distribución inteligente que siempre funciona
+    Último recurso: distribución inteligente - PERO SOLO SI LA CALIDAD ES ACEPTABLE
     """
     print("🎯 Aplicando distribución inteligente")
     
@@ -1175,10 +1186,17 @@ def distribucion_inteligente(ingredientes, requerimientos, tipo_optimizacion, co
         x_final, ingredientes, requerimientos, tipo_optimizacion, matriz_nutrientes
     )
     
-    return formatear_resultado_aproximado(
-        type('obj', (object,), {'x': x_final, 'success': True})(),
-        ingredientes, costos, metricas, "Distribución Inteligente"
-    )
+    print(f"🔍 Calidad de distribución inteligente: {metricas['calidad_general']*100:.1f}%")
+    
+    # CRITERIO ESTRICTO: Solo devolver si la calidad es aceptable
+    if metricas['calidad_general'] >= 0.60:  # Mínimo 60% para distribución inteligente
+        return formatear_resultado_aproximado(
+            type('obj', (object,), {'x': x_final, 'success': True})(),
+            ingredientes, costos, metricas, "Distribución Inteligente"
+        )
+    else:
+        print(f"❌ Distribución inteligente rechazada por baja calidad: {metricas['calidad_general']*100:.1f}%")
+        return {'exito': False}
 
 
 def calcular_metricas_aproximacion(x, ingredientes, requerimientos, tipo_optimizacion, matriz_nutrientes):
