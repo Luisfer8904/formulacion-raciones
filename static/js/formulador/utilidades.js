@@ -263,8 +263,8 @@ function aplicarRequerimientosSeleccionados() {
       tabla.innerHTML = '';
       contadorNutrientes = 0;
       
-      // Agregar nutrientes del requerimiento
-      data.forEach(nutriente => {
+      // Agregar nutrientes del requerimiento SIN filas vacías adicionales
+      data.forEach((nutriente, index) => {
         agregarFilaNutriente();
         const ultimaFila = tabla.lastElementChild;
         const select = ultimaFila.querySelector('select');
@@ -273,14 +273,29 @@ function aplicarRequerimientosSeleccionados() {
         // Seleccionar el nutriente
         select.value = nutriente.nutriente_id;
         
-        // Actualizar la unidad y sugerido
-        actualizarUnidadSugerido(select, contadorNutrientes-1);
+        // Actualizar la unidad y sugerido MANUALMENTE para evitar verificarUltimaFilaNutriente
+        const selectedOption = select.options[select.selectedIndex];
+        const unidad = selectedOption.getAttribute('data-unidad') || '';
+        const sugerido = selectedOption.getAttribute('data-sugerido') || '';
+        
+        const fila = select.closest('tr');
+        const unidadInput = fila.querySelector(`input[name="unidad_${contadorNutrientes-1}"]`);
+        
+        if (unidadInput) {
+          unidadInput.value = unidad;
+        }
+        if (sugeridoInput) {
+          sugeridoInput.value = sugerido;
+        }
         
         // Sobrescribir el valor sugerido con el del requerimiento
         if (sugeridoInput && nutriente.valor_sugerido) {
           sugeridoInput.value = nutriente.valor_sugerido;
         }
       });
+      
+      // Agregar UNA SOLA fila vacía al final para nuevos nutrientes
+      agregarFilaNutriente();
       
       // Cerrar modal
       const modal = bootstrap.Modal.getInstance(document.getElementById('selectorRequerimientosModal'));
