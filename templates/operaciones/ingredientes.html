@@ -128,49 +128,135 @@ function mostrarDetalles(id) {
     fetch(`/api/ingrediente/${id}`)
         .then(response => response.json())
         .then(data => {
+            if (data.error) {
+                alert('Error: ' + data.error);
+                return;
+            }
+            
             const contenido = document.getElementById('detallesContenido');
-            let html = '<div class="row">';
             
-            const grupos = {
-                'Información General': ['nombre', 'tipo', 'comentario'],
-                'Composición Básica': ['MATERIA_SECA', 'HUMEDAD', 'CENIZAS', 'PB', 'EE', 'FB'],
-                'Energía': ['EM_RTES_Kcal_kg', 'EMA_AVES_Kcal_kg', 'ED_PORC_Kcal_kg'],
-                'Minerales': ['Ca', 'P', 'Na', 'Cl', 'Mg', 'K', 'S'],
-                'Aminoácidos': ['LYS', 'MET', 'M_C', 'THR', 'TRP', 'ILE', 'VAL', 'ARG']
-            };
+            // Crear estructura similar al modal del formulador
+            let html = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-section">
+                            <h6 class="text-success mb-3">
+                                <i class="fas fa-info-circle me-2"></i>Información General
+                            </h6>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Nombre:</label>
+                                    <span>${data.nombre || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Tipo:</label>
+                                    <span>${data.tipo || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Materia Seca:</label>
+                                    <span>${data.ms ? data.ms + '%' : 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Precio:</label>
+                                    <span>${data.precio ? '$' + data.precio : 'N/A'}</span>
+                                </div>
+                                ${data.comentario ? `
+                                <div class="info-item">
+                                    <label>Comentario:</label>
+                                    <span>${data.comentario}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-section">
+                            <h6 class="text-success mb-3">
+                                <i class="fas fa-flask me-2"></i>Composición Básica
+                            </h6>
+                            <div id="composicion-basica">
+                                ${data.nutrientes && data.nutrientes.length > 0 ? 
+                                    'No hay información básica disponible' : 
+                                    'No hay información básica disponible'}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
             
-            for (const [grupo, campos] of Object.entries(grupos)) {
-                html += `
-                    <div class="col-md-6 mb-4">
-                        <h6 class="border-bottom pb-2">${grupo}</h6>
-                        <table class="table table-sm">
-                            <tbody>`;
+            // Agregar sección de nutrientes si existen
+            if (data.nutrientes && data.nutrientes.length > 0) {
+                // Agrupar nutrientes por categorías
+                const categorias = {
+                    'Minerales': [],
+                    'Otros': []
+                };
                 
-                campos.forEach(campo => {
-                    let valor = data[campo];
-                    if (valor !== null && valor !== undefined && valor !== '') {
-                        if (typeof valor === 'number') {
-                            if (campo.includes('Kcal')) {
-                                valor = valor.toFixed(0);
-                            } else {
-                                valor = valor.toFixed(3);
-                            }
-                        }
-                        html += `
-                            <tr>
-                                <td class="text-muted">${campo.charAt(0).toUpperCase() + campo.slice(1).replace(/_/g, ' ')}</td>
-                                <td class="text-end">${valor}</td>
-                            </tr>`;
+                data.nutrientes.forEach(nutriente => {
+                    const nombre = nutriente.nombre.toLowerCase();
+                    if (nombre.includes('calcio') || nombre.includes('fosforo') || nombre.includes('sodio') || 
+                        nombre.includes('cloro') || nombre.includes('magnesio') || nombre.includes('potasio') ||
+                        nombre.includes('ca') || nombre.includes('p') || nombre.includes('na') || 
+                        nombre.includes('cl') || nombre.includes('mg') || nombre.includes('k')) {
+                        categorias['Minerales'].push(nutriente);
+                    } else {
+                        categorias['Otros'].push(nutriente);
                     }
                 });
                 
+                html += `<div class="row mt-4">`;
+                
+                Object.entries(categorias).forEach(([categoria, nutrientes]) => {
+                    if (nutrientes.length > 0) {
+                        html += `
+                            <div class="col-md-6 mb-3">
+                                <div class="info-section">
+                                    <h6 class="text-success mb-3">
+                                        <i class="fas fa-atom me-2"></i>${categoria}
+                                    </h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nutriente</th>
+                                                    <th>Valor</th>
+                                                    <th>Unidad</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>`;
+                        
+                        nutrientes.forEach(nutriente => {
+                            const valor = typeof nutriente.valor === 'number' ? 
+                                nutriente.valor.toFixed(4) : nutriente.valor;
+                            html += `
+                                <tr>
+                                    <td>${nutriente.nombre}</td>
+                                    <td class="text-end">${valor}</td>
+                                    <td class="text-muted">${nutriente.unidad || '%'}</td>
+                                </tr>`;
+                        });
+                        
+                        html += `
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>`;
+                    }
+                });
+                
+                html += `</div>`;
+            } else {
                 html += `
-                            </tbody>
-                        </table>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No hay información nutricional disponible para este ingrediente
+                            </div>
+                        </div>
                     </div>`;
             }
             
-            html += '</div>';
             contenido.innerHTML = html;
 
             const modal = new bootstrap.Modal(document.getElementById('detallesModal'));
@@ -189,4 +275,45 @@ function eliminarIngrediente(id) {
     }
 }
 </script>
+
+<style>
+.info-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.info-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #495057;
+    margin: 0;
+}
+
+.info-item span {
+    color: #6c757d;
+    text-align: right;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.02);
+}
+</style>
 {% endblock %}
