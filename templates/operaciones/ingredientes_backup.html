@@ -101,13 +101,13 @@
     {% endif %}
 </div>
 
-<!-- Modal EXACTO del formulador -->
+<!-- Modal para mostrar detalles -->
 <div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="detallesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #8bc34a 0%, #689f38 100%); border: none;">
-                <h5 class="modal-title text-white" id="detallesModalLabel">
-                    <i class="fas fa-info-circle me-2"></i>Información del Ingrediente
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detallesModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Detalles del Ingrediente
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -135,7 +135,7 @@ function mostrarDetalles(id) {
             
             const contenido = document.getElementById('detallesContenido');
             
-            // Agrupar nutrientes por categorías EXACTAS del formulador
+            // Agrupar nutrientes por categorías exactas del formulador
             const categorias = {
                 'energia': [],
                 'proteina': [],
@@ -228,139 +228,4 @@ function mostrarDetalles(id) {
                         </h6>
                         ${Object.keys(composicionBasica).length > 0 ? 
                             Object.entries(composicionBasica).map(([key, value]) => 
-                                `<div class="info-item">
-                                    <strong>${key}:</strong>
-                                    <span>${value}</span>
-                                </div>`
-                            ).join('') : 
-                            '<div class="text-muted">No hay información básica disponible</div>'
-                        }
-                    </div>
-                </div>`;
-            
-            // Agregar secciones de nutrientes por categorías EXACTAS del formulador
-            const iconos = {
-                'energia': 'fas fa-bolt',
-                'proteina': 'fas fa-dna', 
-                'minerales': 'fas fa-gem',
-                'aminoacidos': 'fas fa-link',
-                'otros': 'fas fa-list'
-            };
-            
-            const titulos = {
-                'energia': 'Energía',
-                'proteina': 'Proteína', 
-                'minerales': 'Minerales',
-                'aminoacidos': 'Aminoácidos',
-                'otros': 'Otros'
-            };
-            
-            Object.entries(categorias).forEach(([categoria, nutrientes]) => {
-                if (nutrientes.length > 0) {
-                    html += `
-                        <div class="mt-4">
-                            <h6 class="text-success mb-3">
-                                <i class="${iconos[categoria]} me-2"></i>${titulos[categoria]}
-                            </h6>
-                            <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead class="table-success">
-                                        <tr>
-                                            <th>NUTRIENTE</th>
-                                            <th>VALOR</th>
-                                            <th>UNIDAD</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`;
-                    
-                    nutrientes.forEach(nutriente => {
-                        const valor = typeof nutriente.valor === 'number' ? 
-                            nutriente.valor.toFixed(4) : nutriente.valor;
-                        html += `
-                            <tr>
-                                <td>${nutriente.nombre}</td>
-                                <td class="text-success fw-bold">${valor}</td>
-                                <td>${nutriente.unidad || '%'}</td>
-                            </tr>`;
-                    });
-                    
-                    html += `
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>`;
-                }
-            });
-            
-            // Si no hay nutrientes
-            if (!data.nutrientes || data.nutrientes.length === 0) {
-                html += `
-                    <div class="mt-4">
-                        <div class="alert alert-info text-center">
-                            <i class="fas fa-info-circle me-2"></i>
-                            No hay información nutricional disponible para este ingrediente
-                        </div>
-                    </div>`;
-            }
-            
-            contenido.innerHTML = html;
-
-            const modal = new bootstrap.Modal(document.getElementById('detallesModal'));
-            modal.show();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al cargar los detalles del ingrediente');
-        });
-}
-
-function eliminarIngrediente(id) {
-    console.log("Intentando eliminar ingrediente con ID:", id);
-    if (confirm('¿Estás seguro de que deseas eliminar este ingrediente?')) {
-        window.location.href = `/eliminar_ingrediente/${encodeURIComponent(id)}`;
-    }
-}
-</script>
-
-<style>
-.info-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.info-item:last-child {
-    border-bottom: none;
-}
-
-.info-item strong {
-    color: #495057;
-}
-
-.info-item span {
-    color: #6c757d;
-    text-align: right;
-}
-
-.table-success {
-    background-color: #8bc34a !important;
-    color: white !important;
-}
-
-.table-success th {
-    color: white !important;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-.modal-xl {
-    max-width: 1200px;
-}
-
-.text-success {
-    color: #8bc34a !important;
-}
-</style>
 {% endblock %}
