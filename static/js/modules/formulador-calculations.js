@@ -223,7 +223,7 @@ export function actualizarTotales() {
     const sumaInclusion = calcularSumaInclusiones();
     const spanSumaInclusion = obtenerElemento('#suma-inclusion');
     if (spanSumaInclusion) {
-        spanSumaInclusion.textContent = sumaInclusion.toFixed(2);
+        spanSumaInclusion.textContent = sumaInclusion.toFixed(4);
         
         // Cambiar color según si está cerca del 100%
         if (Math.abs(sumaInclusion - 100) < 0.1) {
@@ -255,9 +255,9 @@ export function validarSumaInclusiones() {
         suma: suma,
         exceso: Math.max(0, suma - 100),
         mensaje: suma > 100 ? 
-            `La suma de inclusiones (${suma.toFixed(2)}%) excede el 100%. Exceso: ${(suma - 100).toFixed(2)}%` :
+            `La suma de inclusiones (${suma.toFixed(4)}%) excede el 100%. Exceso: ${(suma - 100).toFixed(4)}%` :
             suma < 99 ?
-            `La suma de inclusiones (${suma.toFixed(2)}%) está por debajo del 100%. Falta: ${(100 - suma).toFixed(2)}%` :
+            `La suma de inclusiones (${suma.toFixed(4)}%) está por debajo del 100%. Falta: ${(100 - suma).toFixed(4)}%` :
             'La suma de inclusiones es correcta'
     };
 }
