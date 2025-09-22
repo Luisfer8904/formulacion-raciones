@@ -143,7 +143,7 @@ function calcularSumaInclusion() {
   document.querySelectorAll('input[name^="inclusion_"]').forEach(input => {
     suma += parseFloat(input.value) || 0;
   });
-  document.getElementById("suma-inclusion").textContent = suma.toFixed(0);
+  document.getElementById("suma-inclusion").textContent = suma.toFixed(4);
   
   // Calcular materia seca total
   calcularMateriaSeca();
